@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.7;
+import "./interfaces/IFacadeWrite.sol";
+
+pragma solidity ^0.8.9;
 
 contract Safock {}
