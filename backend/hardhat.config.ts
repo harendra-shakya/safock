@@ -24,10 +24,10 @@ const config: HardhatUserConfig = {
     defaultNetwork: "hardhat",
     networks: {
         hardhat: {
-            forking: {
-                url: MUMBAI_RPC_URL!,
-                enabled: true,
-            },
+            // forking: {
+            //     url: "MUMBAI_RPC_URL"!,
+            //     enabled: true,
+            // },
             chainId: 31337,
         },
         localhost: {
