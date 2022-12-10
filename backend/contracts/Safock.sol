@@ -177,14 +177,12 @@ contract Safock is Ownable, ReentrancyGuard {
         ConfigurationParams calldata config,
         SetupParams calldata setup,
         uint8 planNum,
-        address paymentCurrency
+        uint256 amount
     ) external nonReentrant {
         require(planNum <= 4, "Invalid Plan");
-        require(
-            paymentCurrency == USDC || paymentCurrency == USDT || paymentCurrency == BUSD,
-            "Invalid currency!"
-        );
-        IFacadeWrite(RESERVE_PROTOCOL).deployRToken(config, setup);
+
+        address rToken = IFacadeWrite(RESERVE_PROTOCOL).deployRToken(config, setup);
+        IRToken(rToken).issue(amount);
         emit CreateETF(config, setup, planNum);
     }
 
@@ -194,7 +192,12 @@ contract Safock is Ownable, ReentrancyGuard {
         address paymentCurrency,
         address rToken,
         uint256 numRTokens
-    ) private {
+    ) external nonReentrant {
+        require(planNum <= 4, "Invalid Plan");
+        require(
+            paymentCurrency == USDC || paymentCurrency == USDT || paymentCurrency == BUSD,
+            "Invalid currency!"
+        );
         InsurancePlan planType;
         if (planNum == 0) {
             planType = InsurancePlan.NONE;
@@ -225,15 +228,33 @@ contract Safock is Ownable, ReentrancyGuard {
         );
     }
 
-    function claimInsurance(address rToken) external {
+    function claimInsurance(address rToken) external nonReentrant {
         UserPlan memory plan = userPlans[msg.sender][rToken];
+        InsurancePlan planType = plan.planType;
+        InsuranceAttributes memory planAttributes = plans[planType];
+
         require(!plan.isClaimed, "Already Claimed");
         require(plan.planType != InsurancePlan.NONE, "You don't have any plan");
         require(plan.validity > block.timestamp, "Insurance validity is already over");
+
+        // * Currect price should be less than minimum drop
         require(
-            (70 * getPrice(rToken)) / 100 <= plan.amountInsuredInUSD,
-            "Price not dropped below minimu theshold"
+            getPrice(rToken) <=
+                ((planAttributes.minDropDenominator - planAttributes.minDropNumerator) *
+                    plan.amountInsuredInUSD) /
+                    planAttributes.minDropDenominator,
+            "Price not dropped below minimum theshold"
         );
+
+        // * Currect price should be more than cove upto
+        require(
+            getPrice(rToken) >=
+                ((planAttributes.coverUptoDenominator - planAttributes.coverUptoNumerator) *
+                    plan.amountInsuredInUSD) /
+                    planAttributes.coverUptoDenominator,
+            "Price dropped out of coverage"
+        );
+
         _safeTranferFrom(rToken, msg.sender, address(this), plan.numRTokens);
         _safeTranfer(USDT, msg.sender, plan.amountInsuredInUSD);
 
