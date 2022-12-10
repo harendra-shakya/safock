@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: MIT
 
 import "./interfaces/IFacadeWrite.sol";
+import "./interfaces/IFacadeRead.sol";
+import "./interfaces/IRToken.sol";
+
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 pragma solidity ^0.8.9;
@@ -12,10 +15,10 @@ contract Safock {
     bytes4 private constant T_SELECTOR = bytes4(keccak256(bytes("transfer(address,uint256)")));
     bytes4 private constant TF_SELECTOR =
         bytes4(keccak256(bytes("transferFrom(address,address,uint256)")));
-    address private constant FACADE_WRITE_ADDRESS = 0xEE527CC63122732532d0f1ad33Ec035D30f3050f; // it's real mainnet address. change this or use mainnet fork
-    address private constant USDT = 0xEE527CC63122732532d0f1ad33Ec035D30f3050f; // change this, this is wrong address
-    address private constant USDC = 0xEE527CC63122732532d0f1ad33Ec035D30f3050f; // change this, this is wrong address
-    address private constant BUSD = 0xEE527CC63122732532d0f1ad33Ec035D30f3050f; // change this, this is wrong address
+    address private immutable RESERVE_PROTOCOL;
+    address private immutable USDT;
+    address private immutable USDC;
+    address private immutable BUSD;
 
     // 0. NONE      ->   No plan
     // 1. BASIC     ->   cost = 1% of price, if drops 30% or more, lose cover 30%, validity 3 month (validity is low coz of maket fluctuation)
@@ -54,6 +57,18 @@ contract Safock {
         uint256 validity
     );
 
+    constructor(
+        address reserveAddress,
+        address usdc,
+        address busd,
+        address usdt
+    ) {
+        RESERVE_PROTOCOL = reserveAddress;
+        USDC = usdc;
+        USDT = usdt;
+        BUSD = busd;
+    }
+
     function _safeTranfer(
         address token,
         address to,
@@ -88,7 +103,7 @@ contract Safock {
             paymentCurrency == USDC || paymentCurrency == USDT || paymentCurrency == BUSD,
             "Invalid currency!"
         );
-        IFacadeWrite(FACADE_WRITE_ADDRESS).deployRToken(config, setup);
+        IFacadeWrite(RESERVE_PROTOCOL).deployRToken(config, setup);
         emit CreateETF(config, setup, planNum);
     }
 
@@ -111,7 +126,7 @@ contract Safock {
                 0
             );
         } else if (planNum == 1) {
-            amount = (1 * getPrice(rToken)) / 100;
+            amount = (1 * getPrice(rToken)) / 100; // 100 -> taking 100 times less than price
             plans[msg.sender][rToken] = UserPlan(
                 msg.sender,
                 false,
@@ -163,7 +178,11 @@ contract Safock {
         UserPlan memory plan = plans[msg.sender][rToken];
         require(!plan.isClaimed, "Already Claimed");
         require(plan.planType != InsurancePlan.NONE, "You don't have any plan");
-        require(plan.validity > block.timestamp, "Insurance valisity is already over");
+        require(plan.validity > block.timestamp, "Insurance validity is already over");
+        require(
+            (70 * getPrice(rToken)) / 100 <= plan.amountInsuredInUSD,
+            "Price not dropped below minimu theshold"
+        );
         _safeTranferFrom(rToken, msg.sender, address(this), plan.numRTokens);
         _safeTranfer(USDT, msg.sender, plan.amountInsuredInUSD);
 
@@ -179,9 +198,8 @@ contract Safock {
         );
     }
 
+    // this will return the price of rToken
     function getPrice(address rToken) public view returns (uint256 price) {
-        // this will return the price of rToken
-        uint256 fictinalPrice = 20 ether;
-        price = 20;
+        price = IFacadeRead(RESERVE_PROTOCOL).price(IRToken(rToken));
     }
 }

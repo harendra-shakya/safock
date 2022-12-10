@@ -1,28 +1,32 @@
-# vscode
-.vscode
-
-# hardhat
-artifacts
-cache
-deployments
-node_modules
-coverage
+artifacts/
+build
+cache/
 coverage.json
+coverage/
+crytic-export/
+design-docs
+echidna-corpus/
+flatten/
+node_modules/
+reports
+typechain/
+scripts/addresses/31337*
 
-# don't push the environment vars!
+.openzeppelin
 .env
+.vscode/
+/local/
 
-# Generated files
-bin/
-gen/
-out/
-build/
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
 
-# Log Files
-*.log
+\#*\#
+.\#*
 
-typechain 
-typechain-types
+*.orig
 
-# gas
-gas-report.txt
+.idea

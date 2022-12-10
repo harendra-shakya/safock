@@ -1,12 +1,21 @@
 {
-    "compilerOptions": {
-        "target": "es2018",
-        "module": "commonjs",
-        "strict": true,
-        "esModuleInterop": true,
-        "outDir": "dist",
-        "declaration": true
+  "compilerOptions": {
+    "target": "es2020",
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "strict": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "outDir": "dist",
+    "skipLibCheck": true,
+    "paths": {
+      "@typechain/*": ["./typechain/*"],
+      "#/*": ["./*"]
     },
-    "include": ["./deploy", "./typechain"],
-    "files": ["./hardhat.config.ts", "utils/verify.ts"]
+    "typeRoots": ["./typechain", "./node_modules/@types"],
+    "types": ["@nomiclabs/hardhat-ethers", "@nomiclabs/hardhat-waffle"]
+  },
+  "exclude": ["./dist/**/*", "./node_modules/**/*"],
+  "include": ["./test", "./tasks/**/*", "./common", "./scripts", "./typechain/**/*"],
+  "files": ["./hardhat.config.ts"]
 }
