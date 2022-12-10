@@ -12,11 +12,15 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 pragma solidity ^0.8.9;
 
 contract Safock is Ownable, ReentrancyGuard {
+    // # This is the address of the reserve protocol's contract
     address private immutable RESERVE_PROTOCOL;
     address private immutable USDT;
     address private immutable USDC;
     address private immutable BUSD;
 
+    /*
+     * @dev here we're creating enum of NONE, BASIC, PRO, PRO_PLUS, PRO_MAX for keeping track of different types of insurance plans
+     */
     enum InsurancePlan {
         NONE,
         BASIC,
@@ -25,6 +29,10 @@ contract Safock is Ownable, ReentrancyGuard {
         PRO_MAX
     }
 
+    /*
+     * @dev struct of InsuranceAttributes which inclues basic information about price, minimum drop, and cover for
+     * they are only initilized during deploying, saved globally
+     */
     struct InsuranceAttributes {
         InsurancePlan planType;
         uint256 priceNumerator;
@@ -36,6 +44,11 @@ contract Safock is Ownable, ReentrancyGuard {
         uint256 validity;
     }
 
+    /*
+     * @dev UserPlan struct
+     * whenever a user buys a insurance, the information saved in this struct
+     * the information is then used in future during claiming insurance
+     */
     struct UserPlan {
         address owner;
         bool isClaimed;
@@ -46,6 +59,10 @@ contract Safock is Ownable, ReentrancyGuard {
         uint256 validity;
     }
 
+    /*
+     * @dev mapping then conatains all user insurance plans
+     * user -> tToken -> UserPlan
+     */
     mapping(address => mapping(address => UserPlan)) private userPlans; // user -> tToken -> UserPlan
     mapping(InsurancePlan => InsuranceAttributes) private plans; // InsurancePlan -> InsuranceAttributes
 
@@ -132,6 +149,9 @@ contract Safock is Ownable, ReentrancyGuard {
         );
     }
 
+    /*
+     * @dev this function creates a ETF using reserve protocol and mint the ETFS for users
+     */
     function createETF(
         ConfigurationParams calldata config,
         SetupParams calldata setup,
@@ -144,6 +164,9 @@ contract Safock is Ownable, ReentrancyGuard {
         emit CreateETF(config, setup, planNum);
     }
 
+    /*
+     * @dev main function resposible for giving isurance to user's ETFs
+     */
     function insurance(
         address user,
         uint8 planNum,
@@ -188,6 +211,9 @@ contract Safock is Ownable, ReentrancyGuard {
         );
     }
 
+    /*
+     * @dev main function resposible for claiming the insurance
+     */
     function claimInsurance(address rToken) external nonReentrant {
         UserPlan memory plan = userPlans[msg.sender][rToken];
         InsurancePlan planType = plan.planType;
