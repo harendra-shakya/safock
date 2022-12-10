@@ -12,22 +12,10 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 pragma solidity ^0.8.9;
 
 contract Safock is Ownable, ReentrancyGuard {
-    // 1. deploy etf
-    // 2. ask for insurance and give differnt userPlans
-
-    bytes4 private constant T_SELECTOR = bytes4(keccak256(bytes("transfer(address,uint256)")));
-    bytes4 private constant TF_SELECTOR =
-        bytes4(keccak256(bytes("transferFrom(address,address,uint256)")));
     address private immutable RESERVE_PROTOCOL;
     address private immutable USDT;
     address private immutable USDC;
     address private immutable BUSD;
-
-    // 0. NONE      ->   No plan
-    // 1. BASIC     ->   cost = 1% of price, if drops atleast 20%, lose cover upto 30%, validity 3 month (validity is low coz of market fluctuation)
-    // 2. PRO       ->   cost = 3% of price, if drops atleast 20%, lose cover upto 50%, validity 3 month
-    // 3. PRO_PLUS  ->   cost = 5% of price, if drops atleast 20%, lose cover upto 70%, validity 3 month
-    // 4. PRO_MAX   ->   cost = 7% of price, if drops atleast 20%, lose cover upto 100%, validity 3 month
 
     enum InsurancePlan {
         NONE,
@@ -58,8 +46,8 @@ contract Safock is Ownable, ReentrancyGuard {
         uint256 validity;
     }
 
-    mapping(address => mapping(address => UserPlan)) private userPlans;
-    mapping(InsurancePlan => InsuranceAttributes) private plans;
+    mapping(address => mapping(address => UserPlan)) private userPlans; // user -> tToken -> UserPlan
+    mapping(InsurancePlan => InsuranceAttributes) private plans; // InsurancePlan -> InsuranceAttributes
 
     event CreateETF(ConfigurationParams config, SetupParams setup, uint8 plan);
     event InsuranceClaimed(
@@ -82,72 +70,65 @@ contract Safock is Ownable, ReentrancyGuard {
         USDT = usdt;
         BUSD = busd;
 
-        /**
-        InsuranceAttributes {
-            InsurancePlan planType;
-            uint256 priceNumerator;
-            uint256 priceDenominator;
-            uint256 minDropNumerator;
-            uint256 minDropDenominator;
-            uint256 coverUptoNumerator;
-            uint256 coverUptoDenominator;
-            uint256 validity;
-        } 
-        */
+        // 0. NONE      ->   No plan
+        // 1. BASIC     ->   cost = 1% of price, if drops atleast 20%, lose cover upto 30%, validity 3 month (validity is low coz of market fluctuation)
+        // 2. PRO       ->   cost = 3% of price, if drops atleast 20%, lose cover upto 50%, validity 3 month
+        // 3. PRO_PLUS  ->   cost = 5% of price, if drops atleast 20%, lose cover upto 70%, validity 3 month
+        // 4. PRO_MAX   ->   cost = 7% of price, if drops atleast 20%, lose cover upto 100%, validity 3 month
 
         plans[InsurancePlan.NONE] = InsuranceAttributes(
-            InsurancePlan.NONE,
-            0, // InsurancePlan planType
-            100, //  priceNumerator
-            0, // priceDenominator
-            100, // minDropNumerator
+            InsurancePlan.NONE, // InsurancePlan planType
+            0, //  priceNumerator
+            100, // priceDenominator
+            0, // minDropNumerator
+            100, // minDropDenominator
             0, // coverUptoNumerator
             100, // coverUptoDenominator
             0 // validity
         );
 
         plans[InsurancePlan.BASIC] = InsuranceAttributes(
-            InsurancePlan.BASIC,
-            1,
-            100,
-            20,
-            100,
-            30,
-            100,
-            90 days
+            InsurancePlan.BASIC, // InsurancePlan planType
+            1, //  priceNumerator
+            100, // priceDenominator
+            20, // minDropNumerator
+            100, // minDropDenominator
+            30, // coverUptoNumerator
+            100, // coverUptoDenominator
+            90 days // validity
         );
 
         plans[InsurancePlan.PRO] = InsuranceAttributes(
-            InsurancePlan.PRO,
-            3,
-            100,
-            20,
-            100,
-            50,
-            100,
-            90 days
+            InsurancePlan.PRO, // InsurancePlan planType
+            3, //  priceNumerator
+            100, // priceDenominator
+            20, // minDropNumerator
+            100, // minDropDenominator
+            50, // coverUptoNumerator
+            100, // coverUptoDenominator
+            90 days // validity
         );
 
         plans[InsurancePlan.PRO_PLUS] = InsuranceAttributes(
-            InsurancePlan.PRO_PLUS,
-            5,
-            100,
-            20,
-            100,
-            70,
-            100,
-            90 days
+            InsurancePlan.PRO_PLUS, // InsurancePlan planType
+            5, //  priceNumerator
+            100, // priceDenominator
+            20, // minDropNumerator
+            100, // minDropDenominator
+            70, // coverUptoNumerator
+            100, // coverUptoDenominator
+            90 days // validity
         );
 
         plans[InsurancePlan.PRO_MAX] = InsuranceAttributes(
-            InsurancePlan.PRO_MAX,
-            7,
-            100,
-            20,
-            100,
-            90,
-            100,
-            90 days
+            InsurancePlan.PRO_MAX, // InsurancePlan planType
+            7, //  priceNumerator
+            100, // priceDenominator
+            20, // minDropNumerator
+            100, // minDropDenominator
+            100, // coverUptoNumerator
+            100, // coverUptoDenominator
+            90 days // validity
         );
     }
 
@@ -158,7 +139,6 @@ contract Safock is Ownable, ReentrancyGuard {
         uint256 amount
     ) external nonReentrant {
         require(planNum <= 4, "Invalid Plan");
-
         address rToken = IFacadeWrite(RESERVE_PROTOCOL).deployRToken(config, setup);
         IRToken(rToken).issue(amount);
         emit CreateETF(config, setup, planNum);
@@ -176,7 +156,9 @@ contract Safock is Ownable, ReentrancyGuard {
             paymentCurrency == USDC || paymentCurrency == USDT || paymentCurrency == BUSD,
             "Invalid currency!"
         );
+
         InsurancePlan planType;
+
         if (planNum == 0) {
             planType = InsurancePlan.NONE;
         } else if (planNum == 1) {
@@ -251,5 +233,13 @@ contract Safock is Ownable, ReentrancyGuard {
     // this will return the price of rToken
     function getPrice(address rToken) public view returns (uint256 price) {
         price = IFacadeRead(RESERVE_PROTOCOL).price(IRToken(rToken));
+    }
+
+    function getUserPlan(address user, address rToken)
+        external
+        view
+        returns (UserPlan memory userPlan)
+    {
+        userPlan = userPlans[user][rToken];
     }
 }
