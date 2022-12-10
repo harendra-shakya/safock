@@ -3,6 +3,7 @@
 import "./interfaces/IFacadeWrite.sol";
 import "./interfaces/IFacadeRead.sol";
 import "./interfaces/IRToken.sol";
+import "./libraries/TransferHelpers.sol";
 
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -96,13 +97,13 @@ contract Safock is Ownable, ReentrancyGuard {
 
         plans[InsurancePlan.NONE] = InsuranceAttributes(
             InsurancePlan.NONE,
-            0,
-            100,
-            0,
-            100,
-            0,
-            100,
-            0
+            0, // InsurancePlan planType
+            100, //  priceNumerator
+            0, // priceDenominator
+            100, // minDropNumerator
+            0, // coverUptoNumerator
+            100, // coverUptoDenominator
+            0 // validity
         );
 
         plans[InsurancePlan.BASIC] = InsuranceAttributes(
@@ -150,29 +151,6 @@ contract Safock is Ownable, ReentrancyGuard {
         );
     }
 
-    function _safeTranfer(
-        address token,
-        address to,
-        uint256 amount
-    ) internal {
-        (bool success, bytes memory data) = token.call(
-            abi.encodeWithSelector(T_SELECTOR, to, amount)
-        );
-        require(success && (data.length == 0 || abi.decode(data, (bool))), "Transfer Failed!");
-    }
-
-    function _safeTranferFrom(
-        address token,
-        address from,
-        address to,
-        uint256 amount
-    ) internal {
-        (bool success, bytes memory data) = token.call(
-            abi.encodeWithSelector(TF_SELECTOR, from, to, amount)
-        );
-        require(success && (data.length == 0 || abi.decode(data, (bool))), "Transfer Failed!");
-    }
-
     function createETF(
         ConfigurationParams calldata config,
         SetupParams calldata setup,
@@ -214,7 +192,7 @@ contract Safock is Ownable, ReentrancyGuard {
         if (planNum != 0) {
             InsuranceAttributes memory plan = plans[planType];
             uint256 amount = (plan.priceNumerator * getPrice(rToken)) / plan.priceDenominator;
-            _safeTranferFrom(paymentCurrency, user, address(this), amount);
+            TransferHelpers.safeTranferFrom(paymentCurrency, user, address(this), amount);
         }
 
         userPlans[msg.sender][rToken] = UserPlan(
@@ -255,8 +233,8 @@ contract Safock is Ownable, ReentrancyGuard {
             "Price dropped out of coverage"
         );
 
-        _safeTranferFrom(rToken, msg.sender, address(this), plan.numRTokens);
-        _safeTranfer(USDT, msg.sender, plan.amountInsuredInUSD);
+        TransferHelpers.safeTranferFrom(rToken, msg.sender, address(this), plan.numRTokens);
+        TransferHelpers.safeTranfer(USDT, msg.sender, plan.amountInsuredInUSD);
 
         plan.isClaimed = true;
 
