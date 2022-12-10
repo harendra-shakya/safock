@@ -4,11 +4,13 @@ import "./interfaces/IFacadeWrite.sol";
 import "./interfaces/IFacadeRead.sol";
 import "./interfaces/IRToken.sol";
 
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 pragma solidity ^0.8.9;
 
-contract Safock {
+contract Safock is Ownable, ReentrancyGuard {
     // 1. deploy etf
     // 2. ask for insurance and give differnt userPlans
 
@@ -68,18 +70,6 @@ contract Safock {
         uint256 validity
     );
 
-    /**
-    struct InsuranceAttributes {
-        InsurancePlan planType;
-        uint256 priceNumerator;
-        uint256 priceDenominator;
-        uint256 minDropNumerator;
-        uint256 minDropDenominator;
-        uint256 coverUptoNumerator;
-        uint256 coverUptoDenominator;
-        uint256 validity;
-    } */
-
     constructor(
         address reserveAddress,
         address usdc,
@@ -90,6 +80,19 @@ contract Safock {
         USDC = usdc;
         USDT = usdt;
         BUSD = busd;
+
+        /**
+        InsuranceAttributes {
+            InsurancePlan planType;
+            uint256 priceNumerator;
+            uint256 priceDenominator;
+            uint256 minDropNumerator;
+            uint256 minDropDenominator;
+            uint256 coverUptoNumerator;
+            uint256 coverUptoDenominator;
+            uint256 validity;
+        } 
+        */
 
         plans[InsurancePlan.NONE] = InsuranceAttributes(
             InsurancePlan.NONE,
@@ -175,7 +178,7 @@ contract Safock {
         SetupParams calldata setup,
         uint8 planNum,
         address paymentCurrency
-    ) external {
+    ) external nonReentrant {
         require(planNum <= 4, "Invalid Plan");
         require(
             paymentCurrency == USDC || paymentCurrency == USDT || paymentCurrency == BUSD,
@@ -191,65 +194,35 @@ contract Safock {
         address paymentCurrency,
         address rToken,
         uint256 numRTokens
-    ) public {
-        uint256 amount;
+    ) private {
+        InsurancePlan planType;
         if (planNum == 0) {
-            userPlans[msg.sender][rToken] = UserPlan(
-                msg.sender,
-                false,
-                InsurancePlan.NONE,
-                rToken,
-                numRTokens,
-                0,
-                0
-            );
+            planType = InsurancePlan.NONE;
         } else if (planNum == 1) {
-            amount = (1 * getPrice(rToken)) / 100; // 100 -> taking 100 times less than price
-            userPlans[msg.sender][rToken] = UserPlan(
-                msg.sender,
-                false,
-                InsurancePlan.BASIC,
-                rToken,
-                numRTokens,
-                (getPrice(rToken)),
-                90 days
-            );
+            planType = InsurancePlan.BASIC;
         } else if (planNum == 2) {
-            amount = (3 * getPrice(rToken)) / 100;
-            userPlans[msg.sender][rToken] = UserPlan(
-                msg.sender,
-                false,
-                InsurancePlan.PRO,
-                rToken,
-                numRTokens,
-                (getPrice(rToken)),
-                90 days
-            );
+            planType = InsurancePlan.PRO;
         } else if (planNum == 3) {
-            amount = (5 * getPrice(rToken)) / 100;
-            userPlans[msg.sender][rToken] = UserPlan(
-                msg.sender,
-                false,
-                InsurancePlan.PRO_PLUS,
-                rToken,
-                numRTokens,
-                (getPrice(rToken)),
-                90 days
-            );
+            planType = InsurancePlan.PRO_PLUS;
         } else if (planNum == 4) {
-            amount = (7 * getPrice(rToken)) / 100;
-            userPlans[msg.sender][rToken] = UserPlan(
-                msg.sender,
-                false,
-                InsurancePlan.PRO_MAX,
-                rToken,
-                numRTokens,
-                (getPrice(rToken)),
-                90 days
-            );
+            planType = InsurancePlan.PRO_MAX;
         }
 
-        if (planNum != 0) _safeTranferFrom(paymentCurrency, user, address(this), amount);
+        if (planNum != 0) {
+            InsuranceAttributes memory plan = plans[planType];
+            uint256 amount = (plan.priceNumerator * getPrice(rToken)) / plan.priceDenominator;
+            _safeTranferFrom(paymentCurrency, user, address(this), amount);
+        }
+
+        userPlans[msg.sender][rToken] = UserPlan(
+            msg.sender,
+            false,
+            planType,
+            rToken,
+            numRTokens,
+            getPrice(rToken),
+            90 days
+        );
     }
 
     function claimInsurance(address rToken) external {
