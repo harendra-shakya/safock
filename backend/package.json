@@ -1,7 +1,7 @@
 {
-  "name": "reserve-protocol",
+  "name": "backend",
   "version": "1.0.0",
-  "description": "Reserve Mainnet Protocol",
+  "description": "Safock Protocol",
   "directories": {
     "test": "tests"
   },
@@ -14,6 +14,7 @@
     "check_env": "hardhat run scripts/check_env.ts",
     "deploy": "hardhat run scripts/deploy.ts",
     "confirm": "hardhat run scripts/confirm.ts",
+    "format": "prettier --write .",
     "verify_etherscan": "hardhat run scripts/verify_etherscan.ts",
     "devchain": "FORK=true hardhat node --port 8546",
     "test": "yarn test:unit && yarn test:integration",
@@ -35,16 +36,6 @@
     "size": "hardhat size-contracts",
     "slither": "python3 tools/slither.py"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/reserve-protocol/protocol.git"
-  },
-  "author": "Reserve Team",
-  "license": "BlueOak-1.0.0",
-  "bugs": {
-    "url": "https://github.com/reserve-protocol/protocol/issues"
-  },
-  "homepage": "https://github.com/reserve-protocol/protocol#readme",
   "devDependencies": {
     "@aave/protocol-v2": "^1.0.1",
     "@chainlink/contracts": "^0.4.1",

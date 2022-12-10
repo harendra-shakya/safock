@@ -10,7 +10,7 @@ pragma solidity ^0.8.9;
 
 contract Safock {
     // 1. deploy etf
-    // 2. ask for insurance and give differnt plans
+    // 2. ask for insurance and give differnt userPlans
 
     bytes4 private constant T_SELECTOR = bytes4(keccak256(bytes("transfer(address,uint256)")));
     bytes4 private constant TF_SELECTOR =
@@ -21,10 +21,10 @@ contract Safock {
     address private immutable BUSD;
 
     // 0. NONE      ->   No plan
-    // 1. BASIC     ->   cost = 1% of price, if drops 30% or more, lose cover 30%, validity 3 month (validity is low coz of maket fluctuation)
-    // 2. PRO       ->   cost = 3% of price, if drops atleast 30%, lose cover upto 50%, validity 3 month
-    // 3. PRO_PLUS  ->   cost = 5% of price, if drops atleast 30%, lose cover upto 70%, validity 3 month
-    // 4. PRO_MAX   ->   cost = 7% of price, if drops atleast 30%, lose cover upto 100%, validity 3 month
+    // 1. BASIC     ->   cost = 1% of price, if drops atleast 20%, lose cover upto 30%, validity 3 month (validity is low coz of market fluctuation)
+    // 2. PRO       ->   cost = 3% of price, if drops atleast 20%, lose cover upto 50%, validity 3 month
+    // 3. PRO_PLUS  ->   cost = 5% of price, if drops atleast 20%, lose cover upto 70%, validity 3 month
+    // 4. PRO_MAX   ->   cost = 7% of price, if drops atleast 20%, lose cover upto 100%, validity 3 month
 
     enum InsurancePlan {
         NONE,
@@ -32,6 +32,17 @@ contract Safock {
         PRO,
         PRO_PLUS,
         PRO_MAX
+    }
+
+    struct InsuranceAttributes {
+        InsurancePlan planType;
+        uint256 priceNumerator;
+        uint256 priceDenominator;
+        uint256 minDropNumerator;
+        uint256 minDropDenominator;
+        uint256 coverUptoNumerator;
+        uint256 coverUptoDenominator;
+        uint256 validity;
     }
 
     struct UserPlan {
@@ -44,10 +55,10 @@ contract Safock {
         uint256 validity;
     }
 
-    mapping(address => mapping(address => UserPlan)) plans;
+    mapping(address => mapping(address => UserPlan)) private userPlans;
+    mapping(InsurancePlan => InsuranceAttributes) private plans;
 
     event CreateETF(ConfigurationParams config, SetupParams setup, uint8 plan);
-
     event InsuranceClaimed(
         address owner,
         InsurancePlan planType,
@@ -56,6 +67,18 @@ contract Safock {
         uint256 amountInsuredInUSD,
         uint256 validity
     );
+
+    /**
+    struct InsuranceAttributes {
+        InsurancePlan planType;
+        uint256 priceNumerator;
+        uint256 priceDenominator;
+        uint256 minDropNumerator;
+        uint256 minDropDenominator;
+        uint256 coverUptoNumerator;
+        uint256 coverUptoDenominator;
+        uint256 validity;
+    } */
 
     constructor(
         address reserveAddress,
@@ -67,6 +90,61 @@ contract Safock {
         USDC = usdc;
         USDT = usdt;
         BUSD = busd;
+
+        plans[InsurancePlan.NONE] = InsuranceAttributes(
+            InsurancePlan.NONE,
+            0,
+            100,
+            0,
+            100,
+            0,
+            100,
+            0
+        );
+
+        plans[InsurancePlan.BASIC] = InsuranceAttributes(
+            InsurancePlan.BASIC,
+            1,
+            100,
+            20,
+            100,
+            30,
+            100,
+            90 days
+        );
+
+        plans[InsurancePlan.PRO] = InsuranceAttributes(
+            InsurancePlan.PRO,
+            3,
+            100,
+            20,
+            100,
+            50,
+            100,
+            90 days
+        );
+
+        plans[InsurancePlan.PRO_PLUS] = InsuranceAttributes(
+            InsurancePlan.PRO_PLUS,
+            5,
+            100,
+            20,
+            100,
+            70,
+            100,
+            90 days
+        );
+
+        plans[InsurancePlan.PRO_MAX] = InsuranceAttributes(
+            InsurancePlan.PRO_MAX,
+            7,
+            100,
+            20,
+            100,
+            90,
+            100,
+            90 days
+        );
     }
 
     function _safeTranfer(
@@ -116,7 +194,7 @@ contract Safock {
     ) public {
         uint256 amount;
         if (planNum == 0) {
-            plans[msg.sender][rToken] = UserPlan(
+            userPlans[msg.sender][rToken] = UserPlan(
                 msg.sender,
                 false,
                 InsurancePlan.NONE,
@@ -127,7 +205,7 @@ contract Safock {
             );
         } else if (planNum == 1) {
             amount = (1 * getPrice(rToken)) / 100; // 100 -> taking 100 times less than price
-            plans[msg.sender][rToken] = UserPlan(
+            userPlans[msg.sender][rToken] = UserPlan(
                 msg.sender,
                 false,
                 InsurancePlan.BASIC,
@@ -138,7 +216,7 @@ contract Safock {
             );
         } else if (planNum == 2) {
             amount = (3 * getPrice(rToken)) / 100;
-            plans[msg.sender][rToken] = UserPlan(
+            userPlans[msg.sender][rToken] = UserPlan(
                 msg.sender,
                 false,
                 InsurancePlan.PRO,
@@ -149,7 +227,7 @@ contract Safock {
             );
         } else if (planNum == 3) {
             amount = (5 * getPrice(rToken)) / 100;
-            plans[msg.sender][rToken] = UserPlan(
+            userPlans[msg.sender][rToken] = UserPlan(
                 msg.sender,
                 false,
                 InsurancePlan.PRO_PLUS,
@@ -160,7 +238,7 @@ contract Safock {
             );
         } else if (planNum == 4) {
             amount = (7 * getPrice(rToken)) / 100;
-            plans[msg.sender][rToken] = UserPlan(
+            userPlans[msg.sender][rToken] = UserPlan(
                 msg.sender,
                 false,
                 InsurancePlan.PRO_MAX,
@@ -175,7 +253,7 @@ contract Safock {
     }
 
     function claimInsurance(address rToken) external {
-        UserPlan memory plan = plans[msg.sender][rToken];
+        UserPlan memory plan = userPlans[msg.sender][rToken];
         require(!plan.isClaimed, "Already Claimed");
         require(plan.planType != InsurancePlan.NONE, "You don't have any plan");
         require(plan.validity > block.timestamp, "Insurance validity is already over");
