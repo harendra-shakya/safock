@@ -29,3 +29,7 @@ yarn verify_etherscan --network {NETWORK}
 ```
 
 The verification scripts are smart enough to only verify those that are unverified.
+
+#
+
+The assets addresses will be found in `scripts/addresses/{chainId}-assets-collateral.json`. Use them in frontend `src/views/deploy/plugins.ts`.
