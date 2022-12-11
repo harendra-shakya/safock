@@ -36,7 +36,7 @@ async function main() {
   // Deploy Safock
   const SafockFactory = await ethers.getContractFactory('Safock')
 
-  safock = <Safock>await SafockFactory.connect(burner).deploy(deployments.facadeWrite, USDC, USDT, BUSD) // 
+  safock = <Safock>await SafockFactory.connect(burner).deploy(deployments.facadeRead, USDC, USDT, BUSD) // 
   await safock.deployed()
 
   // Write temporary deployments file
