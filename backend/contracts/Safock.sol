@@ -82,6 +82,11 @@ contract Safock is Ownable, ReentrancyGuard {
         address busd,
         address usdt
     ) {
+        require(reserveAddress != address(0), "Invalid Reserve Protocol address");
+        require(usdc != address(0), "Invalid USDC address");
+        require(usdt != address(0), "Invalid USDT address");
+        require(busd != address(0), "Invalid BUSD address");
+
         RESERVE_PROTOCOL = reserveAddress;
         USDC = usdc;
         USDT = usdt;
