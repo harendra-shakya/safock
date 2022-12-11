@@ -16,7 +16,7 @@
     "confirm": "hardhat run scripts/confirm.ts",
     "format": "prettier --write .",
     "verify_etherscan": "hardhat run scripts/verify_etherscan.ts",
-    "devchain": "FORK=true hardhat node --port 8546",
+    "devchain": "FORK=true hardhat node --port 8545",
     "test": "yarn test:unit && yarn test:integration",
     "test:unit": "yarn test:plugins && yarn test:p0 && yarn test:p1 && yarn test:scenario",
     "test:fast": "bash tools/fast-test.sh",

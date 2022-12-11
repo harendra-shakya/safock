@@ -29,7 +29,7 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       // network for tests/in-process stuff
-      forking: useEnv('FORK')
+      forking: true
         ? {
             url: MAINNET_RPC_URL,
             blockNumber: Number(useEnv('MAINNET_BLOCK', forkBlockNumber['default'].toString())),
@@ -42,7 +42,7 @@ const config: HardhatUserConfig = {
     localhost: {
       // network for long-lived mainnet forks
       chainId: 31337,
-      url: 'http://localhost:8546',
+      url: 'http://localhost:8545',
       gas: 0x1ffffffff,
       blockGasLimit: 0x1fffffffffffff,
       allowUnlimitedContractSize: true,
