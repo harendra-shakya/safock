@@ -1,0 +1,27 @@
+{
+  "cSpell.words": [
+    "usedapp",
+    "walletconnect"
+  ],
+  "cSpell.enableFiletypes": [
+    "!c",
+    "!cpp",
+    "!csharp",
+    "!go",
+    "!haskell",
+    "!jade",
+    "!java",
+    "!php",
+    "!pug",
+    "!scala",
+    "jsx-tags",
+    "solidity"
+  ],
+  "search.exclude": {
+    "**/.yarn": true,
+    "**/.pnp.*": true
+  },
+  "prettier.prettierPath": ".yarn/sdks/prettier/index.js",
+  "typescript.tsdk": ".yarn/sdks/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true
+}
