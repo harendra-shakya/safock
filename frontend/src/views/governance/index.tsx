@@ -57,7 +57,7 @@ const Governance = () => {
   return (
     <FormProvider {...form}>
       <GovernanceView />
-    </FormProvider>
+     </FormProvider>
   )
 }
 

@@ -24,8 +24,7 @@ const GovernanceSetup = () => {
           subtitle={t`Define account roles and governance configuration`}
           confirmText={t`Confirm governance setup`}
         />
-        <Card p={0}>
-          <Grid columns={2} gap={0}>
+        <Card p={2}>
             <Box
               sx={{ borderRight: '1px solid', borderColor: 'border' }}
               my={5}
@@ -33,29 +32,7 @@ const GovernanceSetup = () => {
             >
               <GovernanceForm />
             </Box>
-            <Box p={5}>
-              <Text variant="strong" mb={2}>
-                <Trans>What’s “standard governance”</Trans>
-              </Text>
-              <Text as="p" variant="legend" sx={{ fontSize: 2 }}>
-                <Trans>
-                  Please read our documentation on the matter to understand the
-                  difference between setting your own ownership address and
-                  using our custom build standard format.
-                </Trans>
-              </Text>
-              <Box mt={3}>
-                <SmallButton
-                  variant="muted"
-                  onClick={() =>
-                    window.open('https://reserve.org/protocol/', '_blank')
-                  }
-                >
-                  <Trans>Protocol docs</Trans>
-                </SmallButton>
-              </Box>
-            </Box>
-          </Grid>
+           
         </Card>
       </Container>
     </>

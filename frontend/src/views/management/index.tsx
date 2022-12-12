@@ -120,38 +120,23 @@ const Management = () => {
               />
             )}
         </Flex>
-        <Grid columns={[1, 1, 1, 2]} mt={4} gap={5}>
           <Card p={5}>
             <Text variant="title">
               <Trans>ETF Info</Trans>
             </Text>
             <Divider my={3} />
-            <InfoBox mb={3} title={t`Token name`} subtitle={rToken?.name} />
-            <InfoBox mb={3} title={t`Token ticker`} subtitle={rToken?.symbol} />
+            <InfoBox mb={3} title={t`ETF name`} subtitle={rToken?.name} />
+            <InfoBox mb={3} title={t`ETF Symbol`} subtitle={rToken?.symbol} />
             <InfoBox mb={3} title={t`Address`} subtitle={rToken?.address} />
             <InfoBox
               mb={4}
               title={t`Register link`}
               subtitle={`${window.location.origin}/overview?token=${rToken?.address}`}
             />
-            <Text variant="title">
-              <Trans>Staking token Info</Trans>
-            </Text>
-            <Divider my={3} />
-            <InfoBox
-              mb={3}
-              title={t`Token name`}
-              subtitle={rToken?.stToken?.name}
-            />
-            <InfoBox
-              mb={3}
-              title={t`Token ticker`}
-              subtitle={rToken?.stToken?.symbol}
-            />
-            <InfoBox title={t`Address`} subtitle={rToken?.stToken?.address} />
+           
           </Card>
-          <ListingInfo />
-        </Grid>
+          {/* <ListingInfo /> */}
+       
       </Box>
     </Box>
   )

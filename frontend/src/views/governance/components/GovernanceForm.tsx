@@ -12,22 +12,22 @@ const GovernanceForm = () => {
   return (
     <Box>
       <Flex mb={5} variant="layout.verticalAlign">
-        <Box>
-          <Text sx={{ fontWeight: 500, display: 'block' }}>
+        {/* <Box> */}
+          {/* <Text sx={{ fontWeight: 500, display: 'block' }}>
             <Trans>Use Default Governance format?</Trans>
-          </Text>
-          <Text variant="legend" sx={{ fontSize: 1 }}>
+          </Text> */}
+          {/* <Text variant="legend" sx={{ fontSize: 1 }}>
             <Trans>
               The default governance structure instead of your custom setup.
             </Trans>
-          </Text>
-        </Box>
-        <Box ml="auto">
+          </Text> */}
+        {/* </Box> */}
+        {/* <Box ml="auto">
           <Switch
             defaultChecked={defaultGovernance}
             {...register('defaultGovernance')}
           />
-        </Box>
+        </Box> */}
       </Flex>
 
       <Text variant="title" mb={4}>
