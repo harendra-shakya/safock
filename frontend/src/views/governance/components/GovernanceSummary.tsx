@@ -50,52 +50,6 @@ const GovernanceSummary = () => {
           <Info mb={3} title={t`ETF Owner address`} subtitle={owner} />
         )}
         <Info mb={3} title={t`ETF Guardian address`} subtitle={guardian} />
-        <Info mb={3} title={t`ETF Pauser address`} subtitle={pauser} />
-        {defaultGovernance && (
-          <>
-            <Text variant="title">
-              <Trans>Governance Parameters</Trans>
-            </Text>
-            <Divider my={3} />
-            <Info
-              mb={3}
-              title={t`Voting Delay`}
-              subtitle={`${votingDelay} blocks`}
-            />
-            <Info
-              mb={3}
-              title={t`Voting Period`}
-              subtitle={`${votingPeriod} blocks`}
-            />
-            <Info
-              mb={3}
-              title={t`Proposal Threshold`}
-              subtitle={`${proposalThresholdAsMicroPercent}%`}
-            />
-            <Info mb={3} title={t`Quorum`} subtitle={`${quorumPercent}%`} />
-            <Info
-              mb={3}
-              title={t`Minimum delay`}
-              subtitle={`${minDelay} hours`}
-            />
-          </>
-        )}
-      </Box>
-      <Box px={5} py={4}>
-        <Text variant="title">
-          <Trans>Options</Trans>
-        </Text>
-        <Divider my={3} />
-        <Info
-          mb={3}
-          title={t`Default Governance?`}
-          subtitle={defaultGovernance ? 'Yes' : 'No'}
-        />
-        <Info
-          mb={3}
-          title={t`Leave ETF on Pause?`}
-          subtitle={unpause === '0' ? 'Yes' : 'No'}
-        />
       </Box>
     </Grid>
   )

@@ -20,8 +20,10 @@ import DeploymentStepTracker, {
 } from 'views/deploy/components/DeployStep'
 import { govTxIdAtom } from '../atoms'
 import GovernanceSummary from '../components/GovernanceSummary'
+import { useWeb3React } from '@web3-react/core'
 
 const ConfirmGovernanceSetup = () => {
+  const { account } = useWeb3React()
   const rToken = useAtomValue(selectedRTokenAtom)
   const { getValues } = useFormContext()
   const addTransaction = useSetAtom(addTransactionAtom)
@@ -59,11 +61,11 @@ const ConfirmGovernanceSetup = () => {
       const args = [
         rToken,
         !!defaultGovernance,
-        unpause === '1',
+        true,
         govConfig,
         defaultGovernance ? ZERO_ADDRESS : owner,
         guardian,
-        pauser,
+        account,
       ]
 
       return {

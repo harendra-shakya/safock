@@ -72,17 +72,8 @@ const PluginItem = ({ data, onCheck, selected, ...props }: PluginItemProps) => {
       <Flex variant="layout.verticalAlign">
         <TokenLogo size={20} symbol={data.symbol} />
         <Box ml={3}>
-          <Text>{data.symbol} plug-in</Text>
-          <Text sx={{ fontSize: 1, display: 'block' }} variant="legend">
-            <Trans>Target</Trans> {data.targetUnit}{' '}
-            {data.custom ? (
-              <>
-                | <Trans>Custom</Trans>
-              </>
-            ) : (
-              `| ${'description' in data ? data.description : ''}`
-            )}
-          </Text>
+          <Text>{data.symbol}</Text>
+          
         </Box>
         <Box mx="auto" />
         <label>

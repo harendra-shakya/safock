@@ -40,74 +40,14 @@ const TokenConfigurationOverview = () => {
         <Trans>Base Info</Trans>
       </Text>
       <Divider my={3} />
-      <Info mt={3} title={t`Token name`} subtitle={data.name} />
-      <Info mt={3} title={t`Token ticker`} subtitle={data.ticker} />
-      <Info mt={3} title={t`Mandate`} subtitle={data.mandate} />
+      <Info mt={3} title={t`ETF name`} subtitle={data.name} />
+      <Info mt={3} title={t`ETF symbol`} subtitle={data.ticker} />
+      {/* <Info mt={3} title={t`Mandate`} subtitle={data.mandate} /> */}
       <Info
         mt={3}
         mb={4}
         title={t`Ownership address`}
         subtitle={data.ownerAddress}
-      />
-      <Text variant="title">
-        <Trans>Backing</Trans>
-      </Text>
-      <Divider my={3} />
-      <Info mt={3} title={t`Trading delay`} subtitle={data.tradingDelay} time />
-      <Info
-        mt={3}
-        title={t`Auction length`}
-        subtitle={data.auctionLength}
-        time
-      />
-      <Info
-        mt={3}
-        title={t`Backing buffer`}
-        subtitle={`${data.backingBuffer}%`}
-      />
-      <Info
-        mt={3}
-        title={t`Max trade slippage`}
-        subtitle={`${data.maxTradeSlippage}%`}
-      />
-      <Info
-        mt={3}
-        mb={4}
-        title={t`Issuance rate`}
-        subtitle={data.issuanceRate}
-      />
-      <Text variant="title">
-        <Trans>Other</Trans>
-      </Text>
-      <Divider my={3} />
-      <Info
-        mt={3}
-        title={t`Short freeze duration`}
-        subtitle={data.shortFreeze}
-        time
-      />
-      <Info
-        mt={3}
-        title={t`Long freeze duration`}
-        subtitle={data.longFreeze}
-        time
-      />
-      <Info
-        mt={3}
-        title={t`Unstaking Delay`}
-        subtitle={data.unstakingDelay}
-        time
-      />
-      <Info mt={3} title={t`Reward Period`} subtitle={data.rewardPeriod} time />
-      <Info
-        mt={3}
-        title={t`Min trade volume`}
-        subtitle={formatCurrency(data.minTrade)}
-      />
-      <Info
-        mt={3}
-        title={t`ETF Max trade volume`}
-        subtitle={formatCurrency(data.maxTrade)}
       />
     </Box>
   )

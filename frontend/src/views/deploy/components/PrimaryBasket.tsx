@@ -61,13 +61,13 @@ const PrimaryBasket = ({ onAdd = () => {}, readOnly = false }: Props) => {
         <Text variant="title">Primary Basket</Text>
         {!readOnly && (
           <SmallButton onClick={() => onAdd({ basket: 'primary' })} ml="auto">
-            <Trans>Add token plugin</Trans>
+            <Trans>Add token</Trans>
           </SmallButton>
         )}
       </Flex>
       <Divider my={4} />
       <Flex>
-        <Text sx={{ width: 140 }}>1 [ETF] =</Text>
+        <Text sx={{ width: 140 }}>1 ETF =</Text>
         <Text ml="auto">
           {!!units.length ? getBasketComposition(basket) : '--'}
         </Text>

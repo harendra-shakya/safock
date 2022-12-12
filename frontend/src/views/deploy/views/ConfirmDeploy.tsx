@@ -74,7 +74,7 @@ export const getDeployParameters = (
     const config: RTokenConfiguration = {
       name: tokenConfig.name,
       symbol: tokenConfig.ticker,
-      mandate: tokenConfig.mandate,
+      mandate: "mandate",
       params: {
         minTradeVolume: parseEther(tokenConfig.minTrade.toString()),
         rTokenMaxTradeVolume: parseEther(tokenConfig.maxTrade.toString()),

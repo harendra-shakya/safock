@@ -93,7 +93,7 @@ const CollateralModal = ({
 
   return (
     <Modal
-      title={t`Collateral Plugins`}
+      title={t`Tokens`}
       style={{ width: 480 }}
       onClose={onClose}
       {...props}

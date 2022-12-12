@@ -61,7 +61,7 @@ const GovernanceForm = () => {
           },
         }}
       />
-      <FormField
+      {/* <FormField
         label={t`Pauser address`}
         placeholder={t`Input pauser ethereum address`}
         mb={4}
@@ -73,8 +73,8 @@ const GovernanceForm = () => {
             message: t`Invalid ethereum address`,
           },
         }}
-      />
-      <Text variant="title" mb={4}>
+      /> */}
+      {/* <Text variant="title" mb={4}>
         <Trans>ETF state after transaction</Trans>
       </Text>
       <Field label={t`Pause status`} mb={4}>
@@ -164,7 +164,7 @@ const GovernanceForm = () => {
             }}
           />
         </>
-      )}
+      )} */}
     </Box>
   )
 }

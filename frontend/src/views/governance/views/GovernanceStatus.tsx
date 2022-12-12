@@ -63,7 +63,7 @@ const GovernanceSetup = () => {
 
   useEffect(() => {
     if (tx?.status === TRANSACTION_STATUS.CONFIRMED) {
-      navigate(`${ROUTES.GOVERNANCE_INFO}/${txId}`)
+      navigate(`${ROUTES.ISSUANCE}`)
     }
     if (tx?.status === TRANSACTION_STATUS.REJECTED) {
       setStep(Steps.GovernanceSummary)

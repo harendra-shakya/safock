@@ -14,7 +14,7 @@ const TokenForm = (props: BoxProps) => (
       </Text>
     </Box>
     <FormField
-      label={t`Token name`}
+      label={t`ETF name`}
       placeholder={t`Input token name`}
       mb={3}
       name="name"
@@ -23,28 +23,15 @@ const TokenForm = (props: BoxProps) => (
       }}
     />
     <FormField
-      label={t`Ticker`}
-      placeholder={t`Input ticker`}
+      label={t`ETF symbol`}
+      placeholder={t`Input symbol`}
       mb={3}
       name="ticker"
       options={{
-        required: t`Token ticker is required`,
+        required: t`ETF symbol is required`,
       }}
     />
-    <FormField
-      label={t`Mandate`}
-      placeholder={t`ETF mandate`}
-      mb={3}
-      textarea
-      name="mandate"
-      options={{
-        required: t`Mandate is required`,
-        maxLength: {
-          value: 256,
-          message: t`Mandate cannot be longer than 256 characters`,
-        },
-      }}
-    />
+   
     <FormField
       label={t`Ownership address`}
       placeholder={t`Ownership address`}

@@ -6,7 +6,7 @@ const Intro = () => (
   <>
     <DeployHeader
       title={t`Create New ETF`}
-      subtitle="First configure your ETF collateral basket parameters, then in second transaction, set up governance."
+      subtitle="First configure your ETF collateral basket parameters, then deploy and mint"
       confirmText={t`Start`}
     />
     <DeployIntro />

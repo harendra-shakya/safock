@@ -23,14 +23,15 @@ const TokenConfiguration = () => {
   const [advanceConfig, setAdvanceConfig] = useState(false)
 
   return (
-    <Grid
-      columns={2}
-      sx={{ backgroundColor: 'contentBackground', borderRadius: 10 }}
-    >
+    // <Grid
+    //   columns={2}
+    //   sx={{ backgroundColor: 'contentBackground', borderRadius: 10 }}
+    // >
+    <>
       <Box p={4} sx={{ borderRight: '1px solid', borderColor: 'border' }}>
         <TokenForm />
         <Divider my={4} />
-        <Flex mt={3} variant="layout.verticalAlign">
+        {/* <Flex mt={3} variant="layout.verticalAlign">
           <Text variant="title">
             <Trans>Advanced config:</Trans>
           </Text>
@@ -51,18 +52,18 @@ const TokenConfiguration = () => {
               )}
             </Box>
           </SmallButton>
-        </Flex>
-        {advanceConfig && (
+        </Flex> */}
+        {/* {advanceConfig && (
           <>
             <BackingForm my={4} />
             <OtherForm />
           </>
-        )}
+        )} */}
       </Box>
       <Box p={4}>
-        <StakingTokenInfo />
+        {/* <StakingTokenInfo /> */}
       </Box>
-    </Grid>
+      </>
   )
 }
 
