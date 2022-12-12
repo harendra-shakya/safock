@@ -8,7 +8,7 @@ Safock is a DeFi platform that focuses on crypto (ETFs) trading in a decentraliz
 <a href="https://ibb.co/DVKcwfD"><img src="https://i.ibb.co/h78Q2FR/Green-Black-White-Circuit-Board-Social-Feed-Static-Ad.png" alt="Safock | Reserve Protocol Hackathon Submission" border="0" /></a>
 <div align="center"></p>
 <div align="center">
-  <a href="">Safock.com</a>
+  <a href="https://safock.com">Safock.com</a>
   <h6>Backed by RTokens</h6>
 </div>
 </div> 

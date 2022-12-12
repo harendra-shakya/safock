@@ -17,7 +17,7 @@ export const ChainId = {
 }
 
 export const CHAIN_ID =
-  Number(process.env.REACT_APP_CHAIN_ID) || ChainId.Mainnet
+  Number(process.env.REACT_APP_CHAIN_ID) || ChainId.Goerli
 
 /**
  * Supported chains

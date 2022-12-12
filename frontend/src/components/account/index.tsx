@@ -58,7 +58,7 @@ const ErrorWrapper = ({
           </Flex>
           <Text variant="legend" sx={{ fontSize: 1 }}>
             <Trans>
-              We only support Ethereum Mainnet. Change your network in the
+              We only support Goerli testnet. Change your network in the
               connected wallet.
             </Trans>
           </Text>
