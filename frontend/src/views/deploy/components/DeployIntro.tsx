@@ -56,7 +56,7 @@ const DeployIntro = () => {
       >
         <Title prefix="Tx" text={t`ETF Deployment`} />
         <StepItem
-          title={t`Set Primary & Emergency collaterals`}
+          title={t`Set Primary collaterals`}
           subtitle={t``}
           mt={4}
           mb={4}

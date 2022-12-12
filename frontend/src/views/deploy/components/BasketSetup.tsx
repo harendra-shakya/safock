@@ -25,7 +25,7 @@ const BasketSetup = () => {
         <Box p={5} sx={{ borderRight: '1px solid', borderColor: 'border' }}>
           <PrimaryBasket onAdd={setCollateralModal} />
         </Box>
-        <BackupBasket p={5} onAdd={setCollateralModal} />
+        {/* <BackupBasket p={5} onAdd={setCollateralModal} /> */}
       </Grid>
       {!!collateralModal && (
         <CollateralModal
