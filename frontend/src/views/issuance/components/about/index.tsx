@@ -9,18 +9,18 @@ const About = () => (
     <Text as="p" variant="legend">
       <Trans>
         Minting requires a deposit of the defined collateral tokens in equal
-        value amounts to the RToken smart contracts.
+        value amounts to the ETF smart contracts.
       </Trans>
     </Text>
     <Text variant="strong" mb={2} mt={4}>
-      <Trans>When will I get my RTokens?</Trans>
+      <Trans>When wisll I get my RTokens?</Trans>
     </Text>
     <Text as="p" variant="legend">
       <Trans>
-        Depending on RToken minting activity and the size of your deposit, the
+        Depending on ETF minting activity and the size of your deposit, the
         protocol will either issue your RTokens immediately or mint them over
         the period of a few blocks (a "slow mint"). "Slow mints" are designed
-        into the protocol to ensure stability of the RToken's price and
+        into the protocol to ensure stability of the ETF's price and
         redemption rate while there are ongoing mints and revenue operations.
       </Trans>
       <br />

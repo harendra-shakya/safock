@@ -19,7 +19,7 @@ const TokenList = (props: BoxProps) => {
       <ContentHead
         pl={3}
         title={t`Compare RTokens`}
-        subtitle={t`Including off-chain in-app transactions of RToken in the Reserve App.`}
+        subtitle={t`Including off-chain in-app transactions of ETF in the Reserve App.`}
       />
       <ListedTokensTable />
       <Flex mt={2} sx={{ justifyContent: 'center' }}>

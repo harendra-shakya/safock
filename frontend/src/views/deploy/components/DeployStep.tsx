@@ -28,7 +28,7 @@ function getTextColor(step: number, currentStep: number) {
 }
 
 /**
- * Tracks RToken deployment step (Top header)
+ * Tracks ETF deployment step (Top header)
  */
 const DeploymentStepTracker = ({ step }: { step: number }) => {
   const isSecondPhase = step > Steps.DeployToken
@@ -47,7 +47,7 @@ const DeploymentStepTracker = ({ step }: { step: number }) => {
     // Second step has a different shorter header
     if (isSecondPhase) {
       list = list.slice(3)
-      list[0].label = t`RToken Deployed`
+      list[0].label = t`ETF Deployed`
     }
 
     return list

@@ -145,7 +145,7 @@ const EmergencyCollateral = ({
               </Select>
             </Box>
             <Help
-              content={t`The diversity factor determines the amount of emergency collateral that will be deployed to the RToken basket in the case of a default.`}
+              content={t`The diversity factor determines the amount of emergency collateral that will be deployed to the ETF basket in the case of a default.`}
             />
           </>
         )}

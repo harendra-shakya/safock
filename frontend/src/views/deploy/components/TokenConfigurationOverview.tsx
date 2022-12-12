@@ -106,7 +106,7 @@ const TokenConfigurationOverview = () => {
       />
       <Info
         mt={3}
-        title={t`RToken Max trade volume`}
+        title={t`ETF Max trade volume`}
         subtitle={formatCurrency(data.maxTrade)}
       />
     </Box>

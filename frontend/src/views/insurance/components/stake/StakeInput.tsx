@@ -3,7 +3,7 @@ import TransactionInput, {
 } from 'components/transaction-input'
 import { useAtomValue } from 'jotai'
 import { rsrBalanceAtom } from 'state/atoms'
-import { stakeAmountAtom } from 'views/staking/atoms'
+import { stakeAmountAtom } from 'views/insurance/atoms'
 
 const StakeInput = (props: Partial<TransactionInputProps>) => {
   const max = useAtomValue(rsrBalanceAtom)

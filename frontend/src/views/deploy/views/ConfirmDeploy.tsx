@@ -70,7 +70,7 @@ export const getDeployParameters = (
   backup: BackupBasket
 ): [RTokenConfiguration, BasketConfiguration] | null => {
   try {
-    // RToken configuration parameters
+    // ETF configuration parameters
     const config: RTokenConfiguration = {
       name: tokenConfig.name,
       symbol: tokenConfig.ticker,
@@ -162,7 +162,7 @@ export const getDeployParameters = (
 }
 
 /**
- * Execute RToken deployment
+ * Execute ETF deployment
  */
 const ConfirmDeploy = () => {
   const { getValues } = useFormContext()
@@ -185,7 +185,7 @@ const ConfirmDeploy = () => {
 
     return {
       id: deployId,
-      description: t`Deploy RToken`,
+      description: t`Deploy ETF`,
       status: TRANSACTION_STATUS.PENDING,
       value: '0',
       call: {
@@ -220,9 +220,9 @@ const ConfirmDeploy = () => {
     <>
       <DeployHeader
         isValid={!!fee}
-        title={t`RToken Summary`}
-        subtitle="Confirm that your RToken configuration is as you intended."
-        confirmText={fee ? t`Deploy RToken` : 'Validating...'}
+        title={t`ETF Summary`}
+        subtitle="Confirm that your ETF configuration is as you intended."
+        confirmText={fee ? t`Deploy ETF` : 'Validating...'}
         onBack={handleBack}
         onConfirm={handleDeploy}
         gasCost={fee}

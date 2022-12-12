@@ -8,7 +8,7 @@ import { rTokenAtom } from 'state/atoms'
 import { formatCurrency } from 'utils'
 import { RSR, TRANSACTION_STATUS } from 'utils/constants'
 import { v4 as uuid } from 'uuid'
-import { isValidStakeAmountAtom, stakeAmountAtom } from 'views/staking/atoms'
+import { isValidStakeAmountAtom, stakeAmountAtom } from 'views/insurance/atoms'
 import StakeInput from './StakeInput'
 
 const ConfirmStake = ({ onClose }: { onClose: () => void }) => {

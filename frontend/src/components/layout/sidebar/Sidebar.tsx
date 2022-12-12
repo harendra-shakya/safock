@@ -1,13 +1,12 @@
 import styled from '@emotion/styled'
 import { t, Trans } from '@lingui/macro'
-import AuctionsIcon from 'components/icons/AuctionsIcon'
 import DiscussionsIcon from 'components/icons/DiscussionsIcon'
 import GovernanceIcon from 'components/icons/GovernanceIcon'
 import HomeIcon from 'components/icons/HomeIcon'
 import IssuanceIcon from 'components/icons/IssuanceIcon'
 import ManagerIcon from 'components/icons/ManagerIcon'
 import OverviewIcon from 'components/icons/OverviewIcon'
-import StakeIcon from 'components/icons/StakeIcon'
+import InsuranceIcon from 'components/icons/StakeIcon'
 import SyncedBlock from 'components/synced-block'
 import { useAtomValue } from 'jotai/utils'
 import { useMemo } from 'react'
@@ -90,12 +89,11 @@ const Navigation = ({
 }) => {
   const isManager = useAtomValue(isManagerAtom)
   const PAGES = useMemo(() => {
-    const items = [
+    const items: any = [
       { path: ROUTES.HOME, title: t`Home`, Icon: HomeIcon },
       { path: ROUTES.OVERVIEW, title: t`Overview`, Icon: OverviewIcon },
       { path: ROUTES.ISSUANCE, title: t`Mint + Redeem`, Icon: IssuanceIcon },
-      { path: ROUTES.INSURANCE, title: t`Stake + Unstake`, Icon: StakeIcon },
-      { path: ROUTES.AUCTIONS, title: t`Auctions`, Icon: AuctionsIcon },
+      { path: ROUTES.INSURANCE, title: t`Insurance`, Icon: InsuranceIcon },
     ]
 
     if (isManager) {
@@ -141,7 +139,7 @@ const Navigation = ({
 
   return (
     <Box mt={5}>
-      {pages.map((item) => (
+      {pages.map((item: any) => (
         <NavItem
           key={item.path}
           {...item}
@@ -187,27 +185,8 @@ const Navigation = ({
 const Footer = () => (
   <Box m={4} sx={{ display: ['none', 'none', 'block'] }}>
     <Box sx={{ fontSize: 1 }} mb={3}>
-      <Text sx={{ fontWeight: 500, color: 'danger' }}>
-        <Trans>Proceed with caution</Trans>
-      </Text>
-      <Text as="p" variant="legend" mt={1}>
-        <Trans>
-          Both Register & the Reserve Protocol are brand new. There are risks
-          with using any new smart contract technology.
-        </Trans>
-      </Text>
     </Box>
     <Flex sx={{ alignItems: 'center' }}>
-      <Link target="_blank" href="https://github.com/lc-labs">
-        <Text
-          sx={{
-            fontSize: 0,
-          }}
-          variant="legend"
-        >
-          Made by LC Labs
-        </Text>
-      </Link>
       <Box mx="auto" />
       <SyncedBlock />
     </Flex>

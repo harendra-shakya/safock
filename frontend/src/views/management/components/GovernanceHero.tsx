@@ -11,7 +11,7 @@ const GovernanceHero = (props: BoxProps) => {
     <Box {...props}>
       <AlertCircle size={28} />
       <Text variant="title" sx={{ fontSize: 4 }} mt={2} mb={2}>
-        <Trans>RToken Deployed! Next: Configure Governance</Trans>
+        <Trans>ETF Deployed! Next: Configure Governance</Trans>
       </Text>
       <Text as="p" variant="legend" sx={{ maxWidth: 500 }}>
         <Trans>

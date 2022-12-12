@@ -12,8 +12,8 @@ const TokenParameters = () => {
     <>
       <DeployHeader
         isValid={isValid}
-        title={t`Define RToken Parameters`}
-        subtitle="Name your token and define does your RToken should operate."
+        title={t`Define ETF Parameters`}
+        subtitle="Name your token and define does your ETF should operate."
         confirmText={t`Confirm parameters`}
       />
       <TokenConfiguration />

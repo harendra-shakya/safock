@@ -1,4 +1,4 @@
-import { rsrBalanceAtom, stRsrBalanceAtom } from './../../state/atoms'
+import { rsrBalanceAtom, stRsrBalanceAtom } from '../../state/atoms'
 import { atom } from 'jotai'
 
 const isValid = (value: number, max: number) => value > 0 && value <= max

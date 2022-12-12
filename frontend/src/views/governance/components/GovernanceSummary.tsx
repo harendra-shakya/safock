@@ -47,10 +47,10 @@ const GovernanceSummary = () => {
         </Text>
         <Divider my={3} />
         {!defaultGovernance && (
-          <Info mb={3} title={t`RToken Owner address`} subtitle={owner} />
+          <Info mb={3} title={t`ETF Owner address`} subtitle={owner} />
         )}
-        <Info mb={3} title={t`RToken Guardian address`} subtitle={guardian} />
-        <Info mb={3} title={t`RToken Pauser address`} subtitle={pauser} />
+        <Info mb={3} title={t`ETF Guardian address`} subtitle={guardian} />
+        <Info mb={3} title={t`ETF Pauser address`} subtitle={pauser} />
         {defaultGovernance && (
           <>
             <Text variant="title">
@@ -93,7 +93,7 @@ const GovernanceSummary = () => {
         />
         <Info
           mb={3}
-          title={t`Leave RToken on Pause?`}
+          title={t`Leave ETF on Pause?`}
           subtitle={unpause === '0' ? 'Yes' : 'No'}
         />
       </Box>

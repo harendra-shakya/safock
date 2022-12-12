@@ -26,7 +26,7 @@ const Portfolio = (props: BoxProps) => {
   const rTokenColumns = useMemo(
     () => [
       {
-        Header: 'RToken',
+        Header: 'ETF',
         accessor: 'symbol',
         Cell: (data: any) => {
           const logo = getRTokenLogo(data.row.original.address)

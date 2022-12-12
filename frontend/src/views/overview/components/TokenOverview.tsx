@@ -43,7 +43,7 @@ const TokenOverview = ({ metrics, ...props }: Props) => {
           <Box>
             <InfoHeading
               mb={3}
-              title={t`RToken Yield`}
+              title={t`ETF Yield`}
               subtitle={`${tokenApy}%`}
             />
             <InfoHeading title={t`stRSR Yield`} subtitle={`${stakingApy}%`} />

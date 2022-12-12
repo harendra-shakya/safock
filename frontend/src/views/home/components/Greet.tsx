@@ -47,7 +47,7 @@ const Greet = ({ onDismiss, ...props }: Props) => {
     () => [
       {
         title: t`Learn`,
-        text: t`Understand why each RToken exists. What is its backing? its governing mandate?`,
+        text: t`Understand why each ETF exists. What is its backing? its governing mandate?`,
       },
       {
         title: t`Mint`,
@@ -55,11 +55,11 @@ const Greet = ({ onDismiss, ...props }: Props) => {
       },
       {
         title: t`Stake`,
-        text: t`Choose your own adventure with your RSR. Find your preferred RToken to stake, govern, and backstop.`,
+        text: t`Choose your own adventure with your RSR. Find your preferred ETF to stake, govern, and backstop.`,
       },
       {
         title: t`Explore`,
-        text: t`Discover how an RToken is configured to operate in the good times and in emergency situations where collateral defaults.`,
+        text: t`Discover how an ETF is configured to operate in the good times and in emergency situations where collateral defaults.`,
       },
     ],
     []
@@ -125,7 +125,7 @@ const Greet = ({ onDismiss, ...props }: Props) => {
         >
           <Box sx={{ width: 296, height: 200 }}>
             <Text>
-              <Trans>Select an RToken to:</Trans>
+              <Trans>Select an ETF to:</Trans>
             </Text>
             <Flex mt={2} sx={{ alignItems: 'center' }}>
               {steps.map(({ title }, index: number) => (

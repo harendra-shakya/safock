@@ -123,7 +123,7 @@ const Management = () => {
         <Grid columns={[1, 1, 1, 2]} mt={4} gap={5}>
           <Card p={5}>
             <Text variant="title">
-              <Trans>RToken Info</Trans>
+              <Trans>ETF Info</Trans>
             </Text>
             <Divider my={3} />
             <InfoBox mb={3} title={t`Token name`} subtitle={rToken?.name} />

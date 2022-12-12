@@ -36,7 +36,7 @@ const RTokenBalance = ({ token }: { token: Token }) => {
   return (
     <Box p={4}>
       <Text variant="subtitle" mb={3}>
-        <Trans>RToken In Wallet</Trans>
+        <Trans>ETF In Wallet</Trans>
       </Text>
       <TokenBalance
         symbol={token.symbol}

@@ -155,7 +155,7 @@ export interface RTokenMeta {
 /**
  * ReserveToken
  *
- * This interface represents a complete RToken ecosystem
+ * This interface represents a complete ETF ecosystem
  */
 export interface ReserveToken extends Token {
   collaterals: Token[] // current basket collateral list

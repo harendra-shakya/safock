@@ -105,7 +105,7 @@ const TokensBalanceUpdater = () => {
 
 /**
  * Update allowances for:
- * Collaterals (n) -> RToken
+ * Collaterals (n) -> ETF
  * RSR -> stRSR
  * If RSV: RSV -> RSVManager (redeem)
  */
@@ -186,7 +186,7 @@ const PendingBalancesUpdater = () => {
  * Fetch prices for:
  * ETH    -> USD
  * RSR    -> USD
- * RToken -> USD
+ * ETF -> USD
  * GasPrice
  */
 const PricesUpdater = () => {

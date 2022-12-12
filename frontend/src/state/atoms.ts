@@ -30,7 +30,7 @@ if (
 
 /**
  * ######################
- * ? RToken related atoms
+ * ? ETF related atoms
  * ######################
  */
 

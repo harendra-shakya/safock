@@ -126,7 +126,7 @@ const AccountUpdater = () => {
           ;[tokenApy, stakingApy] = calculateApy(recentRate, lastRate)
         }
 
-        // Relate RToken to account
+        // Relate ETF to account
         if (balance > 0 || stake > 0) {
           accountRTokens.push({
             address: getAddress(rToken.rToken.id),

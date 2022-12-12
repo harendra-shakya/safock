@@ -1,5 +1,5 @@
 {
-  "name": "register",
+  "name": "safock-frontend",
   "version": "0.1.0",
   "dependencies": {
     "@coinbase/wallet-sdk": "3.0.5",

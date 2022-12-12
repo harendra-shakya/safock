@@ -10,7 +10,7 @@ const TokenForm = (props: BoxProps) => (
   <Box {...props}>
     <Box variant="layout.verticalAlign" mb={4}>
       <Text ml={2} variant="title">
-        <Trans>RToken Details</Trans>
+        <Trans>ETF Details</Trans>
       </Text>
     </Box>
     <FormField
@@ -33,7 +33,7 @@ const TokenForm = (props: BoxProps) => (
     />
     <FormField
       label={t`Mandate`}
-      placeholder={t`RToken mandate`}
+      placeholder={t`ETF mandate`}
       mb={3}
       textarea
       name="mandate"
@@ -51,7 +51,7 @@ const TokenForm = (props: BoxProps) => (
       name="ownerAddress"
       disabled
       options={{
-        required: t`RToken owner address is required`,
+        required: t`ETF owner address is required`,
         validate: (value) => !!isAddress(value) || t`Invalid address`,
       }}
     />

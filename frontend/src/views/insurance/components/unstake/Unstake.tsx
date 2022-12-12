@@ -3,30 +3,30 @@ import { Button } from 'components'
 import { useAtomValue } from 'jotai/utils'
 import { useState } from 'react'
 import { BoxProps, Card } from 'theme-ui'
-import { isValidStakeAmountAtom } from 'views/staking/atoms'
-import ConfirmStake from './ConfirmStake'
-import StakeInput from './StakeInput'
+import { isValidUnstakeAmountAtom } from 'views/insurance/atoms'
+import ConfirmUnstake from './ConfirmUnstake'
+import UnstakeInput from './UnstakeInput'
 
-const Stake = (props: BoxProps) => {
+const Unstake = (props: BoxProps) => {
   const [confirming, setConfirming] = useState(false)
-  const isValid = useAtomValue(isValidStakeAmountAtom)
+  const isValid = useAtomValue(isValidUnstakeAmountAtom)
 
   return (
     <>
-      {confirming && <ConfirmStake onClose={() => setConfirming(false)} />}
+      {confirming && <ConfirmUnstake onClose={() => setConfirming(false)} />}
       <Card p={4} {...props}>
-        <StakeInput />
+        <UnstakeInput />
         <Button
           disabled={!isValid}
           sx={{ width: '100%' }}
           mt={3}
           onClick={() => setConfirming(true)}
         >
-          + <Trans>Stake RSR</Trans>
+          - <Trans>Unstake stRSR</Trans>
         </Button>
       </Card>
     </>
   )
 }
 
-export default Stake
+export default Unstake

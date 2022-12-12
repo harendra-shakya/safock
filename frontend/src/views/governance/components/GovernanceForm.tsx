@@ -75,15 +75,15 @@ const GovernanceForm = () => {
         }}
       />
       <Text variant="title" mb={4}>
-        <Trans>RToken state after transaction</Trans>
+        <Trans>ETF state after transaction</Trans>
       </Text>
       <Field label={t`Pause status`} mb={4}>
         <Select {...register('unpause')}>
           <option value={0}>
-            <Trans>RToken will be left in pause state</Trans>
+            <Trans>ETF will be left in pause state</Trans>
           </option>
           <option value={1}>
-            <Trans>RToken will be fully functional</Trans>
+            <Trans>ETF will be fully functional</Trans>
           </option>
         </Select>
         {unfreeze === '0' && (

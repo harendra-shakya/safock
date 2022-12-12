@@ -12,7 +12,7 @@ const Basket = () => {
       <DeployHeader
         isValid={isValidBasket}
         title={t`Define Collateral Baskets`}
-        subtitle="What will back your RToken? What happens in default scenarios?"
+        subtitle="What will back your ETF? What happens in default scenarios?"
         confirmText={t`Confirm Basket`}
       />
       <BasketSetup />

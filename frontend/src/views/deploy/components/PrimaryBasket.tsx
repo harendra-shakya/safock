@@ -37,7 +37,7 @@ const Placeholder = () => (
     </Text>
     <Text variant="legend" sx={{ fontSize: 1, display: 'block' }} mb={2}>
       <Trans>
-        The basket & weights of the collateral for your RToken will populate
+        The basket & weights of the collateral for your ETF will populate
         here.
       </Trans>
     </Text>
@@ -67,7 +67,7 @@ const PrimaryBasket = ({ onAdd = () => {}, readOnly = false }: Props) => {
       </Flex>
       <Divider my={4} />
       <Flex>
-        <Text sx={{ width: 140 }}>1 [RToken] =</Text>
+        <Text sx={{ width: 140 }}>1 [ETF] =</Text>
         <Text ml="auto">
           {!!units.length ? getBasketComposition(basket) : '--'}
         </Text>

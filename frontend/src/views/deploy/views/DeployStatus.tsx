@@ -39,7 +39,7 @@ const Mining = ({ hash }: { hash: string }) => (
     <Text as="p" variant="legend">
       <Trans>
         Meditate peacefully on the stability of a future asset backed reserve
-        currency while your RToken deploys 🧘‍♂️
+        currency while your ETF deploys 🧘‍♂️
       </Trans>
       <br />
       <br />

@@ -5,8 +5,8 @@ import DeployIntro from '../components/DeployIntro'
 const Intro = () => (
   <>
     <DeployHeader
-      title={t`Deploy your RToken`}
-      subtitle="First configure your RToken collateral basket parameters, then in second transaction, set up governance."
+      title={t`Create New ETF`}
+      subtitle="First configure your ETF collateral basket parameters, then in second transaction, set up governance."
       confirmText={t`Start`}
     />
     <DeployIntro />

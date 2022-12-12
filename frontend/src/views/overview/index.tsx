@@ -19,8 +19,8 @@ const dividerProps = { my: 5, mx: [-4, -5], sx: { borderColor: 'darkBorder' } }
 const gridProps = { columns: [1, 1, 1, 2], gap: [5, 5, 5, 4] }
 
 /**
- * RToken Overview
- * Displays an overview of the RToken Market and transactions stadistics
+ * ETF Overview
+ * Displays an overview of the ETF Market and transactions stadistics
  *
  * @returns React.Component
  */

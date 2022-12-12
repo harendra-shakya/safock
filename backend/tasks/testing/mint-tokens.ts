@@ -61,6 +61,9 @@ task('mint-tokens', 'Mints all the tokens to an address')
       const tok = await hre.ethers.getContractAt('ERC20Mock', addr as string)
       const decimals = await tok.decimals()
       const amt = hre.ethers.BigNumber.from('10').pow(decimals + 9)
+      const address = tok.address;
+      console.log('/n============================================/n')
+      console.log(`Minting ${token} (${tok.address})`)
       console.log(`Minting ${amt} of ${token}`)
 
       // For ATokens, mint staticAToken balances

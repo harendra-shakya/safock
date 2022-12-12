@@ -26,7 +26,7 @@ const OtherForm = (props: BoxProps) => {
         <Trans>Other</Trans>
       </Text>
       <Field
-        label={t`Reward distribution [${rTokenDist}% RToken - ${rsrDist}% RSR]`}
+        label={t`Reward distribution [${rTokenDist}% ETF - ${rsrDist}% RSR]`}
         mb={4}
       >
         <Box mx={2} mt={4}>
@@ -106,8 +106,8 @@ const OtherForm = (props: BoxProps) => {
         }}
       />
       <FormField
-        label={t`RToken Maximum trade volume`}
-        placeholder={t`Maximum trade for RToken`}
+        label={t`ETF Maximum trade volume`}
+        placeholder={t`Maximum trade for ETF`}
         mb={3}
         name="maxTrade"
         options={{

@@ -3,7 +3,7 @@ import { useAtomValue } from 'jotai'
 import { useEffect, useState } from 'react'
 import { walletAtom } from 'state/atoms'
 import { Divider, Grid } from 'theme-ui'
-import About from './components/About'
+import About from '../deploy'
 import TransactionsOverview from './components/GeneralOverview'
 import Greet from './components/Greet'
 import Portfolio from './components/Portfolio'
@@ -39,7 +39,7 @@ const Home = () => {
 
   return (
     <Container>
-      {!account && !visited && <Greet onDismiss={handleDismiss} />}
+      {/* {!account && !visited && <Greet onDismiss={handleDismiss} />}
       {!!account && <Portfolio />}
       <Grid columns={[1, 1, 1, 2]}>
         <TokenStats mb={[5, 5, 5, 0]} />
@@ -47,7 +47,7 @@ const Home = () => {
       </Grid>
       <Divider mb={2} mt={5} {...dividerProps} />
       <TokenList mt={6} />
-      <Divider my={5} {...dividerProps} />
+      <Divider my={5} {...dividerProps} /> */}
       <About />
     </Container>
   )

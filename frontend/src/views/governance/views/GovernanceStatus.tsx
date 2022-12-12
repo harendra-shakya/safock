@@ -33,7 +33,7 @@ const Mining = ({ hash }: { hash: string }) => (
   <Box sx={{ textAlign: 'center', width: 420 }}>
     <Spinner size={24} />
     <Text sx={{ fontWeight: 500, display: 'block' }}>
-      <Trans>RToken governance is deploying</Trans>
+      <Trans>ETF governance is deploying</Trans>
     </Text>
     <Text as="p" variant="legend">
       <Trans>

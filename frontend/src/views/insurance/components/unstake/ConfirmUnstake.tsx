@@ -9,7 +9,7 @@ import { v4 as uuid } from 'uuid'
 import {
   isValidUnstakeAmountAtom,
   unStakeAmountAtom,
-} from 'views/staking/atoms'
+} from 'views/insurance/atoms'
 import UnstakeInput from './UnstakeInput'
 
 const ConfirmUnstake = ({ onClose }: { onClose: () => void }) => {

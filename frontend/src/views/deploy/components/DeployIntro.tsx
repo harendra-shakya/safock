@@ -54,7 +54,7 @@ const DeployIntro = () => {
         py={4}
         sx={{ borderRight: '1px solid', borderColor: 'border' }}
       >
-        <Title prefix="Tx 1." text={t`RToken Deployment`} />
+        <Title prefix="Tx 1." text={t`ETF Deployment`} />
         <StepItem
           title={t`Set Primary & Emergency collaterals`}
           subtitle={t`Primary, emergency, target units & their initial scale`}
@@ -62,13 +62,13 @@ const DeployIntro = () => {
           mb={4}
         />
         <StepItem
-          title={t`Set RToken parameters`}
+          title={t`Set ETF parameters`}
           subtitle={t`Choose between simple setup & advanced settings`}
           mb={4}
         />
         <StepItem
-          title={t`Deploy RToken`}
-          subtitle={t`Create necessary smart contracts for all RTokens ops`}
+          title={t`Deploy ETF`}
+          subtitle={t`Create necessary smart contracts for all ETFs ops`}
           mb={4}
         />
         <Title prefix="Tx 2." text={t`Governance Deployment`} />
@@ -106,8 +106,8 @@ const DeployIntro = () => {
           <Text as="p" variant="legend" sx={{ fontSize: 2 }}>
             <Trans>
               While it doesn’t require deep technical knowledge, this wizard
-              requires you to thoughtfully design a good token. We encourage you
-              to talk to the Reserve team and read the docs to learn more before
+              requires you to thoughtfully design a good token. But if this looks complex then we encourage you
+              to talk to the Safock team and read the docs to learn more before
               confirming any transactions.
             </Trans>
           </Text>
@@ -115,7 +115,7 @@ const DeployIntro = () => {
             <SmallButton
               variant="muted"
               onClick={() =>
-                window.open('https://discord.gg/Ryk6P67c', '_blank')
+                window.open('https://discord.com/invite/KkckfSdA8R', '_blank')
               }
               mr={3}
             >
@@ -124,7 +124,7 @@ const DeployIntro = () => {
             <SmallButton
               variant="muted"
               onClick={() =>
-                window.open('https://reserve.org/protocol/', '_blank')
+                window.open('https://safock.gitbook.io/docs/', '_blank')
               }
             >
               <Trans>Protocol docs</Trans>

@@ -35,7 +35,7 @@ const Tokens = () => {
       <ListedTokensTable />
       <ContentHead
         title={t`All unlisted RTokens`}
-        subtitle={t`Be aware that anyone can create an RToken that ends up on this list. We don't apply any standards beyond what can be done with the Reserve Protocol.`}
+        subtitle={t`Be aware that anyone can create an ETF that ends up on this list. We don't apply any standards beyond what can be done with the Reserve Protocol.`}
         my={5}
         ml={3}
       />
@@ -51,7 +51,7 @@ const Tokens = () => {
           <Trans>Apply for listing</Trans>
         </SmallButton>
         <SmallButton onClick={handleDeploy}>
-          <Trans>Deploy RToken</Trans>
+          <Trans>Deploy ETF</Trans>
         </SmallButton>
       </Flex>
     </Container>
