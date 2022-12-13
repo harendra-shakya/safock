@@ -3,8 +3,8 @@ import { Container } from 'components'
 import { Box, Grid, Text } from 'theme-ui'
 import Balances from './components/balances'
 import Overview from './components/overview'
-import Stake from './components/stake'
-import Unstake from './components/unstake'
+import Insure from './components/insure'
+import ClaimInsurance from './components/claim-insurance'
 
 const Staking = () => (
   <Container pb={4}>
@@ -13,8 +13,8 @@ const Staking = () => (
     </Text>
       <Box>
         <Grid columns={[1, 2]} gap={4} mb={4}>
-          <Stake />
-          <Unstake />
+          <Insure />
+          <ClaimInsurance />
         </Grid>
         <Balances />
       </Box>

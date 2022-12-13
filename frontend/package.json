@@ -35,6 +35,7 @@
     "i18next-browser-languagedetector": "^6.1.2",
     "immer": "^9.0.12",
     "jotai": "^1.8.1",
+    "magic-sdk": "^10.1.0",
     "make-plural": "^7.1.0",
     "react": "^18.2.0",
     "react-dom": "18.2.0",

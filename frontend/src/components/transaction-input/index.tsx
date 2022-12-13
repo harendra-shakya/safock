@@ -53,4 +53,46 @@ const TransactionInput = ({
   )
 }
 
+export interface InsureTransactionInputProps extends BoxProps {
+  title?: string
+  placeholder?: string
+  compact?: boolean
+  disabled?: boolean
+}
+
+export const InsureTransactionInput = ({
+  title = '',
+  placeholder = '',
+  disabled = false,
+  compact = false,
+  ...props
+}: InsureTransactionInputProps) => {
+
+  const maxLabel = (
+    <Text
+      as="a"
+      variant="a"
+      sx={{ display: 'block', marginLeft: 'auto', fontSize: compact ? 1 : 2 }}
+    >
+    </Text>
+  )
+
+  return (
+    <Box {...props}>
+      <Flex sx={{ alignItems: 'center' }} mb={2}>
+        <Text as="label" variant="legend" ml={2}>
+          {title}
+        </Text>
+        {compact && maxLabel}
+      </Flex>
+      <NumericalInput
+        disabled={disabled}
+        placeholder={placeholder}
+        onChange={() => {}}
+      />
+      {!compact && <Flex mt={2}>{maxLabel}</Flex>}
+    </Box>
+  )
+}
+
 export default TransactionInput

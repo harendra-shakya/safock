@@ -1,1 +1,734 @@
-[{"type":"constructor","payable":false,"inputs":[{"type":"address","name":"facadeRead"},{"type":"address","name":"usdc"},{"type":"address","name":"usdt"},{"type":"address","name":"busd"}]},{"type":"event","anonymous":false,"name":"InsuranceClaimed","inputs":[{"type":"address","name":"owner","indexed":false},{"type":"uint8","name":"planType","indexed":false},{"type":"address","name":"rToken","indexed":false},{"type":"uint256","name":"numRTokens","indexed":false},{"type":"uint256","name":"amountInsuredInUSD","indexed":false},{"type":"uint256","name":"validity","indexed":false}]},{"type":"event","anonymous":false,"name":"Insured","inputs":[{"type":"address","name":"owner","indexed":false},{"type":"uint8","name":"planType","indexed":false},{"type":"address","name":"rToken","indexed":false},{"type":"uint256","name":"numRTokens","indexed":false},{"type":"uint256","name":"price","indexed":false},{"type":"uint256","name":"totalAmount","indexed":false},{"type":"uint256","name":"validity","indexed":false}]},{"type":"event","anonymous":false,"name":"OwnershipTransferred","inputs":[{"type":"address","name":"previousOwner","indexed":true},{"type":"address","name":"newOwner","indexed":true}]},{"type":"event","anonymous":false,"name":"Withdraw","inputs":[{"type":"address","name":"caller","indexed":false},{"type":"address","name":"token","indexed":false},{"type":"uint256","name":"amount","indexed":false}]},{"type":"function","name":"changeTreaduryAddress","constant":false,"payable":false,"inputs":[{"type":"address","name":"newAddress"}],"outputs":[]},{"type":"function","name":"claimInsurance","constant":false,"payable":false,"inputs":[{"type":"address","name":"rToken"}],"outputs":[]},{"type":"function","name":"getPlan","constant":true,"stateMutability":"view","payable":false,"inputs":[{"type":"uint256","name":"planNum"}],"outputs":[{"type":"tuple","name":"plan","components":[{"type":"uint8","name":"planType"},{"type":"uint256","name":"priceNumerator"},{"type":"uint256","name":"priceDenominator"},{"type":"uint256","name":"minDropNumerator"},{"type":"uint256","name":"minDropDenominator"},{"type":"uint256","name":"coverUptoNumerator"},{"type":"uint256","name":"coverUptoDenominator"},{"type":"uint256","name":"validity"}]}]},{"type":"function","name":"getPrice","constant":true,"stateMutability":"view","payable":false,"inputs":[{"type":"address","name":"rToken"}],"outputs":[{"type":"uint256","name":"price"}]},{"type":"function","name":"getUserPlan","constant":true,"stateMutability":"view","payable":false,"inputs":[{"type":"address","name":"user"},{"type":"address","name":"rToken"}],"outputs":[{"type":"tuple","name":"userPlan","components":[{"type":"address","name":"owner"},{"type":"bool","name":"isClaimed"},{"type":"uint8","name":"planType"},{"type":"address","name":"rToken"},{"type":"uint256","name":"numRTokens"},{"type":"uint256","name":"price"},{"type":"uint256","name":"amountInsuredInUSD"},{"type":"uint256","name":"validity"}]}]},{"type":"function","name":"insurance","constant":false,"payable":false,"inputs":[{"type":"uint8","name":"planNum"},{"type":"address","name":"paymentCurrency"},{"type":"address","name":"rToken"},{"type":"uint256","name":"numRTokens"}],"outputs":[]},{"type":"function","name":"owner","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"address"}]},{"type":"function","name":"renounceOwnership","constant":false,"payable":false,"inputs":[],"outputs":[]},{"type":"function","name":"transferOwnership","constant":false,"payable":false,"inputs":[{"type":"address","name":"newOwner"}],"outputs":[]},{"type":"function","name":"validityLeft","constant":true,"stateMutability":"view","payable":false,"inputs":[{"type":"address","name":"rToken"}],"outputs":[{"type":"uint256","name":"leftValidity"}]},{"type":"function","name":"withdraw","constant":false,"payable":false,"inputs":[{"type":"address","name":"token"},{"type":"uint256","name":"amount"}],"outputs":[]}]
+[
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "facadeRead",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "usdc",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "usdt",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "busd",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": false,
+            "internalType": "address",
+            "name": "owner",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "internalType": "enum Safock.InsurancePlan",
+            "name": "planType",
+            "type": "uint8"
+          },
+          {
+            "indexed": false,
+            "internalType": "address",
+            "name": "rToken",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "numRTokens",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "amountInsuredInUSD",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "validity",
+            "type": "uint256"
+          }
+        ],
+        "name": "InsuranceClaimed",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": false,
+            "internalType": "address",
+            "name": "owner",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "internalType": "enum Safock.InsurancePlan",
+            "name": "planType",
+            "type": "uint8"
+          },
+          {
+            "indexed": false,
+            "internalType": "address",
+            "name": "rToken",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "numRTokens",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "price",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "totalAmount",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "validity",
+            "type": "uint256"
+          }
+        ],
+        "name": "Insured",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "internalType": "address",
+            "name": "previousOwner",
+            "type": "address"
+          },
+          {
+            "indexed": true,
+            "internalType": "address",
+            "name": "newOwner",
+            "type": "address"
+          }
+        ],
+        "name": "OwnershipTransferred",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": false,
+            "internalType": "address",
+            "name": "caller",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          }
+        ],
+        "name": "Withdraw",
+        "type": "event"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "newAddress",
+            "type": "address"
+          }
+        ],
+        "name": "changeTreaduryAddress",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "rToken",
+            "type": "address"
+          }
+        ],
+        "name": "claimInsurance",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "rToken",
+            "type": "address"
+          }
+        ],
+        "name": "createStakingContract",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "rToken",
+            "type": "address"
+          }
+        ],
+        "name": "getCurrentRewards",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "planNum",
+            "type": "uint256"
+          }
+        ],
+        "name": "getPlan",
+        "outputs": [
+          {
+            "components": [
+              {
+                "internalType": "enum Safock.InsurancePlan",
+                "name": "planType",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint256",
+                "name": "priceNumerator",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "priceDenominator",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "minDropNumerator",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "minDropDenominator",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "coverUptoNumerator",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "coverUptoDenominator",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "validity",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct Safock.InsuranceAttributes",
+            "name": "plan",
+            "type": "tuple"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "rToken",
+            "type": "address"
+          }
+        ],
+        "name": "getPrice",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "price",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "rToken",
+            "type": "address"
+          }
+        ],
+        "name": "getStkPerShare",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "rToken",
+            "type": "address"
+          }
+        ],
+        "name": "getTotalShares",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "rToken",
+            "type": "address"
+          }
+        ],
+        "name": "getTotalStakeholders",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "rToken",
+            "type": "address"
+          }
+        ],
+        "name": "getTotalStakes",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "user",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "rToken",
+            "type": "address"
+          }
+        ],
+        "name": "getUserPlan",
+        "outputs": [
+          {
+            "components": [
+              {
+                "internalType": "address",
+                "name": "owner",
+                "type": "address"
+              },
+              {
+                "internalType": "bool",
+                "name": "isClaimed",
+                "type": "bool"
+              },
+              {
+                "internalType": "enum Safock.InsurancePlan",
+                "name": "planType",
+                "type": "uint8"
+              },
+              {
+                "internalType": "address",
+                "name": "rToken",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "numRTokens",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "price",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "amountInsuredInUSD",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "validity",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct Safock.UserPlan",
+            "name": "userPlan",
+            "type": "tuple"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint8",
+            "name": "planNum",
+            "type": "uint8"
+          },
+          {
+            "internalType": "address",
+            "name": "paymentCurrency",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "rToken",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "numRTokens",
+            "type": "uint256"
+          }
+        ],
+        "name": "insurance",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "rToken",
+            "type": "address"
+          }
+        ],
+        "name": "isStakingContractExists",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "isExists",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "owner",
+        "outputs": [
+          {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "from",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "to",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "rToken",
+            "type": "address"
+          }
+        ],
+        "name": "refundLockedSTK",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "rToken",
+            "type": "address"
+          }
+        ],
+        "name": "removeLockedRewards",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "rToken",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          }
+        ],
+        "name": "removeStake",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "renounceOwnership",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "stakeholder",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "stkAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "rToken",
+            "type": "address"
+          }
+        ],
+        "name": "rewardForSTK",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "stakeholder",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "rToken",
+            "type": "address"
+          }
+        ],
+        "name": "rewardOf",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "stakeholder",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "rToken",
+            "type": "address"
+          }
+        ],
+        "name": "sharesOf",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "rToken",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          }
+        ],
+        "name": "stake",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "stakeholder",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "rToken",
+            "type": "address"
+          }
+        ],
+        "name": "stakeOf",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "newOwner",
+            "type": "address"
+          }
+        ],
+        "name": "transferOwnership",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "rToken",
+            "type": "address"
+          }
+        ],
+        "name": "validityLeft",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "leftValidity",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          }
+        ],
+        "name": "withdraw",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    ]

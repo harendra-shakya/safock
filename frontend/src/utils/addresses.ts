@@ -10,6 +10,12 @@ export const DEPLOYER_ADDRESS: AddressMap = {
   [ChainId.Hardhat]: '0x139e1D41943ee15dDe4DF876f9d0E7F85e26660A',
 }
 
+export const SAFOCK_ADDRESS: AddressMap = {
+  [ChainId.Mainnet]: '0x9cAc8ED3297040626D8aA6317F5e29813A6A8fc6',
+  [ChainId.Goerli]: '0x7b9F88d86034675CB9be53F2423a433Cd72bf1AC',
+  [ChainId.Hardhat]: '0x139e1D41943ee15dDe4DF876f9d0E7F85e26660A',
+}
+
 export const FACADE_ADDRESS: AddressMap = {
   [ChainId.Mainnet]: '0x3DAf5a7681a9cfB92fB38983EB3998dFC7963B28',
   [ChainId.Goerli]: '0x8B84160CF8d9066Ba45f71471a06F2BFAc364626',

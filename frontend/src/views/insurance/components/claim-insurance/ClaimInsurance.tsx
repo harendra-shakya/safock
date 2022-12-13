@@ -4,10 +4,10 @@ import { useAtomValue } from 'jotai/utils'
 import { useState } from 'react'
 import { BoxProps, Card } from 'theme-ui'
 import { isValidUnstakeAmountAtom } from 'views/insurance/atoms'
-import ConfirmUnstake from './ConfirmUnstake'
-import UnstakeInput from './UnstakeInput'
+import ConfirmUnstake from './ConfirmClaimInsurance'
+import UnstakeInput from './ClaimInsuranceInput'
 
-const Unstake = (props: BoxProps) => {
+const ClaimInsurance = (props: BoxProps) => {
   const [confirming, setConfirming] = useState(false)
   const isValid = useAtomValue(isValidUnstakeAmountAtom)
 
@@ -29,4 +29,5 @@ const Unstake = (props: BoxProps) => {
   )
 }
 
-export default Unstake
+export default ClaimInsurance
+

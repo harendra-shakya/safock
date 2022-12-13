@@ -10,9 +10,9 @@ import {
   isValidUnstakeAmountAtom,
   unStakeAmountAtom,
 } from 'views/insurance/atoms'
-import UnstakeInput from './UnstakeInput'
+import UnstakeInput from './ClaimInsuranceInput'
 
-const ConfirmUnstake = ({ onClose }: { onClose: () => void }) => {
+const ConfirmClaimInsurance = ({ onClose }: { onClose: () => void }) => {
   const [signing, setSigning] = useState(false)
   const rToken = useAtomValue(rTokenAtom)
   const [amount, setAmount] = useAtom(unStakeAmountAtom)
@@ -54,4 +54,4 @@ const ConfirmUnstake = ({ onClose }: { onClose: () => void }) => {
   )
 }
 
-export default ConfirmUnstake
+export default ConfirmClaimInsurance
