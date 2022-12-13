@@ -14,6 +14,7 @@ pragma solidity ^0.8.9;
 contract Safock is Ownable, ReentrancyGuard {
     // # This is the address of the reserve protocol's facade read contract
     address private immutable FACADE_READ;
+    address private TREASURY_ADDRESS;
     address private immutable USDT;
     address private immutable USDC;
     address private immutable BUSD;
@@ -83,6 +84,8 @@ contract Safock is Ownable, ReentrancyGuard {
         uint256 amountInsuredInUSD,
         uint256 validity
     );
+
+    event Withdraw(address caller, address token, uint256 amount);
 
     constructor(
         address facadeRead,
@@ -243,6 +246,15 @@ contract Safock is Ownable, ReentrancyGuard {
             plan.amountInsuredInUSD,
             plan.validity
         );
+    }
+
+    function withdraw(address token, uint256 amount) external {
+        TransferHelpers.safeTranfer(token, TREASURY_ADDRESS, amount);
+        emit Withdraw(msg.sender, token, amount);
+    }
+
+    function changeTreaduryAddress(address newAddress) external onlyOwner {
+        TREASURY_ADDRESS = newAddress;
     }
 
     // this will return the price of rToken
