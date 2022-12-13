@@ -25,7 +25,7 @@ const ClaimInsurace = (props: BoxProps) => {
     const [paymentCurrency, setPaymentCurrency] = useState(
         "0xAE64954A904da3fD9D71945980A849B8A9F755d7"
     );
-    const {account} = useWeb3React();
+    const { account } = useWeb3React();
 
     const [tokenName, setTokenName] = useState("USDT");
     const [isOkDisabled, setIsOkDisabled] = useState(false);
@@ -33,7 +33,6 @@ const ClaimInsurace = (props: BoxProps) => {
 
     const _claimInsurance = async () => {
         try {
-
             setIsOkDisabled(true);
             const { ethereum }: any = window;
             const provider = new ethers.providers.Web3Provider(ethereum);
@@ -42,7 +41,8 @@ const ClaimInsurace = (props: BoxProps) => {
             const safock = new ethers.Contract(SAFOCK_ADDRESS[5], safockAbi, signer);
 
             const token = await new ethers.Contract(paymentCurrency, erc20Abi, signer);
-            const numRTokens: string = (await safock.getUserPlan(account, rToken?.address)).numRTokens;
+            const numRTokens: string = (await safock.getUserPlan(account, rToken?.address))
+                .numRTokens;
 
             setInfo(`Approve your ${numRTokens} ${rToken?.symbol}.....`);
 
@@ -54,7 +54,6 @@ const ClaimInsurace = (props: BoxProps) => {
             setInfo(`Approved! Receving confirmations.....`);
 
             let txReceipt = await tx.wait(1);
-
 
             if (txReceipt.status === 1) {
                 console.log("aprroved");
@@ -103,7 +102,10 @@ const ClaimInsurace = (props: BoxProps) => {
                         setShowModal(true);
                     }}
                 >
-                    - <Trans>{isOkDisabled ? "transacting..." : `Claim Insurance (${rToken?.symbol})`}</Trans>
+                    -{" "}
+                    <Trans>
+                        {isOkDisabled ? "transacting..." : `Claim Insurance (${rToken?.symbol})`}
+                    </Trans>
                 </Button>
                 {showModal && (
                     <Modal
@@ -123,7 +125,7 @@ const ClaimInsurace = (props: BoxProps) => {
                             loading={!!signing}
                             disabled={isOkDisabled}
                             variant={!!signing ? "accent" : "primary"}
-                            text={isOkDisabled ? 'Claming': 'Claim Inurance'}
+                            text={isOkDisabled ? "Claming" : "Claim Inurance"}
                             onClick={_claimInsurance}
                             sx={{ width: "100%" }}
                             mt={3}

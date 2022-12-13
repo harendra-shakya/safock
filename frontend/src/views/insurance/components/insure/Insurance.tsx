@@ -141,7 +141,11 @@ const Insure = (props: BoxProps) => {
                             loading={!!signing}
                             disabled={isOkDisabled}
                             variant={!!signing ? "accent" : "primary"}
-                            text={isOkDisabled ? `Providing insurance to ${rToken?.symbol}`: 'Get insurance'}
+                            text={
+                                isOkDisabled
+                                    ? `Providing insurance to ${rToken?.symbol}`
+                                    : "Get insurance"
+                            }
                             onClick={provideInsurance}
                             sx={{ width: "100%" }}
                             mt={3}
