@@ -1,15 +1,14 @@
-import { useMemo } from 'react'
-import rtokens from 'utils/rtokens'
+import { useMemo } from "react";
+import rtokens from "utils/rtokens";
 
 export const getRTokenLogo = (address: string) => {
-  if (rtokens[address]?.logo) {
-    return require(`@lc-labs/rtokens/images/${rtokens[address].logo}`)
-  }
+    if (rtokens[address]?.logo) {
+        return require(`@lc-labs/rtokens/images/${rtokens[address].logo}`);
+    }
 
-  return '/svgs/default.svg'
-}
+    return "/svgs/default.svg";
+};
 
-const useRTokenLogo = (address: string) =>
-  useMemo(() => getRTokenLogo(address), [address])
+const useRTokenLogo = (address: string) => useMemo(() => getRTokenLogo(address), [address]);
 
-export default useRTokenLogo
+export default useRTokenLogo;

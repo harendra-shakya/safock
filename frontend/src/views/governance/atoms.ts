@@ -1,3 +1,3 @@
-import { atom } from 'jotai'
+import { atom } from "jotai";
 
-export const govTxIdAtom = atom('')
+export const govTxIdAtom = atom("");

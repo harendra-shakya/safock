@@ -1,18 +1,18 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from "react";
 
 const useMountedState = () => {
-  const mountedRef = useRef(false)
-  const isMounted = useCallback(() => mountedRef.current, [])
+    const mountedRef = useRef(false);
+    const isMounted = useCallback(() => mountedRef.current, []);
 
-  useEffect(() => {
-    mountedRef.current = true
+    useEffect(() => {
+        mountedRef.current = true;
 
-    return () => {
-      mountedRef.current = false
-    }
-  }, [])
+        return () => {
+            mountedRef.current = false;
+        };
+    }, []);
 
-  return isMounted
-}
+    return isMounted;
+};
 
-export default useMountedState
+export default useMountedState;

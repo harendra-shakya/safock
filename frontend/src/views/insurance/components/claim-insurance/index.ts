@@ -1,1 +1,1 @@
-export { default } from './ClaimInsurance'
+export { default } from "./ClaimInsurance";

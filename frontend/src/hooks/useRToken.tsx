@@ -1,9 +1,9 @@
-import { useAtomValue } from 'jotai'
-import { rTokenAtom } from 'state/atoms'
-import { ReserveToken } from 'types'
+import { useAtomValue } from "jotai";
+import { rTokenAtom } from "state/atoms";
+import { ReserveToken } from "types";
 
 const useRToken = (): ReserveToken | null => {
-  return useAtomValue(rTokenAtom)
-}
+    return useAtomValue(rTokenAtom);
+};
 
-export default useRToken
+export default useRToken;

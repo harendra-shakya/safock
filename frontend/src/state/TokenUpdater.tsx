@@ -1,436 +1,408 @@
-import { Web3Provider } from '@ethersproject/providers'
-import { formatEther } from '@ethersproject/units'
-import { useWeb3React } from '@web3-react/core'
+import { Web3Provider } from "@ethersproject/providers";
+import { formatEther } from "@ethersproject/units";
+import { useWeb3React } from "@web3-react/core";
+import { ERC20Interface, FacadeInterface, MainInterface, RTokenInterface } from "abis";
+import { ethers } from "ethers";
+import { gql } from "graphql-request";
+import useBlockNumber from "hooks/useBlockNumber";
+import useIsWindowVisible from "hooks/useIsWindowVisible";
+import useQuery from "hooks/useQuery";
+import { atom, useAtom, useAtomValue } from "jotai";
+import { useResetAtom, useUpdateAtom } from "jotai/utils";
+import { useCallback, useEffect, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
+import { ContractCall, ReserveToken, Token } from "types";
+import { calculateApy, isAddress, truncateDecimals } from "utils";
+import { FACADE_ADDRESS } from "utils/addresses";
+import { CHAIN_ID } from "utils/chains";
+import { RTOKEN_STATUS } from "utils/constants";
+import RSV from "utils/rsv";
+import rtokens from "utils/rtokens";
 import {
-  ERC20Interface,
-  FacadeInterface,
-  MainInterface,
-  RTokenInterface,
-} from 'abis'
-import { ethers } from 'ethers'
-import { gql } from 'graphql-request'
-import useBlockNumber from 'hooks/useBlockNumber'
-import useIsWindowVisible from 'hooks/useIsWindowVisible'
-import useQuery from 'hooks/useQuery'
-import { atom, useAtom, useAtomValue } from 'jotai'
-import { useResetAtom, useUpdateAtom } from 'jotai/utils'
-import { useCallback, useEffect, useMemo } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import { ContractCall, ReserveToken, Token } from 'types'
-import { calculateApy, isAddress, truncateDecimals } from 'utils'
-import { FACADE_ADDRESS } from 'utils/addresses'
-import { CHAIN_ID } from 'utils/chains'
-import { RTOKEN_STATUS } from 'utils/constants'
-import RSV from 'utils/rsv'
-import rtokens from 'utils/rtokens'
-import {
-  accountRoleAtom,
-  blockTimestampAtom,
-  reserveTokensAtom,
-  rTokenCollateralDist,
-  rTokenDistributionAtom,
-  rTokenMainAtom,
-  rTokenStatusAtom,
-  rTokenYieldAtom,
-  selectedRTokenAtom,
-  walletAtom,
-} from './atoms'
-import { tokenMetricsAtom } from './metrics/atoms'
-import { promiseMulticall } from './web3/lib/multicall'
-import { error } from './web3/lib/notifications'
+    accountRoleAtom,
+    blockTimestampAtom,
+    reserveTokensAtom,
+    rTokenCollateralDist,
+    rTokenDistributionAtom,
+    rTokenMainAtom,
+    rTokenStatusAtom,
+    rTokenYieldAtom,
+    selectedRTokenAtom,
+    walletAtom,
+} from "./atoms";
+import { tokenMetricsAtom } from "./metrics/atoms";
+import { promiseMulticall } from "./web3/lib/multicall";
+import { error } from "./web3/lib/notifications";
 
 const apyQuery = gql`
-  query getRTokenGrowth($id: String!, $fromTime: Int!) {
-    rToken(id: $id) {
-      recentRate: hourlySnapshots(
-        first: 1
-        orderBy: timestamp
-        where: { timestamp_gte: $fromTime }
-        orderDirection: desc
-      ) {
-        rsrExchangeRate
-        basketRate
-        timestamp
-      }
-      lastRate: hourlySnapshots(
-        first: 1
-        orderBy: timestamp
-        where: { timestamp_gte: $fromTime }
-        orderDirection: asc
-      ) {
-        rsrExchangeRate
-        basketRate
-        timestamp
-      }
+    query getRTokenGrowth($id: String!, $fromTime: Int!) {
+        rToken(id: $id) {
+            recentRate: hourlySnapshots(
+                first: 1
+                orderBy: timestamp
+                where: { timestamp_gte: $fromTime }
+                orderDirection: desc
+            ) {
+                rsrExchangeRate
+                basketRate
+                timestamp
+            }
+            lastRate: hourlySnapshots(
+                first: 1
+                orderBy: timestamp
+                where: { timestamp_gte: $fromTime }
+                orderDirection: asc
+            ) {
+                rsrExchangeRate
+                basketRate
+                timestamp
+            }
+        }
     }
-  }
-`
+`;
 
 /**
  * Fetch a list of tokens metadata from the blockchain
  */
 const getRTokenMeta = async (
-  addresses: string[],
-  provider: Web3Provider
+    addresses: string[],
+    provider: Web3Provider
 ): Promise<{ tokens: Token[]; main: string; mandate: string }> => {
-  const calls = addresses.reduce((acc, address) => {
-    const params = { abi: ERC20Interface, address, args: [] }
+    const calls = addresses.reduce((acc, address) => {
+        const params = { abi: ERC20Interface, address, args: [] };
 
-    return [
-      ...acc,
-      {
-        ...params,
-        method: 'name',
-      },
-      {
-        ...params,
-        method: 'symbol',
-      },
-      {
-        ...params,
-        method: 'decimals',
-      },
-    ]
-  }, [] as ContractCall[])
+        return [
+            ...acc,
+            {
+                ...params,
+                method: "name",
+            },
+            {
+                ...params,
+                method: "symbol",
+            },
+            {
+                ...params,
+                method: "decimals",
+            },
+        ];
+    }, [] as ContractCall[]);
 
-  calls.unshift(
-    {
-      abi: RTokenInterface,
-      address: addresses[0],
-      args: [],
-      method: 'main',
-    },
-    {
-      abi: RTokenInterface,
-      address: addresses[0],
-      args: [],
-      method: 'mandate',
-    }
-  )
+    calls.unshift(
+        {
+            abi: RTokenInterface,
+            address: addresses[0],
+            args: [],
+            method: "main",
+        },
+        {
+            abi: RTokenInterface,
+            address: addresses[0],
+            args: [],
+            method: "mandate",
+        }
+    );
 
-  const multicallResult = await promiseMulticall(calls, provider)
-  const main = multicallResult.shift()
-  const mandate = multicallResult.shift()
+    const multicallResult = await promiseMulticall(calls, provider);
+    const main = multicallResult.shift();
+    const mandate = multicallResult.shift();
 
-  const tokens = addresses.reduce((tokens, address) => {
-    const [name, symbol, decimals] = multicallResult.splice(0, 3)
+    const tokens = addresses.reduce((tokens, address) => {
+        const [name, symbol, decimals] = multicallResult.splice(0, 3);
 
-    tokens.push({
-      address,
-      name,
-      symbol,
-      decimals,
-    })
+        tokens.push({
+            address,
+            name,
+            symbol,
+            decimals,
+        });
 
-    return tokens
-  }, [] as Token[])
+        return tokens;
+    }, [] as Token[]);
 
-  return {
-    tokens,
-    main,
-    mandate,
-  }
-}
+    return {
+        tokens,
+        main,
+        mandate,
+    };
+};
 
 const updateTokenAtom = atom(null, (get, set, data: ReserveToken) => {
-  const tokens = get(reserveTokensAtom)
-  set(reserveTokensAtom, { ...tokens, [data.address]: data })
-})
+    const tokens = get(reserveTokensAtom);
+    set(reserveTokensAtom, { ...tokens, [data.address]: data });
+});
 
 // Try to grab the token meta from theGraph
 // If it fails, get it from the blockchain (only whitelisted tokens)
 // TODO: Loading state?
 const ReserveTokenUpdater = () => {
-  const [selectedAddress, setSelectedToken] = useAtom(selectedRTokenAtom)
-  const blockNumber = useBlockNumber()
-  const windowVisible = useIsWindowVisible()
-  const mainAddress = useAtomValue(rTokenMainAtom)
-  const updateApy = useUpdateAtom(rTokenYieldAtom)
-  const updateTokenStatus = useUpdateAtom(rTokenStatusAtom)
-  const updateToken = useUpdateAtom(updateTokenAtom)
-  const resetMetrics = useResetAtom(tokenMetricsAtom)
-  const updateAccountRole = useUpdateAtom(accountRoleAtom)
-  const setDistribution = useUpdateAtom(rTokenDistributionAtom)
-  const setCollateralDist = useUpdateAtom(rTokenCollateralDist)
-  const [searchParams] = useSearchParams()
-  const currentAddress = searchParams.get('token')
-  const account = useAtomValue(walletAtom)
-  const { provider } = useWeb3React()
-  const timestamp = useAtomValue(blockTimestampAtom)
-  const fromTime = useMemo(() => {
-    return timestamp - 2592000
-  }, [!!timestamp])
-  // TODO: poll from blockNumber
-  const { data } = useQuery(mainAddress ? apyQuery : null, {
-    id: selectedAddress.toLowerCase(),
-    fromTime,
-  })
+    const [selectedAddress, setSelectedToken] = useAtom(selectedRTokenAtom);
+    const blockNumber = useBlockNumber();
+    const windowVisible = useIsWindowVisible();
+    const mainAddress = useAtomValue(rTokenMainAtom);
+    const updateApy = useUpdateAtom(rTokenYieldAtom);
+    const updateTokenStatus = useUpdateAtom(rTokenStatusAtom);
+    const updateToken = useUpdateAtom(updateTokenAtom);
+    const resetMetrics = useResetAtom(tokenMetricsAtom);
+    const updateAccountRole = useUpdateAtom(accountRoleAtom);
+    const setDistribution = useUpdateAtom(rTokenDistributionAtom);
+    const setCollateralDist = useUpdateAtom(rTokenCollateralDist);
+    const [searchParams] = useSearchParams();
+    const currentAddress = searchParams.get("token");
+    const account = useAtomValue(walletAtom);
+    const { provider } = useWeb3React();
+    const timestamp = useAtomValue(blockTimestampAtom);
+    const fromTime = useMemo(() => {
+        return timestamp - 2592000;
+    }, [!!timestamp]);
+    // TODO: poll from blockNumber
+    const { data } = useQuery(mainAddress ? apyQuery : null, {
+        id: selectedAddress.toLowerCase(),
+        fromTime,
+    });
 
-  const setTokenStatus = useCallback(
-    async (mainAddress: string, provider: Web3Provider) => {
-      try {
-        let status = RTOKEN_STATUS.SOUND
-        const [isPaused, isFrozen] = await promiseMulticall(
-          [
-            {
-              abi: MainInterface,
-              address: mainAddress,
-              args: [],
-              method: 'paused',
-            },
-            {
-              abi: MainInterface,
-              address: mainAddress,
-              args: [],
-              method: 'frozen',
-            },
-          ],
-          provider
-        )
+    const setTokenStatus = useCallback(async (mainAddress: string, provider: Web3Provider) => {
+        try {
+            let status = RTOKEN_STATUS.SOUND;
+            const [isPaused, isFrozen] = await promiseMulticall(
+                [
+                    {
+                        abi: MainInterface,
+                        address: mainAddress,
+                        args: [],
+                        method: "paused",
+                    },
+                    {
+                        abi: MainInterface,
+                        address: mainAddress,
+                        args: [],
+                        method: "frozen",
+                    },
+                ],
+                provider
+            );
 
-        if (isPaused) {
-          status = RTOKEN_STATUS.PAUSED
-        } else if (isFrozen) {
-          status = RTOKEN_STATUS.FROZEN
+            if (isPaused) {
+                status = RTOKEN_STATUS.PAUSED;
+            } else if (isFrozen) {
+                status = RTOKEN_STATUS.FROZEN;
+            }
+
+            updateTokenStatus(status);
+        } catch (e) {
+            console.error("Error getting token status", e);
+        }
+    }, []);
+
+    const getBackingDistribution = useCallback(
+        async (tokenAddress: string, provider: Web3Provider) => {
+            try {
+                const callParams = {
+                    abi: FacadeInterface,
+                    address: FACADE_ADDRESS[CHAIN_ID],
+                    args: [tokenAddress],
+                };
+
+                const [{ erc20s, uoaShares, targets }, { backing, insurance }] =
+                    await promiseMulticall(
+                        [
+                            {
+                                ...callParams,
+                                method: "basketBreakdown",
+                            },
+                            {
+                                ...callParams,
+                                method: "backingOverview",
+                            },
+                        ],
+                        provider
+                    );
+
+                setDistribution({
+                    backing: Math.ceil(Number(formatEther(backing)) * 100),
+                    insurance: Math.ceil(Number(formatEther(insurance)) * 100),
+                });
+                setCollateralDist(
+                    erc20s.reduce(
+                        (acc: any, current: any, index: any) => ({
+                            ...acc,
+                            [current]: {
+                                share: truncateDecimals(+formatEther(uoaShares[index]) * 100, 4),
+                                targetUnit: ethers.utils
+                                    .parseBytes32String(targets[index])
+                                    .toUpperCase(),
+                            },
+                        }),
+                        {}
+                    )
+                );
+            } catch (e) {
+                console.error("Error getting rToken backing distribution", e);
+            }
+        },
+        []
+    );
+
+    const getTokenMeta = useCallback(async (address: string, provider: Web3Provider) => {
+        const isRSV = address === RSV.address;
+
+        if (isRSV) {
+            return updateToken({ ...RSV, meta: rtokens[address] });
         }
 
-        updateTokenStatus(status)
-      } catch (e) {
-        console.error('Error getting token status', e)
-      }
-    },
-    []
-  )
+        try {
+            const callParams = {
+                abi: FacadeInterface,
+                address: FACADE_ADDRESS[CHAIN_ID],
+                args: [address],
+            };
 
-  const getBackingDistribution = useCallback(
-    async (tokenAddress: string, provider: Web3Provider) => {
-      try {
-        const callParams = {
-          abi: FacadeInterface,
-          address: FACADE_ADDRESS[CHAIN_ID],
-          args: [tokenAddress],
+            const [basket, stTokenAddress] = await promiseMulticall(
+                [
+                    {
+                        ...callParams,
+                        method: "basketTokens",
+                    },
+                    {
+                        ...callParams,
+                        method: "stToken",
+                    },
+                ],
+                provider
+            );
+
+            const {
+                main,
+                mandate,
+                tokens: [rToken, stToken, ...collaterals],
+            } = await getRTokenMeta([address, stTokenAddress, ...basket], provider);
+
+            const logo = rtokens[address]?.logo
+                ? require(`@lc-labs/rtokens/images/${rtokens[address].logo}`)
+                : "/svgs/default.svg";
+
+            return updateToken({
+                ...rToken,
+                stToken,
+                collaterals,
+                main,
+                logo,
+                mandate,
+                unlisted: !rtokens[rToken.address],
+                meta: rtokens[rToken.address],
+            });
+        } catch (e) {
+            console.error("Error fetching token info", e);
+            if (windowVisible) {
+                error("Network Error", "Error fetching token information");
+            }
         }
+    }, []);
 
-        const [{ erc20s, uoaShares, targets }, { backing, insurance }] =
-          await promiseMulticall(
-            [
-              {
-                ...callParams,
-                method: 'basketBreakdown',
-              },
-              {
-                ...callParams,
-                method: 'backingOverview',
-              },
-            ],
-            provider
-          )
+    const getUserRole = useCallback(
+        async (provider: Web3Provider, mainAddress: string, accountAddress: string) => {
+            try {
+                const callParams = {
+                    abi: MainInterface,
+                    address: mainAddress,
+                    method: "hasRole",
+                };
 
-        setDistribution({
-          backing: Math.ceil(Number(formatEther(backing)) * 100),
-          insurance: Math.ceil(Number(formatEther(insurance)) * 100),
-        })
-        setCollateralDist(
-          erc20s.reduce(
-            (acc: any, current: any, index: any) => ({
-              ...acc,
-              [current]: {
-                share: truncateDecimals(
-                  +formatEther(uoaShares[index]) * 100,
-                  4
-                ),
-                targetUnit: ethers.utils
-                  .parseBytes32String(targets[index])
-                  .toUpperCase(),
-              },
-            }),
-            {}
-          )
-        )
-      } catch (e) {
-        console.error('Error getting rToken backing distribution', e)
-      }
-    },
-    []
-  )
+                const [isOwner, isPauser, isFreezer] = await promiseMulticall(
+                    [
+                        {
+                            ...callParams,
+                            args: [ethers.utils.formatBytes32String("OWNER"), accountAddress],
+                        },
+                        {
+                            ...callParams,
+                            args: [ethers.utils.formatBytes32String("PAUSER"), accountAddress],
+                        },
+                        {
+                            ...callParams,
+                            args: [ethers.utils.formatBytes32String("FREEZER"), accountAddress],
+                        },
+                    ],
+                    provider
+                );
 
-  const getTokenMeta = useCallback(
-    async (address: string, provider: Web3Provider) => {
-      const isRSV = address === RSV.address
+                updateAccountRole({
+                    owner: isOwner,
+                    pauser: isPauser,
+                    freezer: isFreezer,
+                });
+            } catch (e) {
+                console.error("Error fetching user role", e);
+            }
+        },
+        []
+    );
 
-      if (isRSV) {
-        return updateToken({ ...RSV, meta: rtokens[address] })
-      }
+    useEffect(() => {
+        const token = isAddress(currentAddress ?? "");
 
-      try {
-        const callParams = {
-          abi: FacadeInterface,
-          address: FACADE_ADDRESS[CHAIN_ID],
-          args: [address],
+        if (token && token !== selectedAddress) {
+            setSelectedToken(token);
         }
+    }, [currentAddress]);
 
-        const [basket, stTokenAddress] = await promiseMulticall(
-          [
-            {
-              ...callParams,
-              method: 'basketTokens',
-            },
-            {
-              ...callParams,
-              method: 'stToken',
-            },
-          ],
-          provider
-        )
-
-        const {
-          main,
-          mandate,
-          tokens: [rToken, stToken, ...collaterals],
-        } = await getRTokenMeta([address, stTokenAddress, ...basket], provider)
-
-        const logo = rtokens[address]?.logo
-          ? require(`@lc-labs/rtokens/images/${rtokens[address].logo}`)
-          : '/svgs/default.svg'
-
-        return updateToken({
-          ...rToken,
-          stToken,
-          collaterals,
-          main,
-          logo,
-          mandate,
-          unlisted: !rtokens[rToken.address],
-          meta: rtokens[rToken.address],
-        })
-      } catch (e) {
-        console.error('Error fetching token info', e)
-        if (windowVisible) {
-          error('Network Error', 'Error fetching token information')
+    useEffect(() => {
+        if (selectedAddress && provider) {
+            getTokenMeta(selectedAddress, provider);
         }
-      }
-    },
-    []
-  )
+    }, [provider, selectedAddress]);
 
-  const getUserRole = useCallback(
-    async (
-      provider: Web3Provider,
-      mainAddress: string,
-      accountAddress: string
-    ) => {
-      try {
-        const callParams = {
-          abi: MainInterface,
-          address: mainAddress,
-          method: 'hasRole',
+    useEffect(() => {
+        if (selectedAddress) {
+            resetMetrics();
         }
+    }, [selectedAddress]);
 
-        const [isOwner, isPauser, isFreezer] = await promiseMulticall(
-          [
-            {
-              ...callParams,
-              args: [ethers.utils.formatBytes32String('OWNER'), accountAddress],
-            },
-            {
-              ...callParams,
-              args: [
-                ethers.utils.formatBytes32String('PAUSER'),
-                accountAddress,
-              ],
-            },
-            {
-              ...callParams,
-              args: [
-                ethers.utils.formatBytes32String('FREEZER'),
-                accountAddress,
-              ],
-            },
-          ],
-          provider
-        )
+    // Checks rToken status on every block
+    useEffect(() => {
+        if (provider && blockNumber && mainAddress) {
+            setTokenStatus(mainAddress, provider);
+        } else {
+            updateTokenStatus(RTOKEN_STATUS.SOUND);
+        }
+    }, [blockNumber, mainAddress]);
 
-        updateAccountRole({
-          owner: isOwner,
-          pauser: isPauser,
-          freezer: isFreezer,
-        })
-      } catch (e) {
-        console.error('Error fetching user role', e)
-      }
-    },
-    []
-  )
+    // User role
+    useEffect(() => {
+        if (provider) {
+            if (!mainAddress || !account) {
+                updateAccountRole({ owner: false, freezer: false, pauser: false });
+            } else {
+                getUserRole(provider, mainAddress, account);
+            }
+        }
+    }, [mainAddress, account, blockNumber]);
 
-  useEffect(() => {
-    const token = isAddress(currentAddress ?? '')
+    useEffect(() => {
+        // Use mainAddress to validate we have an rToken selected
+        if (mainAddress && provider) {
+            getBackingDistribution(selectedAddress, provider);
+        }
+    }, [blockNumber, mainAddress]);
 
-    if (token && token !== selectedAddress) {
-      setSelectedToken(token)
-    }
-  }, [currentAddress])
+    useEffect(() => {
+        if (data) {
+            // TODO: Repeated logic, encapsulate in a diff place
+            let tokenApy = 0;
+            let stakingApy = 0;
 
-  useEffect(() => {
-    if (selectedAddress && provider) {
-      getTokenMeta(selectedAddress, provider)
-    }
-  }, [provider, selectedAddress])
+            const recentRate = data.rToken?.recentRate[0];
+            const lastRate = data.rToken?.lastRate[0];
 
-  useEffect(() => {
-    if (selectedAddress) {
-      resetMetrics()
-    }
-  }, [selectedAddress])
+            if (recentRate && lastRate && recentRate.timestamp !== lastRate.timestamp) {
+                [tokenApy, stakingApy] = calculateApy(recentRate, lastRate);
+            }
 
-  // Checks rToken status on every block
-  useEffect(() => {
-    if (provider && blockNumber && mainAddress) {
-      setTokenStatus(mainAddress, provider)
-    } else {
-      updateTokenStatus(RTOKEN_STATUS.SOUND)
-    }
-  }, [blockNumber, mainAddress])
+            updateApy({ tokenApy, stakingApy });
+        }
+    }, [data]);
 
-  // User role
-  useEffect(() => {
-    if (provider) {
-      if (!mainAddress || !account) {
-        updateAccountRole({ owner: false, freezer: false, pauser: false })
-      } else {
-        getUserRole(provider, mainAddress, account)
-      }
-    }
-  }, [mainAddress, account, blockNumber])
+    return null;
+};
 
-  useEffect(() => {
-    // Use mainAddress to validate we have an rToken selected
-    if (mainAddress && provider) {
-      getBackingDistribution(selectedAddress, provider)
-    }
-  }, [blockNumber, mainAddress])
-
-  useEffect(() => {
-    if (data) {
-      // TODO: Repeated logic, encapsulate in a diff place
-      let tokenApy = 0
-      let stakingApy = 0
-
-      const recentRate = data.rToken?.recentRate[0]
-      const lastRate = data.rToken?.lastRate[0]
-
-      if (
-        recentRate &&
-        lastRate &&
-        recentRate.timestamp !== lastRate.timestamp
-      ) {
-        ;[tokenApy, stakingApy] = calculateApy(recentRate, lastRate)
-      }
-
-      updateApy({ tokenApy, stakingApy })
-    }
-  }, [data])
-
-  return null
-}
-
-export default ReserveTokenUpdater
+export default ReserveTokenUpdater;

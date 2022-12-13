@@ -1,3 +1,3 @@
-const ListedTokens = () => {}
+const ListedTokens = () => {};
 
-export default ListedTokens
+export default ListedTokens;

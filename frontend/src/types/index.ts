@@ -1,155 +1,153 @@
-import { BigNumber } from '@ethersproject/bignumber'
-import { Interface } from '@ethersproject/abi'
-import { Contract, ContractTransaction } from '@ethersproject/contracts'
+import { BigNumber } from "@ethersproject/bignumber";
+import { Interface } from "@ethersproject/abi";
+import { Contract, ContractTransaction } from "@ethersproject/contracts";
 
-export type AddressMap = { [chainId: number]: string }
+export type AddressMap = { [chainId: number]: string };
 
 export interface StringMap {
-  [key: string]: any
+    [key: string]: any;
 }
 
 export interface WalletTransaction {
-  [x: string]: TransactionState[]
+    [x: string]: TransactionState[];
 }
 
 export interface TransactionMap {
-  [x: string]: WalletTransaction
+    [x: string]: WalletTransaction;
 }
 
 export interface ContractCall {
-  abi: Interface
-  address: string
-  method: string
-  args: any[]
+    abi: Interface;
+    address: string;
+    method: string;
+    args: any[];
 }
 
 export interface TransactionState {
-  id: string // uuid generated
-  description: string
-  status: string
-  value: string
-  call: {
-    abi: string
-    address: string
-    method: string
-    args: any[]
-  }
-  hash?: string
-  error?: string
-  confirmedAt?: number
-  extra?: { [x: string]: string }
-  // timestamps
-  createdAt?: number // timestamp UTC
-  updatedAt?: number // timestamp UTC
+    id: string; // uuid generated
+    description: string;
+    status: string;
+    value: string;
+    call: {
+        abi: string;
+        address: string;
+        method: string;
+        args: any[];
+    };
+    hash?: string;
+    error?: string;
+    confirmedAt?: number;
+    extra?: { [x: string]: string };
+    // timestamps
+    createdAt?: number; // timestamp UTC
+    updatedAt?: number; // timestamp UTC
 }
 
 export interface TransactionRecord {
-  type: string
-  amount?: number
-  amountUSD: number | string
-  timestamp: number
-  hash?: string
+    type: string;
+    amount?: number;
+    amountUSD: number | string;
+    timestamp: number;
+    hash?: string;
 }
 
 export interface Wallet {
-  address: string
-  alias: string
+    address: string;
+    alias: string;
 }
 export interface RawCall {
-  address: string
-  data: string
+    address: string;
+    data: string;
 }
 
-export type Awaited<T> = T extends PromiseLike<infer U> ? U : T
+export type Awaited<T> = T extends PromiseLike<infer U> ? U : T;
 
 export type Params<
-  T extends TypedContract,
-  FN extends ContractFunctionNames<T> | ContractMethodNames<T>
-> = Parameters<T['functions'][FN]>
+    T extends TypedContract,
+    FN extends ContractFunctionNames<T> | ContractMethodNames<T>
+> = Parameters<T["functions"][FN]>;
 
 export type RawCallResult =
-  | {
-      value: string
-      success: boolean
-    }
-  | undefined
+    | {
+          value: string;
+          success: boolean;
+      }
+    | undefined;
 
 export type MulticallState = {
-  [address: string]:
-    | {
-        [data: string]: RawCallResult
-      }
-    | undefined
-}
+    [address: string]:
+        | {
+              [data: string]: RawCallResult;
+          }
+        | undefined;
+};
 
-export type Falsy = undefined | false | '' | null
+export type Falsy = undefined | false | "" | null;
 
 export type TypedContract = Contract & {
-  functions: Record<string, (...args: any[]) => any>
-}
+    functions: Record<string, (...args: any[]) => any>;
+};
 
 export type ContractFunctionNames<T extends TypedContract> = keyof {
-  [P in keyof T['functions'] as ReturnType<
-    T['functions'][P]
-  > extends Promise<ContractTransaction>
-    ? P
-    : never]: void
+    [P in keyof T["functions"] as ReturnType<
+        T["functions"][P]
+    > extends Promise<ContractTransaction>
+        ? P
+        : never]: void;
 } &
-  string
+    string;
 
 export type ContractMethodNames<T extends TypedContract> = keyof {
-  [P in keyof T['functions'] as ReturnType<T['functions'][P]> extends Promise<
-    any[]
-  >
-    ? P
-    : never]: void
+    [P in keyof T["functions"] as ReturnType<T["functions"][P]> extends Promise<any[]>
+        ? P
+        : never]: void;
 } &
-  string
+    string;
 
 // Generic token definition ERC20 + extra data
 export interface Token {
-  address: string
-  symbol: string
-  name: string
-  decimals: number
-  logo?: string
+    address: string;
+    symbol: string;
+    name: string;
+    decimals: number;
+    logo?: string;
 }
 
 export interface BigNumberMap {
-  [x: string]: BigNumber
+    [x: string]: BigNumber;
 }
 
 export interface RTokenMeta {
-  address: string
-  name: string
-  symbol: string
-  decimals: number
-  logo?: string
-  about?: string
-  website?: string
-  governance?: {
-    voting?: string
-    discussion?: string
-  }
-  support?: {
-    email?: string
-    url?: string
-  }
-  social?: {
-    blog?: string
-    chat?: string
-    facebook?: string
-    forum?: string
-    github?: string
-    gitter?: string
-    instagram?: string
-    linkedin?: string
-    reddit?: string
-    slack?: string
-    telegram?: string
-    twitter?: string
-    youtube?: string
-  }
+    address: string;
+    name: string;
+    symbol: string;
+    decimals: number;
+    logo?: string;
+    about?: string;
+    website?: string;
+    governance?: {
+        voting?: string;
+        discussion?: string;
+    };
+    support?: {
+        email?: string;
+        url?: string;
+    };
+    social?: {
+        blog?: string;
+        chat?: string;
+        facebook?: string;
+        forum?: string;
+        github?: string;
+        gitter?: string;
+        instagram?: string;
+        linkedin?: string;
+        reddit?: string;
+        slack?: string;
+        telegram?: string;
+        twitter?: string;
+        youtube?: string;
+    };
 }
 
 /**
@@ -158,44 +156,44 @@ export interface RTokenMeta {
  * This interface represents a complete ETF ecosystem
  */
 export interface ReserveToken extends Token {
-  collaterals: Token[] // current basket collateral list
-  stToken?: Token // staking RSR token
-  main?: string // main contract address
-  isRSV?: boolean // only for RSV
-  logo?: string // rToken logo
-  unlisted?: boolean // Mark if the token is not listed
-  mandate?: string
-  meta?: RTokenMeta
+    collaterals: Token[]; // current basket collateral list
+    stToken?: Token; // staking RSR token
+    main?: string; // main contract address
+    isRSV?: boolean; // only for RSV
+    logo?: string; // rToken logo
+    unlisted?: boolean; // Mark if the token is not listed
+    mandate?: string;
+    meta?: RTokenMeta;
 }
 
 export interface AccountToken {
-  address: string
-  name: string
-  symbol: string
-  usdPrice: number
-  balance: number
-  usdAmount: number
-  apy: number
+    address: string;
+    name: string;
+    symbol: string;
+    usdPrice: number;
+    balance: number;
+    usdAmount: number;
+    apy: number;
 }
 
 export interface AccountPosition {
-  name: string
-  symbol: string
-  balance: number
-  apy: number
-  exchangeRate: number
-  rsrAmount: number
-  usdAmount: number
+    name: string;
+    symbol: string;
+    balance: number;
+    apy: number;
+    exchangeRate: number;
+    rsrAmount: number;
+    usdAmount: number;
 }
 
 export interface TokenStats {
-  insurance: number
-  insuranceUsd: string
-  supply: number
-  supplyUsd: string
-  cumulativeVolume: number
-  cumulativeVolumeUsd: string
-  transferCount: number
-  dailyTransferCount: number
-  dailyVolume: string
+    insurance: number;
+    insuranceUsd: string;
+    supply: number;
+    supplyUsd: string;
+    cumulativeVolume: number;
+    cumulativeVolumeUsd: string;
+    transferCount: number;
+    dailyTransferCount: number;
+    dailyVolume: string;
 }

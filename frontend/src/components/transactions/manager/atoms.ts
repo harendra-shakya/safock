@@ -1,3 +1,3 @@
-import { atom } from 'jotai'
+import { atom } from "jotai";
 
-export const txSidebarToggleAtom = atom(false)
+export const txSidebarToggleAtom = atom(false);

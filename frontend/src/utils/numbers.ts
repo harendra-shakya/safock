@@ -1,3 +1,3 @@
-import { parseEther } from '@ethersproject/units'
+import { parseEther } from "@ethersproject/units";
 
-export const ONE_ETH = parseEther('1')
+export const ONE_ETH = parseEther("1");

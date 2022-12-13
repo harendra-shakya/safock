@@ -1,58 +1,57 @@
-import type { AddEthereumChainParameter } from '@web3-react/types'
+import type { AddEthereumChainParameter } from "@web3-react/types";
 
 interface BasicChainInformation {
-  urls: string[]
-  name: string
+    urls: string[];
+    name: string;
 }
 
 interface ExtendedChainInformation extends BasicChainInformation {
-  nativeCurrency: AddEthereumChainParameter['nativeCurrency']
-  blockExplorerUrls: AddEthereumChainParameter['blockExplorerUrls']
+    nativeCurrency: AddEthereumChainParameter["nativeCurrency"];
+    blockExplorerUrls: AddEthereumChainParameter["blockExplorerUrls"];
 }
 
 export const ChainId = {
-  Mainnet: 1,
-  Goerli: 5,
-  Hardhat: 31337,
-}
+    Mainnet: 1,
+    Goerli: 5,
+    Hardhat: 31337,
+};
 
-export const CHAIN_ID =
-  Number(process.env.REACT_APP_CHAIN_ID) || ChainId.Goerli
+export const CHAIN_ID = Number(process.env.REACT_APP_CHAIN_ID) || ChainId.Goerli;
 
 /**
  * Supported chains
  */
 export const CHAINS: {
-  [chainId: number]: BasicChainInformation | ExtendedChainInformation
+    [chainId: number]: BasicChainInformation | ExtendedChainInformation;
 } = {
-  [ChainId.Mainnet]: {
-    urls: [
-      'https://cloudflare-eth.com/v1/mainnet',
-      'https://api.mycryptoapi.com/eth',
-      'https://rpc.ankr.com/eth',
-      'https://eth-mainnet.public.blastapi.io',
-    ],
-    name: 'Mainnet',
-  },
-  [ChainId.Goerli]: {
-    urls: ['https://rpc.ankr.com/eth_goerli'],
-    name: 'Goerli',
-  },
-  // Hardhat
-  [ChainId.Hardhat]: {
-    urls: ['https://demochain.reserve.org/chain'],
-    name: 'Hardhat',
-  },
-}
+    [ChainId.Mainnet]: {
+        urls: [
+            "https://cloudflare-eth.com/v1/mainnet",
+            "https://api.mycryptoapi.com/eth",
+            "https://rpc.ankr.com/eth",
+            "https://eth-mainnet.public.blastapi.io",
+        ],
+        name: "Mainnet",
+    },
+    [ChainId.Goerli]: {
+        urls: ["https://rpc.ankr.com/eth_goerli"],
+        name: "Goerli",
+    },
+    // Hardhat
+    [ChainId.Hardhat]: {
+        urls: ["https://demochain.reserve.org/chain"],
+        name: "Hardhat",
+    },
+};
 
-export const URLS: { [chainId: number]: string[] } = Object.keys(
-  CHAINS
-).reduce<{ [chainId: number]: string[] }>((accumulator, chainId) => {
-  const validURLs: string[] = CHAINS[Number(chainId)].urls
+export const URLS: { [chainId: number]: string[] } = Object.keys(CHAINS).reduce<{
+    [chainId: number]: string[];
+}>((accumulator, chainId) => {
+    const validURLs: string[] = CHAINS[Number(chainId)].urls;
 
-  if (validURLs.length) {
-    accumulator[Number(chainId)] = validURLs
-  }
+    if (validURLs.length) {
+        accumulator[Number(chainId)] = validURLs;
+    }
 
-  return accumulator
-}, {})
+    return accumulator;
+}, {});

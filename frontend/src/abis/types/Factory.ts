@@ -2,126 +2,105 @@
 /* tslint:disable */
 /* eslint-disable */
 import type {
-  BaseContract,
-  BigNumber,
-  BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
+    BaseContract,
+    BigNumber,
+    BytesLike,
+    CallOverrides,
+    ContractTransaction,
+    Overrides,
+    PopulatedTransaction,
+    Signer,
+    utils,
 } from "ethers";
-import type {
-  FunctionFragment,
-  Result,
-  EventFragment,
-} from "@ethersproject/abi";
+import type { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
-import type {
-  TypedEventFilter,
-  TypedEvent,
-  TypedListener,
-  OnEvent,
-} from "./common";
+import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
 export interface FactoryInterface extends utils.Interface {
-  functions: {
-    "deployToken(string,string)": FunctionFragment;
-  };
+    functions: {
+        "deployToken(string,string)": FunctionFragment;
+    };
 
-  getFunction(nameOrSignatureOrTopic: "deployToken"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "deployToken"): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "deployToken",
-    values: [string, string]
-  ): string;
+    encodeFunctionData(functionFragment: "deployToken", values: [string, string]): string;
 
-  decodeFunctionResult(
-    functionFragment: "deployToken",
-    data: BytesLike
-  ): Result;
+    decodeFunctionResult(functionFragment: "deployToken", data: BytesLike): Result;
 
-  events: {
-    "TokenCreated(address)": EventFragment;
-  };
+    events: {
+        "TokenCreated(address)": EventFragment;
+    };
 
-  getEvent(nameOrSignatureOrTopic: "TokenCreated"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "TokenCreated"): EventFragment;
 }
 
 export interface TokenCreatedEventObject {
-  tokenAddress: string;
+    tokenAddress: string;
 }
 export type TokenCreatedEvent = TypedEvent<[string], TokenCreatedEventObject>;
 
 export type TokenCreatedEventFilter = TypedEventFilter<TokenCreatedEvent>;
 
 export interface Factory extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+    connect(signerOrProvider: Signer | Provider | string): this;
+    attach(addressOrName: string): this;
+    deployed(): Promise<this>;
 
-  interface: FactoryInterface;
+    interface: FactoryInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+    queryFilter<TEvent extends TypedEvent>(
+        event: TypedEventFilter<TEvent>,
+        fromBlockOrBlockhash?: string | number | undefined,
+        toBlock?: string | number | undefined
+    ): Promise<Array<TEvent>>;
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+    listeners<TEvent extends TypedEvent>(
+        eventFilter?: TypedEventFilter<TEvent>
+    ): Array<TypedListener<TEvent>>;
+    listeners(eventName?: string): Array<Listener>;
+    removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this;
+    removeAllListeners(eventName?: string): this;
+    off: OnEvent<this>;
+    on: OnEvent<this>;
+    once: OnEvent<this>;
+    removeListener: OnEvent<this>;
 
-  functions: {
+    functions: {
+        deployToken(
+            name: string,
+            symbol: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
+    };
+
     deployToken(
-      name: string,
-      symbol: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+        name: string,
+        symbol: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-  };
 
-  deployToken(
-    name: string,
-    symbol: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+    callStatic: {
+        deployToken(name: string, symbol: string, overrides?: CallOverrides): Promise<string>;
+    };
 
-  callStatic: {
-    deployToken(
-      name: string,
-      symbol: string,
-      overrides?: CallOverrides
-    ): Promise<string>;
-  };
+    filters: {
+        "TokenCreated(address)"(tokenAddress?: null): TokenCreatedEventFilter;
+        TokenCreated(tokenAddress?: null): TokenCreatedEventFilter;
+    };
 
-  filters: {
-    "TokenCreated(address)"(tokenAddress?: null): TokenCreatedEventFilter;
-    TokenCreated(tokenAddress?: null): TokenCreatedEventFilter;
-  };
+    estimateGas: {
+        deployToken(
+            name: string,
+            symbol: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
+    };
 
-  estimateGas: {
-    deployToken(
-      name: string,
-      symbol: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    deployToken(
-      name: string,
-      symbol: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-  };
+    populateTransaction: {
+        deployToken(
+            name: string,
+            symbol: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+    };
 }

@@ -1,33 +1,30 @@
-import { atom, useAtom } from 'jotai'
-import { useAtomValue, useUpdateAtom } from 'jotai/utils'
-import { useEffect, useMemo } from 'react'
-import { callsAtom, multicallStateAtom } from 'state/atoms'
-import { Falsy, MulticallState, RawCall, RawCallResult } from 'types'
-import { addressEqual } from 'utils'
+import { atom, useAtom } from "jotai";
+import { useAtomValue, useUpdateAtom } from "jotai/utils";
+import { useEffect, useMemo } from "react";
+import { callsAtom, multicallStateAtom } from "state/atoms";
+import { Falsy, MulticallState, RawCall, RawCallResult } from "types";
+import { addressEqual } from "utils";
 
-export function extractCallResult(
-  state: MulticallState,
-  call: RawCall
-): RawCallResult {
-  return state?.[call.address]?.[call.data]
+export function extractCallResult(state: MulticallState, call: RawCall): RawCallResult {
+    return state?.[call.address]?.[call.data];
 }
 
 const setCallsAtom = atom(null, (get, set, calls: any) => {
-  set(callsAtom, [...get(callsAtom), ...calls])
-})
+    set(callsAtom, [...get(callsAtom), ...calls]);
+});
 
 const removeCallsAtom = atom(null, (get, set, calls: any) => {
-  let finalState = get(callsAtom)
-  for (const call of calls) {
-    const index = finalState.findIndex(
-      (x) => addressEqual(x.address, call.address) && x.data === call.data
-    )
-    if (index !== -1) {
-      finalState = finalState.filter((_, i) => i !== index)
+    let finalState = get(callsAtom);
+    for (const call of calls) {
+        const index = finalState.findIndex(
+            (x) => addressEqual(x.address, call.address) && x.data === call.data
+        );
+        if (index !== -1) {
+            finalState = finalState.filter((_, i) => i !== index);
+        }
     }
-  }
-  set(callsAtom, finalState)
-})
+    set(callsAtom, finalState);
+});
 
 // Ported from https://github.com/TrueFiEng/useDApp/blob/master/packages/core/src/hooks/useRawCalls.ts
 /**
@@ -35,27 +32,24 @@ const removeCallsAtom = atom(null, (get, set, calls: any) => {
  * The hook will cause the component to refresh when values change.
  */
 export function useRawCalls(calls: (RawCall | Falsy)[]): RawCallResult[] {
-  const setCalls = useUpdateAtom(setCallsAtom)
-  const removeCalls = useUpdateAtom(removeCallsAtom)
-  const multicallState = useAtomValue(multicallStateAtom)
-  const callsString = JSON.stringify(calls)
+    const setCalls = useUpdateAtom(setCallsAtom);
+    const removeCalls = useUpdateAtom(removeCallsAtom);
+    const multicallState = useAtomValue(multicallStateAtom);
+    const callsString = JSON.stringify(calls);
 
-  useEffect(() => {
-    const filteredCalls = calls.filter(Boolean) as RawCall[]
-    setCalls(filteredCalls)
-    return () => {
-      removeCalls(filteredCalls)
-    }
-  }, [callsString, setCalls])
+    useEffect(() => {
+        const filteredCalls = calls.filter(Boolean) as RawCall[];
+        setCalls(filteredCalls);
+        return () => {
+            removeCalls(filteredCalls);
+        };
+    }, [callsString, setCalls]);
 
-  // TODO: Multichain support
-  return useMemo(
-    () =>
-      calls.map((call) =>
-        call ? extractCallResult(multicallState, call) : undefined
-      ),
-    [callsString, multicallState]
-  )
+    // TODO: Multichain support
+    return useMemo(
+        () => calls.map((call) => (call ? extractCallResult(multicallState, call) : undefined)),
+        [callsString, multicallState]
+    );
 }
 
 /**
@@ -66,5 +60,5 @@ export function useRawCalls(calls: (RawCall | Falsy)[]): RawCallResult[] {
  * It is recommended to use useCall where applicable instead of this method.
  */
 export function useRawCall(call: RawCall | Falsy) {
-  return useRawCalls([call])[0]
+    return useRawCalls([call])[0];
 }

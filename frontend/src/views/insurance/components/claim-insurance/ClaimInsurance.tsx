@@ -1,33 +1,156 @@
-import { Trans } from '@lingui/macro'
-import { Button } from 'components'
-import { useAtomValue } from 'jotai/utils'
-import { useState } from 'react'
-import { BoxProps, Card } from 'theme-ui'
-import { isValidUnstakeAmountAtom } from 'views/insurance/atoms'
-import ConfirmUnstake from './ConfirmClaimInsurance'
-import UnstakeInput from './ClaimInsuranceInput'
+import { Trans } from "@lingui/macro";
+import { Button } from "components";
+import { useState } from "react";
+import { BoxProps, Card } from "theme-ui";
+import useRToken from "hooks/useRToken";
 
-const ClaimInsurance = (props: BoxProps) => {
-  const [confirming, setConfirming] = useState(false)
-  const isValid = useAtomValue(isValidUnstakeAmountAtom)
+import { InsureTransactionInput } from "components/transaction-input";
 
-  return (
-    <>
-      {confirming && <ConfirmUnstake onClose={() => setConfirming(false)} />}
-      <Card p={4} {...props}>
-        <UnstakeInput />
-        <Button
-          disabled={!isValid}
-          sx={{ width: '100%' }}
-          mt={3}
-          onClick={() => setConfirming(true)}
-        >
-          - <Trans>Unstake stRSR</Trans>
-        </Button>
-      </Card>
-    </>
-  )
-}
+import { ethers } from "ethers";
+import { SAFOCK_ADDRESS } from "utils/addresses";
+import erc20Abi from "abis/ERC20.json";
+import safockAbi from "abis/safock.json";
 
-export default ClaimInsurance
+import { LoadingButton } from "components/button";
+import Modal from "components/modal";
+import { Divider, Flex, Text, Link, Box, Spinner } from "theme-ui";
 
+const Insure = (props: BoxProps) => {
+    const rToken = useRToken();
+    const [showModal, setShowModal] = useState(false);
+    const [amount, setAmount] = useState("0");
+    const [planNum, setPlanNum] = useState("0");
+    const [signing, setSigning] = useState(false);
+    const [paymentCurrency, setPaymentCurrency] = useState(
+        "0xAE64954A904da3fD9D71945980A849B8A9F755d7"
+    );
+    const [tokenName, setTokenName] = useState("USDT");
+    const [isOkDisabled, setIsOkDisabled] = useState(false);
+    const [info, setInfo] = useState(`Allow to use your ${tokenName}`);
+
+    const provideInsurance = async () => {
+        try {
+            console.log("providing insurance...");
+            if (+amount <= 0) {
+                alert("invalid Amount!");
+                setShowModal(false);
+                return;
+            }
+            if (+planNum >= 3) {
+                alert("Wrong plan!");
+                setShowModal(false);
+                return;
+            }
+            setInfo(`Allow to use your ${tokenName}`);
+
+            setIsOkDisabled(true);
+            const { ethereum }: any = window;
+            const provider = new ethers.providers.Web3Provider(ethereum);
+            const signer = provider.getSigner();
+
+            const safock = new ethers.Contract(SAFOCK_ADDRESS[5], safockAbi, signer);
+
+            const token = await new ethers.Contract(paymentCurrency, erc20Abi, signer);
+
+            setInfo(`Approved! Receving confirmations.....`);
+
+            let tx = await token.approve(
+                safock.address,
+                ethers.utils.parseEther((+amount).toString())
+            );
+
+            setInfo(`Confirm Insurance Plan.....`);
+
+            let txReceipt = await tx.wait(1);
+            if (txReceipt.status === 1) {
+                console.log("aprroved");
+            } else {
+                alert("Tx failed. Plz try agains!");
+            }
+
+            tx = await safock.insurance(planNum, paymentCurrency, rToken?.address, amount);
+            setInfo("receiving confirmations...");
+            txReceipt = await tx.wait();
+            if (txReceipt.status === 1) {
+                setInfo("done!");
+            } else {
+                alert("Tx failed. Plz try agains!");
+            }
+            setShowModal(false);
+            setIsOkDisabled(false);
+            setInfo(`Allow to use your ${tokenName}`);
+        } catch (e) {
+            console.log(e);
+            setIsOkDisabled(false);
+            setInfo("");
+        }
+    };
+    const modalStyle = { maxWidth: "420px" };
+
+    return (
+        <>
+            <Card p={4} {...props}>
+                <InsureTransactionInput
+                    title="Amount"
+                    placeholder={`${rToken?.symbol} amount`}
+                    onChange={(e) => {
+                        setAmount((e.target as HTMLInputElement).value);
+                    }}
+                    {...props}
+                />
+                <InsureTransactionInput
+                    title="Plan"
+                    placeholder={`0`}
+                    onChange={(e) => {
+                        setPlanNum((e.target as HTMLInputElement).value);
+                    }}
+                    {...props}
+                />
+                <InsureTransactionInput
+                    title="Payment Currency"
+                    placeholder={`USDT`}
+                    onChange={(e) => {}}
+                    disabled
+                    {...props}
+                />
+                <Button
+                    disabled={isOkDisabled}
+                    sx={{ width: "100%" }}
+                    mt={3}
+                    onClick={() => {
+                        setShowModal(true);
+                    }}
+                >
+                    + <Trans>{isOkDisabled ? "transacting..." : `Insure ${rToken?.symbol}`}</Trans>
+                </Button>
+                {showModal && (
+                    <Modal
+                        title="Take Insurance"
+                        onClose={() => {
+                            setShowModal(false);
+                        }}
+                        style={modalStyle}
+                    >
+                        {info}
+                        <>
+                            <Divider mx={-4} my={4} />
+                        </>
+
+                        <Divider mx={-4} mt={4} />
+                        <LoadingButton
+                            loading={!!signing}
+                            disabled={isOkDisabled}
+                            variant={!!signing ? "accent" : "primary"}
+                            text={"Transacting"}
+                            onClick={provideInsurance}
+                            sx={{ width: "100%" }}
+                            mt={3}
+                        />
+                    </Modal>
+                )}{" "}
+            </Card>
+        </>
+    );
+};
+
+export default Insure;

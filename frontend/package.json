@@ -37,6 +37,7 @@
     "jotai": "^1.8.1",
     "magic-sdk": "^10.1.0",
     "make-plural": "^7.1.0",
+    "prettier-plugin-solidity": "^1.0.0",
     "react": "^18.2.0",
     "react-dom": "18.2.0",
     "react-feather": "^2.0.9",
@@ -62,7 +63,8 @@
     "build": "react-scripts build",
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "test": "react-scripts test",
-    "translations": "lingui extract && lingui compile"
+    "translations": "lingui extract && lingui compile",
+    "format": "prettier --write ."
   },
   "browserslist": {
     "production": [
@@ -93,7 +95,7 @@
     "@types/uuid": "^8.3.4",
     "babel-plugin-macros": "^3.1.0",
     "babel-preset-react-app": "^10.0.1",
-    "prettier": "^2.3.2",
+    "prettier": "^2.8.1",
     "source-map-explorer": "^2.5.2",
     "typechain": "^8.1.0"
   },

@@ -1,9 +1,10 @@
-html, body {  
-  height: 100%;
-  position: relative;
+html,
+body {
+    height: 100%;
+    position: relative;
 }
 
 #root {
-  height: 100%;
-  position: relative;
+    height: 100%;
+    position: relative;
 }

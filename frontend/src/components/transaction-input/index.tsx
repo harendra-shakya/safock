@@ -1,98 +1,92 @@
-import { NumericalInput } from 'components'
-import { useAtom } from 'jotai'
-import { Box, BoxProps, Flex, Text } from 'theme-ui'
-import { formatCurrency } from 'utils'
+import { NumericalInput } from "components";
+import { useAtom } from "jotai";
+import { Box, BoxProps, Flex, Text } from "theme-ui";
+import { formatCurrency } from "utils";
 
 export interface TransactionInputProps extends BoxProps {
-  title?: string
-  placeholder?: string
-  compact?: boolean
-  amountAtom: any
-  maxAmount: number
-  disabled?: boolean
+    title?: string;
+    placeholder?: string;
+    compact?: boolean;
+    amountAtom: any;
+    maxAmount: number;
+    disabled?: boolean;
 }
 
 const TransactionInput = ({
-  title = '',
-  placeholder = '',
-  amountAtom,
-  maxAmount,
-  disabled = false,
-  compact = false,
-  ...props
+    title = "",
+    placeholder = "",
+    amountAtom,
+    maxAmount,
+    disabled = false,
+    compact = false,
+    ...props
 }: TransactionInputProps) => {
-  const [amount, setAmount] = useAtom(amountAtom)
+    const [amount, setAmount] = useAtom(amountAtom);
 
-  const maxLabel = (
-    <Text
-      onClick={() => setAmount(maxAmount.toString())}
-      as="a"
-      variant="a"
-      sx={{ display: 'block', marginLeft: 'auto', fontSize: compact ? 1 : 2 }}
-    >
-      Max: {formatCurrency(maxAmount)}
-    </Text>
-  )
-
-  return (
-    <Box {...props}>
-      <Flex sx={{ alignItems: 'center' }} mb={2}>
-        <Text as="label" variant="legend" ml={2}>
-          {title}
+    const maxLabel = (
+        <Text
+            onClick={() => setAmount(maxAmount.toString())}
+            as="a"
+            variant="a"
+            sx={{ display: "block", marginLeft: "auto", fontSize: compact ? 1 : 2 }}
+        >
+            Max: {formatCurrency(maxAmount)}
         </Text>
-        {compact && maxLabel}
-      </Flex>
-      <NumericalInput
-        disabled={disabled}
-        placeholder={placeholder}
-        value={amount as string}
-        onChange={setAmount}
-      />
-      {!compact && <Flex mt={2}>{maxLabel}</Flex>}
-    </Box>
-  )
-}
+    );
+
+    return (
+        <Box {...props}>
+            <Flex sx={{ alignItems: "center" }} mb={2}>
+                <Text as="label" variant="legend" ml={2}>
+                    {title}
+                </Text>
+                {compact && maxLabel}
+            </Flex>
+            <NumericalInput
+                disabled={disabled}
+                placeholder={placeholder}
+                value={amount as string}
+                onChange={setAmount}
+            />
+            {!compact && <Flex mt={2}>{maxLabel}</Flex>}
+        </Box>
+    );
+};
 
 export interface InsureTransactionInputProps extends BoxProps {
-  title?: string
-  placeholder?: string
-  compact?: boolean
-  disabled?: boolean
+    title?: string;
+    placeholder?: string;
+    compact?: boolean;
+    disabled?: boolean;
 }
 
 export const InsureTransactionInput = ({
-  title = '',
-  placeholder = '',
-  disabled = false,
-  compact = false,
-  ...props
+    title = "",
+    placeholder = "",
+    disabled = false,
+    compact = false,
+    ...props
 }: InsureTransactionInputProps) => {
+    const maxLabel = (
+        <Text
+            as="a"
+            variant="a"
+            sx={{ display: "block", marginLeft: "auto", fontSize: compact ? 1 : 2 }}
+        ></Text>
+    );
 
-  const maxLabel = (
-    <Text
-      as="a"
-      variant="a"
-      sx={{ display: 'block', marginLeft: 'auto', fontSize: compact ? 1 : 2 }}
-    >
-    </Text>
-  )
+    return (
+        <Box {...props}>
+            <Flex sx={{ alignItems: "center" }} mb={2}>
+                <Text as="label" variant="legend" ml={2}>
+                    {title}
+                </Text>
+                {compact && maxLabel}
+            </Flex>
+            <NumericalInput disabled={disabled} placeholder={placeholder} onChange={() => {}} />
+            {!compact && <Flex mt={2}>{maxLabel}</Flex>}
+        </Box>
+    );
+};
 
-  return (
-    <Box {...props}>
-      <Flex sx={{ alignItems: 'center' }} mb={2}>
-        <Text as="label" variant="legend" ml={2}>
-          {title}
-        </Text>
-        {compact && maxLabel}
-      </Flex>
-      <NumericalInput
-        disabled={disabled}
-        placeholder={placeholder}
-        onChange={() => {}}
-      />
-      {!compact && <Flex mt={2}>{maxLabel}</Flex>}
-    </Box>
-  )
-}
-
-export default TransactionInput
+export default TransactionInput;

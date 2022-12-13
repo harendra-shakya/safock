@@ -1,1 +1,1 @@
-export { default } from './SyncedBlock'
+export { default } from "./SyncedBlock";

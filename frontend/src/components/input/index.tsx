@@ -1,19 +1,19 @@
-import { useCallback } from 'react'
-import { Input as ThemeInput, InputProps as ThemeInputProps } from 'theme-ui'
+import { useCallback } from "react";
+import { Input as ThemeInput, InputProps as ThemeInputProps } from "theme-ui";
 
-interface InputProps extends Omit<ThemeInputProps, 'onChange'> {
-  onChange(value: string): void
+interface InputProps extends Omit<ThemeInputProps, "onChange"> {
+    onChange(value: string): void;
 }
 
 const Input = ({ onChange, ...props }: InputProps) => {
-  const handleChange = useCallback(
-    (event: any) => {
-      onChange(event.target.value)
-    },
-    [onChange]
-  )
+    const handleChange = useCallback(
+        (event: any) => {
+            onChange(event.target.value);
+        },
+        [onChange]
+    );
 
-  return <ThemeInput {...props} onChange={handleChange} />
-}
+    return <ThemeInput {...props} onChange={handleChange} />;
+};
 
-export default Input
+export default Input;

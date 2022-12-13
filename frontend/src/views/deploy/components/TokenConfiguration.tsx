@@ -1,37 +1,37 @@
-import { Trans } from '@lingui/macro'
-import { SmallButton } from 'components/button'
-import { useState } from 'react'
-import { ChevronDown, ChevronUp } from 'react-feather'
-import { Box, Divider, Flex, Grid, Text } from 'theme-ui'
-import BackingForm from './BackingForm'
-import OtherForm from './OtherForm'
-import StakingTokenInfo from './StakingTokenInfo'
-import TokenForm from './TokenForm'
+import { Trans } from "@lingui/macro";
+import { SmallButton } from "components/button";
+import { useState } from "react";
+import { ChevronDown, ChevronUp } from "react-feather";
+import { Box, Divider, Flex, Grid, Text } from "theme-ui";
+import BackingForm from "./BackingForm";
+import OtherForm from "./OtherForm";
+import StakingTokenInfo from "./StakingTokenInfo";
+import TokenForm from "./TokenForm";
 
 const chevronProps = {
-  style: {
-    marginLeft: 10,
-  },
-  size: 14,
-}
+    style: {
+        marginLeft: 10,
+    },
+    size: 14,
+};
 
 /**
  * View: Deploy -> Token setup
  * Display token forms
  */
 const TokenConfiguration = () => {
-  const [advanceConfig, setAdvanceConfig] = useState(false)
+    const [advanceConfig, setAdvanceConfig] = useState(false);
 
-  return (
-    // <Grid
-    //   columns={2}
-    //   sx={{ backgroundColor: 'contentBackground', borderRadius: 10 }}
-    // >
-    <>
-      <Box p={4} sx={{ borderRight: '1px solid', borderColor: 'border' }}>
-        <TokenForm />
-        <Divider my={4} />
-        {/* <Flex mt={3} variant="layout.verticalAlign">
+    return (
+        // <Grid
+        //   columns={2}
+        //   sx={{ backgroundColor: 'contentBackground', borderRadius: 10 }}
+        // >
+        <>
+            <Box p={4} sx={{ borderRight: "1px solid", borderColor: "border" }}>
+                <TokenForm />
+                <Divider my={4} />
+                {/* <Flex mt={3} variant="layout.verticalAlign">
           <Text variant="title">
             <Trans>Advanced config:</Trans>
           </Text>
@@ -53,18 +53,16 @@ const TokenConfiguration = () => {
             </Box>
           </SmallButton>
         </Flex> */}
-        {/* {advanceConfig && (
+                {/* {advanceConfig && (
           <>
             <BackingForm my={4} />
             <OtherForm />
           </>
         )} */}
-      </Box>
-      <Box p={4}>
-        {/* <StakingTokenInfo /> */}
-      </Box>
-      </>
-  )
-}
+            </Box>
+            <Box p={4}>{/* <StakingTokenInfo /> */}</Box>
+        </>
+    );
+};
 
-export default TokenConfiguration
+export default TokenConfiguration;

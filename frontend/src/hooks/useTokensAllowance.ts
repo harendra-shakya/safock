@@ -1,10 +1,10 @@
-import { BigNumber } from '@ethersproject/bignumber'
-import { StringMap } from 'types'
-import { useMemo } from 'react'
-import { ERC20Interface } from 'abis'
-import { useContractCalls } from './useCall'
-import useBlockNumber from './useBlockNumber'
-import { formatUnits } from '@ethersproject/units'
+import { BigNumber } from "@ethersproject/bignumber";
+import { StringMap } from "types";
+import { useMemo } from "react";
+import { ERC20Interface } from "abis";
+import { useContractCalls } from "./useCall";
+import useBlockNumber from "./useBlockNumber";
+import { formatUnits } from "@ethersproject/units";
 
 // TODO: Edge case if RSR is used as part of the basket?
 // TODO: Maybe to be extra secure the hash key could be the two addresses token+spender
@@ -15,34 +15,34 @@ import { formatUnits } from '@ethersproject/units'
  * @returns
  */
 const useTokensAllowance = (
-  tokens: [string, string][],
-  account: string
+    tokens: [string, string][],
+    account: string
 ): { [x: string]: BigNumber } => {
-  const blockNumber = useBlockNumber()
+    const blockNumber = useBlockNumber();
 
-  const calls = useMemo(
-    () =>
-      tokens.map(([address, spender]) => ({
-        abi: ERC20Interface,
-        address,
-        method: 'allowance',
-        args: [account, spender],
-      })),
-    [tokens.toString(), account, blockNumber]
-  )
+    const calls = useMemo(
+        () =>
+            tokens.map(([address, spender]) => ({
+                abi: ERC20Interface,
+                address,
+                method: "allowance",
+                args: [account, spender],
+            })),
+        [tokens.toString(), account, blockNumber]
+    );
 
-  const allowances = <any[]>useContractCalls(calls) ?? []
+    const allowances = <any[]>useContractCalls(calls) ?? [];
 
-  return allowances.reduce((acc, current, index) => {
-    const [address] = tokens[index]
-    if (current?.value) {
-      acc[address] = current.value[0]
-    } else {
-      acc[address] = 0
-    }
+    return allowances.reduce((acc, current, index) => {
+        const [address] = tokens[index];
+        if (current?.value) {
+            acc[address] = current.value[0];
+        } else {
+            acc[address] = 0;
+        }
 
-    return acc
-  }, <StringMap>{})
-}
+        return acc;
+    }, <StringMap>{});
+};
 
-export default useTokensAllowance
+export default useTokensAllowance;

@@ -1,4 +1,4 @@
-import { Box, BoxProps } from 'theme-ui'
+import { Box, BoxProps } from "theme-ui";
 
 /**
  * Wraps the page content
@@ -7,7 +7,7 @@ import { Box, BoxProps } from 'theme-ui'
  * @returns
  */
 const Container = ({ sx = {}, ...props }: BoxProps) => (
-  <Box sx={{ boxSizing: 'border-box', padding: [4, 5], ...sx }} {...props} />
-)
+    <Box sx={{ boxSizing: "border-box", padding: [4, 5], ...sx }} {...props} />
+);
 
-export default Container
+export default Container;

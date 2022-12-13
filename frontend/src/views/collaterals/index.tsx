@@ -1,7 +1,7 @@
-import { Box } from 'theme-ui'
+import { Box } from "theme-ui";
 
 const Collaterals = () => {
-  return <Box></Box>
-}
+    return <Box></Box>;
+};
 
-export default Collaterals
+export default Collaterals;

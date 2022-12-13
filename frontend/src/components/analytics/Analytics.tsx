@@ -1,16 +1,16 @@
-import { useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
-import ReactGA from 'react-ga'
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import ReactGA from "react-ga";
 
 const Analytics = () => {
-  const location = useLocation()
+    const location = useLocation();
 
-  useEffect(() => {
-    ReactGA.initialize('G-DMSRQ8XLEE')
-    ReactGA.pageview(location.pathname + location.search)
-  }, [location])
+    useEffect(() => {
+        ReactGA.initialize("G-DMSRQ8XLEE");
+        ReactGA.pageview(location.pathname + location.search);
+    }, [location]);
 
-  return null
-}
+    return null;
+};
 
-export default Analytics
+export default Analytics;
