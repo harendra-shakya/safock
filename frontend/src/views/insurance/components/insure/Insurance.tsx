@@ -2,75 +2,62 @@ import { Trans } from '@lingui/macro'
 import { Button } from 'components'
 import { useState } from 'react'
 import { BoxProps, Card } from 'theme-ui'
-import { isValidStakeAmountAtom } from 'views/insurance/atoms'
-import ConfirmStake from './ConfirmInsurance'
-import StakeInput from './InsuranceInput'
 import useRToken from 'hooks/useRToken'
 
 import {
-  InsureTransactionInputProps,  InsureTransactionInput,
+    InsureTransactionInput,
 } from 'components/transaction-input'
-import { rsrBalanceAtom } from 'state/atoms'
-import { stakeAmountAtom } from 'views/insurance/atoms'
-import { Select } from 'theme-ui'
 
-
-import { parseEther } from '@ethersproject/units'
-import { t } from '@lingui/macro'
-import TransactionModal from 'components/transaction-modal'
-import { BigNumber } from 'ethers'
-import { useAtom, useAtomValue } from 'jotai'
-import { useCallback, useEffect, useMemo } from 'react'
-import { rTokenAtom } from 'state/atoms'
-import { formatCurrency } from 'utils'
-import { RSR, TRANSACTION_STATUS } from 'utils/constants'
-import { v4 as uuid } from 'uuid'
-import InsureInput from './InsuranceInput'
 import { ethers } from 'ethers'
-import { useSetAtom } from 'jotai'
-import { addTransactionAtom, allowanceAtom } from 'state/atoms'
 import { SAFOCK_ADDRESS } from 'utils/addresses'
 import  erc20Abi  from 'abis/ERC20.json'
 import safockAbi from 'abis/safock.json'
 
-// var window:any;
+import { LoadingButton } from 'components/button'
+import Modal from 'components/modal'
+import { Divider, Flex, Text, Link, Box, Spinner } from 'theme-ui'
 
 const Insure = (props: BoxProps) => {
-  const [confirming, setConfirming] = useState(false)
-  const isValid = useAtomValue(isValidStakeAmountAtom)
   const rToken = useRToken()
-
+  const [showModal, setShowModal] = useState(false)
   const [amount, setAmount] = useState("0")
   const [planNum, setPlanNum] = useState("0")
-
   const [signing, setSigning] = useState(false)
   const [paymentCurrency, setPaymentCurrency] = useState("0xAE64954A904da3fD9D71945980A849B8A9F755d7")
-  const [token, setToken] = useState("USDT")
-  const addTransaction = useSetAtom(addTransactionAtom)
+  const [tokenName, setTokenName] = useState("USDT")
   const [isOkDisabled, setIsOkDisabled] = useState(false);
+  const [info, setInfo] = useState(`Allow to use your ${tokenName}`)
 
   const provideInsurance = async () => {
     try {
       console.log("providing insurance...")
         if (+amount <= 0) {
             alert("invalid Amount!");
+            setShowModal(false)
             return;
         }
         if (+planNum >= 3) {
             alert("Wrong plan!");
+            setShowModal(false)
             return;
         }
+        setInfo(`Allow to use your ${tokenName}`)
+
         setIsOkDisabled(true);
         const {ethereum}: any = window;
         const provider = new ethers.providers.Web3Provider(ethereum);
         const signer = provider.getSigner();
 
         const safock = new ethers.Contract(SAFOCK_ADDRESS[5], safockAbi, signer);
-        console.log("listing token");
 
         const token = await new ethers.Contract(paymentCurrency, erc20Abi, signer);
 
+        setInfo(`Approved! Receving confirmations.....`)
+
         let tx = await token.approve(safock.address, ethers.utils.parseEther((+amount).toString()));
+
+        setInfo(`Confirm Insurance Plan.....`)
+
         let txReceipt = await tx.wait(1);
         if (txReceipt.status === 1) {
             console.log("aprroved");
@@ -79,19 +66,24 @@ const Insure = (props: BoxProps) => {
         }
 
         tx = await safock.insurance(planNum, paymentCurrency, rToken?.address, amount);
-        console.log("receiving confirmations...");
+        setInfo("receiving confirmations...");
         txReceipt = await tx.wait();
         if (txReceipt.status === 1) {
-            console.log("done!");
+            setInfo("done!");
         } else {
             alert("Tx failed. Plz try agains!");
         }
+        setShowModal(false);
         setIsOkDisabled(false);
+        setInfo(`Allow to use your ${tokenName}`);
     } catch (e) {
         console.log(e);
         setIsOkDisabled(false);
+        setInfo("");
+
     }
 };
+const modalStyle = { maxWidth: '420px' }
 
   return (
     <>
@@ -114,6 +106,7 @@ const Insure = (props: BoxProps) => {
       title="Payment Currency"
       placeholder={`USDT`}
       onChange={(e) => {}}
+      disabled
       {...props}
     
     />
@@ -121,11 +114,32 @@ const Insure = (props: BoxProps) => {
           disabled={isOkDisabled}
           sx={{ width: '100%' }}
           mt={3}
-          onClick={provideInsurance}
+          onClick={() => {setShowModal(true)}}
         >
+          
           + <Trans>{isOkDisabled ? "transacting..." :`Insure ${rToken?.symbol}`}</Trans>
         </Button>
-      </Card>
+
+
+        {showModal && <Modal title="Take Insurance" onClose={() => {setShowModal(false)}} style={modalStyle}>
+          
+      {info}
+        <>
+          <Divider mx={-4} my={4} />
+          
+        </>
+      
+      <Divider mx={-4} mt={4} />
+      <LoadingButton
+        loading={!!signing}
+        disabled={isOkDisabled}
+        variant={!!signing ? 'accent' : 'primary'}
+        text={"Transacting"}
+        onClick={provideInsurance}
+        sx={{ width: '100%' }}
+        mt={3}
+      />
+    </Modal> }     </Card>
     </>
   )
 }
