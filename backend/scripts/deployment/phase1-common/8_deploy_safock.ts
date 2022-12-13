@@ -40,6 +40,7 @@ async function main() {
   await safock.deployed()
 
   // Write temporary deployments file
+  deployments.safock = safock.address
   fs.writeFileSync(deploymentFilename, JSON.stringify(deployments, null, 2))
 
   console.log(`Deployed to ${hre.network.name} (${chainId})

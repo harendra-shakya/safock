@@ -22,6 +22,7 @@ export interface IDeployments {
   deployer: string
   rsrAsset: string
   implementations: IImplementations
+  safock: string
 }
 
 export interface IAssetCollDeployments {
