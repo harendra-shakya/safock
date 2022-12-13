@@ -1,4 +1,4 @@
-## SAFOCK - Simplify the Trading of DeFi ETFs
+## SAFOCK - Opening Doors to DeFi ETFs
 
 Safock is a DeFi platform that focuses on crypto (ETFs) trading in a decentralized way, Backed by RTokens.<br>
 (This project is a submission to the Reserve Protocol Hackathon💎)
@@ -16,15 +16,14 @@ Safock is a DeFi platform that focuses on crypto (ETFs) trading in a decentraliz
 
 ## Overview
 
-Safock is a Crypto ETF platform which open doors to pushare defi crypto ETFs. Safock makes it easy to bundle together various yield generating collateral assets to create a customized financial product, while utilizing an insurance backstop and fully on-chain transparency to protect users. This functionality is perfect for creating crypto ETF, as the deployer can choose their custom basket of underlying assets, and even using yield generating assets to generate revenue.
+Safock is a Crypto ETF platform that opens doors to purchase Defi crypto ETFs. Safock makes it easy to bundle together various yield-generating collateral assets to create a customized financial product while utilizing an insurance backstop and fully on-chain transparency to protect users. This functionality is perfect for creating crypto ETF, as the deployer can choose their custom basket of underlying assets, and even use yield-generating assets to generate revenue.
 
-ETFs are investment vehicles that track the performance of a particular asset or basket of assets, and they are traded on exchanges like stocks but as they're backed by centralized commodities the barrier of entry is too high that's why we build Decentralized Finance ETFs, also known as "DeFi ETFs" are ETFs(exchange-traded funds) that are built on blockchain technology and backed by Rtokens. This allows for a more transparent and secure way to invest in a diversified portfolio of crypto assets. One of the key features of Safock is its focus on providing investors with a wide range of DeFi ETFs to choose from. These ETFs are designed to trade and insure various crypto assets, such as Bitcoin, Ethereum, and other popular cryptocurrencies. This allows investors to easily diversify their portfolio and gain exposure to the performance of the overall crypto market.
-In addition to providing access to a wide range of DeFi ETFs, Safock also offers a number of other useful features. For example, it provides interest-free trading, insurance of volatile assets, real-time pricing information, and many more. It also offers a user-friendly interface making it easy for investors of all experience levels to buy and sell DeFi ETFs.
+ETFs are investment vehicles that track the performance of a particular asset or basket of assets, and they are traded on exchanges like stocks but as they're backed by centralized commodities the barrier of entry is too high that's why we build Decentralized Finance ETFs, also known as "DeFi ETFs" are ETFs(exchange-traded funds) that are built on blockchain technology and backed by Rtokens. This allows for a more transparent and secure way to invest in a diversified portfolio of crypto assets. One of the key features of Safock is its focus on providing investors with a wide range of DeFi ETFs to choose from. These ETFs are designed to insure and stake various crypto assets, such as Bitcoin, Ethereum, and other popular cryptocurrencies, as well you can also deploy and mint an ETF of revenue-generating tokens like aETH, aDai, etc. This allows investors to easily diversify their portfolio and gain exposure to the performance of the overall crypto market. In addition to providing access to a wide range of DeFi ETFs, Safock also offers other useful features. For example, it provides insurance for volatile assets, staking to gain yield rewards and many more. It also offers a user-friendly interface making it easy for investors of all experience levels to mint and redeem DeFi ETFs.
 
 ## Benefits of DeFi ETFs
 
 A decentralized finance exchange traded funds, also known as a DeFi ETFs is a type of trading of multiple digital currencies aka cryptocurrencies in one basket or many crypto assets pools. Some potential benefits of using DeFi ETFs include:<br>
-• Increased liquidity: Because DeFi ETFs are traded on Dexs, they can be bought and sold easily, providing investors with greater liquidity than they would have if they held the underlying cryptocurrencies directly.<br>
+• High liquidity: Because DeFi ETFs are traded on dapps, they can be bought and sold easily, providing investors with greater liquidity than they would have if they held the underlying cryptocurrencies directly.<br>
 
 • Diversification: DeFi ETFs allow investors to diversify their cryptocurrency holdings without having to purchase and manage multiple different cryptocurrencies.<br>
 
@@ -32,7 +31,7 @@ A decentralized finance exchange traded funds, also known as a DeFi ETFs is a ty
 
 • Accessibility: DeFi ETFs make it easier for investors to access the cryptocurrency market, as they can be purchased through a wallet in the same way as other products on Dexs.<br>
 
-• Own your ETFs: ETFs are typically managed by professional fund managers who use their expertise to make investment decisions on behalf of investors. but in DeFi ETFs "you own your etfs" in just a single DeFi wallet This can help to reduce the risks associated with investing in DeFi ETFs.<br>
+• Own your Asset: ETFs are typically managed by professional fund managers who use their expertise to make investment decisions on behalf of investors. but in DeFi ETFs "you own your asset" in just a single DeFi wallet This can help to reduce the risks associated with investing in DeFi ETFs.<br>
 
 • Reduced fees: Because DeFi ETFs are decentralized and run on the blockchain, they can potentially have lower fees than traditional ETFs that are managed by financial institutions.<br>
 
@@ -42,7 +41,7 @@ A decentralized finance exchange traded funds, also known as a DeFi ETFs is a ty
 
 • Potentially higher returns: DeFi ETFs can offer investors the potential for higher returns than traditional ETFs because they track the performance of cryptocurrencies, which have the potential to generate significant gains.<br>
 
-DeFi ETFs offer investors a number of potential benefits, including but not limited to increased liquidity, diversification, transparency, accessibility, investing management, reduced fees, improved security, greater flexibility, and potentially higher returns.
+DeFi ETFs offer investors a number of potential benefits, including but not limited to high liquidity, diversification, transparency, accessibility, own your asset, reduced fees, improved security, greater flexibility, and potentially higher returns.
 
 ## How it Works
 
@@ -72,7 +71,7 @@ Twitter: https://twitter.com/SafockOfficial<br>
 Discord: https://discord.gg/KkckfSdA8R<br>
 Medium: https://medium.com/@Safock<br>
 Youtube: https://www.youtube.com/@Safock<br>
-Mail: hi@safock.com
+Mail: hi@safock.com <br>
 
 ## Mission
 
