@@ -51,7 +51,7 @@ export const [coinbaseWallet, coinbaseWalletHooks] =
         actions,
         options: {
           url: URLS[1][0],
-          appName: 'Register',
+          appName: 'Safock',
         },
       })
   )

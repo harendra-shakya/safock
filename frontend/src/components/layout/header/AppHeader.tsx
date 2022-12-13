@@ -35,9 +35,9 @@ const RTokenStatus = () => {
         <AlertCircle size={18} />
         <Text ml={2}>
           {status === RTOKEN_STATUS.FROZEN ? (
-            <Trans>RToken is frozen</Trans>
+            <Trans>ETF is frozen</Trans>
           ) : (
-            <Trans>RToken is paused</Trans>
+            <Trans>ETF is paused</Trans>
           )}
         </Text>
       </Box>
@@ -61,7 +61,7 @@ const AppHeader = () => {
           <Brand />
           {isDeployer && (
             <Text ml={3} sx={{ fontSize: 3 }} variant="subtitle">
-              <Trans>RToken Deployer</Trans>
+              <Trans>ETF Deployer</Trans>
             </Text>
           )}
         </Flex>

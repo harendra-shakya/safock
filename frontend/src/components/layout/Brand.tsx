@@ -1,4 +1,4 @@
-import Logo, { SmallLogo } from 'components/icons/Logo'
+import { SmallLogo } from 'components/icons/Logo'
 import { useUpdateAtom } from 'jotai/utils'
 import { useNavigate } from 'react-router-dom'
 import { selectedRTokenAtom } from 'state/atoms'
@@ -26,7 +26,7 @@ const Brand = (props: BoxProps) => {
         }}
         {...props}
       >
-        <Logo />
+        Safock
       </Box>
       <Box
         sx={{

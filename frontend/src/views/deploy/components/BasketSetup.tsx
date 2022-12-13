@@ -16,17 +16,17 @@ const BasketSetup = () => {
 
   return (
     <>
-      <Grid
+      {/* <Grid
         columns={2}
         mb={4}
         gap={0}
         sx={{ backgroundColor: 'contentBackground', borderRadius: 10 }}
-      >
+      > */}
         <Box p={5} sx={{ borderRight: '1px solid', borderColor: 'border' }}>
           <PrimaryBasket onAdd={setCollateralModal} />
         </Box>
         {/* <BackupBasket p={5} onAdd={setCollateralModal} /> */}
-      </Grid>
+      {/* </Grid> */}
       {!!collateralModal && (
         <CollateralModal
           targetUnit={collateralModal?.targetUnit}

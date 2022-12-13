@@ -119,7 +119,7 @@ const SelectedToken = () => {
   if (!selectedAddress) {
     return (
       <Text>
-        <Trans>Select RToken</Trans>
+        <Trans>Select ETF</Trans>
       </Text>
     )
   }
