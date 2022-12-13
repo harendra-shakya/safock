@@ -16,7 +16,7 @@ Safock is a DeFi platform that focuses on crypto (ETFs) trading in a decentraliz
 
 ## Overview
 
-Safock is a Crypto ETF platform that opens doors to purchase Defi crypto ETFs. Safock makes it easy to bundle together various yield-generating collateral assets to create a customized financial product while utilizing an insurance backstop and fully on-chain transparency to protect users. This functionality is perfect for creating crypto ETF, as the deployer can choose their custom basket of underlying assets, and even use yield-generating assets to generate revenue.
+Safock is a Crypto ETF platform that opens doors to purchase Defi crypto ETFs. Safock makes it easy to bundle together various yield-generating collateral assets to create a customized financial product while utilizing an insurance backstop and fully on-chain transparency to protect users. This functionality is perffor ect for creating crypto ETF, as the deployer can choose their custom basket of underlying assets, and even use yield-generating assets to generate revenue. And users can stake their ETF too with our platform for even higher yields.
 
 ETFs are investment vehicles that track the performance of a particular asset or basket of assets, and they are traded on exchanges like stocks but as they're backed by centralized commodities the barrier of entry is too high that's why we build Decentralized Finance ETFs, also known as "DeFi ETFs" are ETFs(exchange-traded funds) that are built on blockchain technology and backed by Rtokens. This allows for a more transparent and secure way to invest in a diversified portfolio of crypto assets. One of the key features of Safock is its focus on providing investors with a wide range of DeFi ETFs to choose from. These ETFs are designed to insure and stake various crypto assets, such as Bitcoin, Ethereum, and other popular cryptocurrencies, as well you can also deploy and mint an ETF of revenue-generating tokens like aETH, aDai, etc. This allows investors to easily diversify their portfolio and gain exposure to the performance of the overall crypto market. In addition to providing access to a wide range of DeFi ETFs, Safock also offers other useful features. For example, it provides insurance for volatile assets, staking to gain yield rewards and many more. It also offers a user-friendly interface making it easy for investors of all experience levels to mint and redeem DeFi ETFs.
 
@@ -61,16 +61,17 @@ There are currently 4 insurance plans that we provide. The insurance can be clai
 1. PRO_PLUS -> cost = 5% of price, lose cover upto 70%. **Conditions:** If the price drops atleast 20% then the purchased price. Validity 3 month.
 1. PRO_MAX -> cost = 7% of price, lose cover upto 100%. **Conditions:** If the price drops atleast 20% then the purchased price. Validity 3 month.
 
-Userflow
+(Although we can change them after looking at stats and data when we deploy that on mainnet.)
 
-<img src="backend/docs/safock-userflow.png" alt="Safock | Reserve Protocol Hackathon Submission" border="0" /><br>
+<img src="backend/docs/safock-userflow.png" alt="safock-userflow" border="0" /><br>
 
-Dynamic Staking:
-For most common staking applications, the admin has to provide the estimated APY for the program for a certain period of time beforehand. With the dynamic staking approach, it calculates the APY dynamically for a particular stakeholder based on the number of stakeholders, their staked amount, and the rewards which were added to the Staking contract address till that point in time. There is no lock-in time for the stakeholder's stake in this approach. Stakeholders can remove their stake at any point in time and can claim the rewards. Here the staking program is done for a dummy StakeToken(STK) which is an ERC20 token deployed on the Goerli network.<br>
+As a core feature of our product we also provide ETF (RToken) staking. We're implementing dynamic staking here. For most common staking applications, the admin has to provide the estimated APY for the program for a certain period of time beforehand. With the dynamic staking approach, it calculates the APY dynamically for a particular stakeholder based on the number of stakeholders, their staked amount, and the rewards which were added to the Staking contract address till that point in time. There is no lock-in time for the stakeholder's stake in this approach. Stakeholders can remove their stake at any point in time and can claim the rewards. Here the staking program is done for a dummy StakeToken(STK) which is an ERC20 token deployed on the Goerli network.<br>
 
 The financial logic of the staking smart contract is to assign shares to each stakeholder and rewards are in proportion to the shares. Just like Mutual Funds derive the NAV(Net Asset Value) and it increases or decreases based on the shares and their asset value inside of it, the similar way the NAV, in this case, will be STK per share price which will increase as and when rewards are added to the staking program.<br>
 
 By default the initial ratio will be set at 1:1, so 1 STK is equal to 1 share. Each user who stakes at this ratio will receive an equal amount of shares for the number of STK she/he staked. During the month a reward will be sent to the Staking smart contract, which will alter the number of STK on the contract and by default alter the STK per share ratio.<br>
+
+<img src="backend/docs/safock-staking.png" alt="safock-staking" border="0" /><br>
 
 ## Official Links
 
