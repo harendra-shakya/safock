@@ -299,7 +299,8 @@ contract Safock is Ownable, ReentrancyGuard {
 
         InsuranceAttributes memory plan = plans[planType];
         uint256 amount = (plan.priceNumerator * totalAmount) / plan.priceDenominator;
-        TransferHelpers.safeTranferFrom(paymentCurrency, msg.sender, address(this), amount);
+        IERC20(paymentCurrency).transferFrom(msg.sender, address(this), amount);
+        // TransferHelpers.safeTranferFrom(paymentCurrency, msg.sender, address(this), amount);
 
         userPlans[msg.sender][rToken] = UserPlan(
             msg.sender, //owner
@@ -347,8 +348,8 @@ contract Safock is Ownable, ReentrancyGuard {
             "Price dropped out of coverage"
         );
 
-        TransferHelpers.safeTranferFrom(rToken, msg.sender, address(this), plan.numRTokens);
-        TransferHelpers.safeTranfer(USDT, msg.sender, plan.amountInsuredInUSD);
+        IERC20(rToken).transferFrom(msg.sender, address(this), plan.numRTokens);
+        IERC20(USDT).transfer(msg.sender, plan.amountInsuredInUSD);
 
         plan.isClaimed = true;
 

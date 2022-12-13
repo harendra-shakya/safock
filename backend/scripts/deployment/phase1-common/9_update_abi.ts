@@ -20,7 +20,7 @@ async function main() {
 
   deployments = <IDeployments>getDeploymentFile(getDeploymentFilename(chainId))
 
-  const abiPath = ".frontend/src/abis/"
+  const abiPath = "frontend/src/abis/"
 
   const safock = await ethers.getContractAt("Safock", deployments.safock)
 
