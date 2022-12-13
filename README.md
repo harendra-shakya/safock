@@ -45,12 +45,15 @@ DeFi ETFs offer investors a number of potential benefits, including but not limi
 
 ## How it Works
 
+(Note: We're currently on goerli testnet, mainnet will launch soon).
+
 For creating and minting ETFs, Safock uses Reserve Protocol as the Reserve Protocol makes it easy to bundle together various yield generating collateral assets to create a customized financial product.
 
 All the logic minting and redeeming of ETFs is handled by Reserve Protocol. But we add an extra layer in frontend to make it easy to mint RTokens and simplifies the overall process for users.
 
 To save our users from losses, we also provide insurance to our customers.
 
+Insurance:<br>
 There are currently 4 insurance plans that we provide. The insurance can be claimed if it meets the conditions.
 
 1. BASIC -> cost = 1% of price, lose cover upto 30%. **Conditions:** If the price drops atleast 20% then the purchased price. Validity 3 month.
@@ -60,7 +63,14 @@ There are currently 4 insurance plans that we provide. The insurance can be clai
 
 Userflow
 
-<img src="backend/docs/safock-userflow.png" alt="Safock | Reserve Protocol Hackathon Submission" border="0" />
+<img src="backend/docs/safock-userflow.png" alt="Safock | Reserve Protocol Hackathon Submission" border="0" /><br>
+
+Dynamic Staking:
+For most common staking applications, the admin has to provide the estimated APY for the program for a certain period of time beforehand. With the dynamic staking approach, it calculates the APY dynamically for a particular stakeholder based on the number of stakeholders, their staked amount, and the rewards which were added to the Staking contract address till that point in time. There is no lock-in time for the stakeholder's stake in this approach. Stakeholders can remove their stake at any point in time and can claim the rewards. Here the staking program is done for a dummy StakeToken(STK) which is an ERC20 token deployed on the Goerli network.<br>
+
+The financial logic of the staking smart contract is to assign shares to each stakeholder and rewards are in proportion to the shares. Just like Mutual Funds derive the NAV(Net Asset Value) and it increases or decreases based on the shares and their asset value inside of it, the similar way the NAV, in this case, will be STK per share price which will increase as and when rewards are added to the staking program.<br>
+
+By default the initial ratio will be set at 1:1, so 1 STK is equal to 1 share. Each user who stakes at this ratio will receive an equal amount of shares for the number of STK she/he staked. During the month a reward will be sent to the Staking smart contract, which will alter the number of STK on the contract and by default alter the STK per share ratio.<br>
 
 ## Official Links
 
