@@ -4,6 +4,9 @@ import "./interfaces/IFacadeWrite.sol";
 import "./interfaces/IFacadeRead.sol";
 import "./interfaces/IRToken.sol";
 import "./libraries/TransferHelpers.sol";
+import "./interfaces/IStaking.sol";
+import "./Staking.sol";
+import "./STK.sol";
 
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -66,6 +69,13 @@ contract Safock is Ownable, ReentrancyGuard {
      */
     mapping(address => mapping(address => UserPlan)) private userPlans; // user -> tToken -> UserPlan
     mapping(InsurancePlan => InsuranceAttributes) private plans; // InsurancePlan -> InsuranceAttributes
+
+    mapping(address => bool) private stkContracts;
+
+    modifier isStkContract(address rToken) {
+        require(!isStakingContractExists(rToken), "Staking contract exists");
+        _;
+    }
 
     event Insured(
         address owner,
@@ -152,6 +162,110 @@ contract Safock is Ownable, ReentrancyGuard {
             90 days // validity
         );
     }
+
+    // ========================== Staking ==================================== //
+
+    function isStakingContractExists(address rToken) public view returns (bool isExists) {
+        isExists = stkContracts[rToken];
+    }
+
+    function createStakingContract(address rToken) external isStkContract(rToken) {
+        uint256 initialSupply = 10000000 ether;
+
+        STK token = new STK(initialSupply);
+
+        Staking staking = new Staking();
+        staking.initialize(owner(), address(this), address(token));
+        staking.setInitialRatio(initialSupply);
+        stkContracts[address(staking)] = true;
+    }
+
+    function stake(address rToken, uint256 amount) external isStkContract(rToken) {
+        IStaking(rToken).createStake(amount);
+    }
+
+    function removeStake(address rToken, uint256 amount) external isStkContract(rToken) {
+        IStaking(rToken).removeStake(amount);
+    }
+
+    function getStkPerShare(address rToken) external view isStkContract(rToken) returns (uint256) {
+        return IStaking(rToken).getStkPerShare();
+    }
+
+    function stakeOf(address stakeholder, address rToken)
+        external
+        view
+        isStkContract(rToken)
+        returns (uint256)
+    {
+        return IStaking(rToken).stakeOf(stakeholder);
+    }
+
+    function sharesOf(address stakeholder, address rToken)
+        external
+        view
+        isStkContract(rToken)
+        returns (uint256)
+    {
+        return IStaking(rToken).sharesOf(stakeholder);
+    }
+
+    function rewardOf(address stakeholder, address rToken)
+        external
+        view
+        isStkContract(rToken)
+        returns (uint256)
+    {
+        return IStaking(rToken).rewardOf(stakeholder);
+    }
+
+    function rewardForSTK(
+        address stakeholder,
+        uint256 stkAmount,
+        address rToken
+    ) external view isStkContract(rToken) returns (uint256) {
+        return IStaking(rToken).rewardForSTK(stakeholder, stkAmount);
+    }
+
+    function getTotalStakes(address rToken) external view isStkContract(rToken) returns (uint256) {
+        return IStaking(rToken).getTotalStakes();
+    }
+
+    function getTotalShares(address rToken) external view isStkContract(rToken) returns (uint256) {
+        return IStaking(rToken).getTotalShares();
+    }
+
+    function getCurrentRewards(address rToken)
+        external
+        view
+        isStkContract(rToken)
+        returns (uint256)
+    {
+        return IStaking(rToken).getCurrentRewards();
+    }
+
+    function getTotalStakeholders(address rToken)
+        external
+        view
+        isStkContract(rToken)
+        returns (uint256)
+    {
+        return IStaking(rToken).getCurrentRewards();
+    }
+
+    function refundLockedSTK(
+        uint256 from,
+        uint256 to,
+        address rToken
+    ) external isStkContract(rToken) {
+        IStaking(rToken).refundLockedSTK(from, to);
+    }
+
+    function removeLockedRewards(address rToken) external isStkContract(rToken) {
+        IStaking(rToken).removeLockedRewards();
+    }
+
+    // ========================== Insurance ==================================== //
 
     /*
      * @dev main function resposible for giving isurance to user's ETFs

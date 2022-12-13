@@ -1,6 +1,6 @@
 import useRToken from 'hooks/useRToken'
 import { Navigate } from 'react-router-dom'
-import InsurancePage from './Insurance'
+import StakingPage from './Staking'
 
 export default () => {
   const rToken = useRToken()
@@ -9,5 +9,5 @@ export default () => {
     return <Navigate to="/" />
   }
 
-  return <InsurancePage />
+  return <StakingPage />
 }

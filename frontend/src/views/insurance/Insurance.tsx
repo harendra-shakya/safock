@@ -11,7 +11,6 @@ const Staking = () => (
     <Text ml={5} mb={4} variant="strong" sx={{ display: 'block' }}>
       <Trans>Insure + Claim Insurance</Trans>
     </Text>
-    <Grid columns={[1, 1, 1, '2fr 1.5fr']} gap={5}>
       <Box>
         <Grid columns={[1, 2]} gap={4} mb={4}>
           <Stake />
@@ -19,8 +18,6 @@ const Staking = () => (
         </Grid>
         <Balances />
       </Box>
-      <Overview />
-    </Grid>
   </Container>
 )
 
