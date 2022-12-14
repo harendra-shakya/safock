@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 import { Button } from "components";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BoxProps, Card } from "theme-ui";
 import useRToken from "hooks/useRToken";
 
@@ -14,6 +14,7 @@ import safockAbi from "abis/safock.json";
 import { LoadingButton } from "components/button";
 import Modal from "components/modal";
 import { Divider, Flex, Text, Link, Box, Spinner } from "theme-ui";
+import { CHAIN_ID } from "utils/chains";
 
 const Insure = (props: BoxProps) => {
     const rToken = useRToken();
@@ -28,6 +29,10 @@ const Insure = (props: BoxProps) => {
     const [isOkDisabled, setIsOkDisabled] = useState(false);
     const [info, setInfo] = useState(`Allow to use your ${tokenName}`);
 
+    useEffect(() => {})
+
+    
+
     const provideInsurance = async () => {
         try {
             console.log("providing insurance...");
@@ -41,41 +46,45 @@ const Insure = (props: BoxProps) => {
                 setShowModal(false);
                 return;
             }
-            setInfo(`Allow to use your ${tokenName}`);
 
             setIsOkDisabled(true);
             const { ethereum }: any = window;
             const provider = new ethers.providers.Web3Provider(ethereum);
             const signer = provider.getSigner();
 
-            const safock = new ethers.Contract(SAFOCK_ADDRESS[5], safockAbi, signer);
+            const safock = new ethers.Contract(SAFOCK_ADDRESS[CHAIN_ID], safockAbi, signer);
 
             const token = await new ethers.Contract(paymentCurrency, erc20Abi, signer);
 
-            setInfo(`Approved! Receving confirmations.....`);
+            setInfo(`Allow to use your ${tokenName}`);
 
             let tx = await token.approve(
                 safock.address,
                 ethers.utils.parseEther((+amount).toString())
             );
+            setInfo(`Approved! Receiving confirmations.....`);
 
-            setInfo(`Confirm Insurance Plan.....`);
 
             let txReceipt = await tx.wait(1);
+
             if (txReceipt.status === 1) {
                 console.log("aprroved");
             } else {
                 alert("Tx failed. Plz try agains!");
             }
+            setInfo(`Confirm Your Insurance Plan.....`);
 
             tx = await safock.insurance(planNum, paymentCurrency, rToken?.address, amount);
             setInfo("receiving confirmations...");
+
             txReceipt = await tx.wait();
             if (txReceipt.status === 1) {
                 setInfo("done!");
             } else {
                 alert("Tx failed. Plz try agains!");
             }
+            setInfo("Done!");
+
             setShowModal(false);
             setIsOkDisabled(false);
             setInfo(`Allow to use your ${tokenName}`);
