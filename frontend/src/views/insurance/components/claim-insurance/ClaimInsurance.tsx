@@ -51,11 +51,7 @@ const ClaimInsurace = (props: BoxProps) => {
     }, [account, showModal])
 
     const [validityLeft, setValidityLeft] = useState(0);
-    const [owner, setOwner] = useState(0);
-    const [isClaimed, setisClaimed] = useState(0);
-    const [price, setprice] = useState(0);
-    const [amountInsuredInUSD, setamountInsuredInUSD] = useState(0);
-    const [planType, setplanType] = useState(0);
+    const [hasFallen, setHasFallen] = useState(false);
 
 
     const updateUI = async () => {
@@ -68,12 +64,19 @@ const ClaimInsurace = (props: BoxProps) => {
         setUserPlan(await safock.getUserPlan(account, rToken?.address));
 
         setValidityLeft(await safock.validityLeft(rToken?.address) )
+        const _price = await safock.price(rToken);
+        setHasFallen(userPlan?.price! > (20 * _price / 100))
     }
 
     const _claimInsurance = async () => {
         try {
+            
             if(userPlan?.owner !== account) {
                 alert("You don't have any plan");
+                return;
+            }
+            if(!hasFallen) {
+                alert("Price not fallen that much according to your insurance plan")
                 return;
             }
             setIsOkDisabled(true);
@@ -176,9 +179,14 @@ const ClaimInsurace = (props: BoxProps) => {
                       {`Amount assured In USD: ${ethers.utils.formatEther((userPlan?.amountInsuredInUSD!))}`}
 
                       <div></div>
-                      {`Validity: ${rToken?.symbol}: ${(userPlan?.validity! - validityLeft)/ (3600*24)} Days`}{"\n"}                    
+                      {`Validity Left: ${rToken?.symbol}: ${(userPlan?.validity! - validityLeft)/ (3600*24)} Days`}{"\n"}                    
 
-                  
+                      <div></div>
+                      {`Has ETF Fallen: ${hasFallen}`}
+
+                      <div></div>
+                      {`Is insurance claimable: ${hasFallen}`}
+
                         <Divider mx={-4} my={4} />
 
                         {info}
