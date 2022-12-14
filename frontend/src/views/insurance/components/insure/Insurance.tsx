@@ -29,10 +29,21 @@ const Insure = (props: BoxProps) => {
     const [isOkDisabled, setIsOkDisabled] = useState(false);
     const [info, setInfo] = useState(`Allow to use your ${tokenName}`);
 
-    useEffect(() => {})
+    useEffect(() => {
+        updateUI();
+    }, [showModal]);
 
+    const updateUI = async () => {
+        const { ethereum }: any = window;
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+
+        const safock = new ethers.Contract(SAFOCK_ADDRESS[CHAIN_ID], safockAbi, signer);
+
+
+        const _price = await safock.price(rToken);
+    };
     
-
     const provideInsurance = async () => {
         try {
             console.log("providing insurance...");
@@ -41,7 +52,7 @@ const Insure = (props: BoxProps) => {
                 setShowModal(false);
                 return;
             }
-            if (+(planNum) > 3) {
+            if (+planNum > 3) {
                 alert("Wrong plan!");
                 setShowModal(false);
                 return;
@@ -63,7 +74,6 @@ const Insure = (props: BoxProps) => {
                 ethers.utils.parseEther((+amount).toString())
             );
             setInfo(`Approved! Receiving confirmations.....`);
-
 
             let txReceipt = await tx.wait(1);
 
@@ -134,7 +144,7 @@ const Insure = (props: BoxProps) => {
                 </Button>
                 {showModal && (
                     <Modal
-                        title="Take Insurance"
+                        title="Get Insurance"
                         onClose={() => {
                             setShowModal(false);
                         }}

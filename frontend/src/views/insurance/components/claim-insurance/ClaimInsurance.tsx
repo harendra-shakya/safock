@@ -29,31 +29,30 @@ const ClaimInsurace = (props: BoxProps) => {
     const [isOkDisabled, setIsOkDisabled] = useState(false);
     const [info, setInfo] = useState(`Claim insurance?`);
 
+    const [validityLeft, setValidityLeft] = useState(0);
+    const [hasFallen, setHasFallen] = useState(false);
+    const [planType, setPlanType] = useState<string>("");
+
     enum InsurancePlan {
         BASIC,
         PRO,
         PRO_PLUS,
-        PRO_MAX
+        PRO_MAX,
     }
     const [userPlan, setUserPlan] = useState<{
-         owner: string;
+        owner: string;
         isClaimed: Boolean;
         planType: InsurancePlan;
-         rToken :string;
-         numRTokens: number;
-         price: number;
-         amountInsuredInUSD: number;
-         validity: number;
-    }>()
+        rToken: string;
+        numRTokens: number;
+        price: number;
+        amountInsuredInUSD: number;
+        validity: number;
+    }>();
 
     useEffect(() => {
         updateUI();
-    }, [account, showModal])
-
-    const [validityLeft, setValidityLeft] = useState(0);
-    const [hasFallen, setHasFallen] = useState(false);
-    const [planType, setPlanType] = useState<string>("")
-
+    }, [account, showModal]);
 
     const updateUI = async () => {
         const { ethereum }: any = window;
@@ -61,25 +60,22 @@ const ClaimInsurace = (props: BoxProps) => {
         const signer = provider.getSigner();
 
         const safock = new ethers.Contract(SAFOCK_ADDRESS[CHAIN_ID], safockAbi, signer);
-        
+
         setUserPlan(await safock.getUserPlan(account, rToken?.address));
 
-        setValidityLeft(await safock.validityLeft(rToken?.address) )
+        setValidityLeft(await safock.validityLeft(rToken?.address));
         const _price = await safock.price(rToken);
-        setHasFallen(userPlan?.price! > (20 * _price / 100))
-
-     
-    }
+        setHasFallen(userPlan?.price! > (20 * _price) / 100);
+    };
 
     const _claimInsurance = async () => {
         try {
-            
-            if(userPlan?.owner !== account) {
+            if (userPlan?.owner !== account) {
                 alert("You don't have any plan");
                 return;
             }
-            if(!hasFallen) {
-                alert("Price not fallen that much according to your insurance plan")
+            if (!hasFallen) {
+                alert("Price not fallen that much according to your insurance plan");
                 return;
             }
             setIsOkDisabled(true);
@@ -157,7 +153,6 @@ const ClaimInsurace = (props: BoxProps) => {
                     </Trans>
                 </Button>
                 {showModal && (
-
                     <Modal
                         title="Claim Insurance"
                         onClose={() => {
@@ -166,37 +161,34 @@ const ClaimInsurace = (props: BoxProps) => {
                         style={modalStyle}
                     >
                         Your Plan info:
-
                         <div></div>
                         <div></div>
-
                         {`Token Symbol: ${rToken?.symbol}`}
                         <div></div>
-
-                      {`Number of ${rToken?.symbol}: ${parseInt((userPlan?.numRTokens!).toString())}`}{"\n"}                    
-                      <div></div>
-
-                      {`Insurance Plan Type: ${userPlan?.planType}`}
-                      <div></div>
-
-                      {`Amount assured In USD: ${ethers.utils.formatEther((userPlan?.amountInsuredInUSD!))}`}
-
-                      <div></div>
-                      {`Validity Left: ${rToken?.symbol}: ${(userPlan?.validity! - validityLeft)/ (3600*24)} Days`}{"\n"}                    
-
-                      <div></div>
-                      {`Has ETF Fallen: ${hasFallen}`}
-
-                      <div></div>
-                      {`Is insurance claimable: ${hasFallen}`}
-
+                        {`Number of ${rToken?.symbol}: ${parseInt(
+                            userPlan?.numRTokens!.toString()
+                        )}`}
+                        {"\n"}
+                        <div></div>
+                        {`Insurance Plan Type: ${userPlan?.planType}`}
+                        <div></div>
+                        {`Amount assured In USD: ${ethers.utils.formatEther(
+                            userPlan?.amountInsuredInUSD!
+                        )}`}
+                        <div></div>
+                        {`Validity Left: ${rToken?.symbol}: ${
+                            (userPlan?.validity! - validityLeft) / (3600 * 24)
+                        } Days`}
+                        {"\n"}
+                        <div></div>
+                        {`Has ETF Fallen: ${hasFallen}`}
+                        <div></div>
+                        {`Is insurance claimable: ${hasFallen}`}
                         <Divider mx={-4} my={4} />
-
                         {info}
                         <>
                             <Divider mx={-4} my={4} />
                         </>
-
                         <Divider mx={-4} mt={4} />
                         <LoadingButton
                             loading={!!signing}
