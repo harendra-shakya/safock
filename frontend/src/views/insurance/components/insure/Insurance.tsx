@@ -29,9 +29,30 @@ const Insure = (props: BoxProps) => {
     const [isOkDisabled, setIsOkDisabled] = useState(false);
     const [info, setInfo] = useState(`Allow to use your ${tokenName}`);
 
+    enum InsurancePlan {
+        BASIC,
+        PRO,
+        PRO_PLUS,
+        PRO_MAX,
+    }
+
+    const [plan, setPlan] = useState<{
+        planType: InsurancePlan;
+        priceNumerator: number;
+        priceDenominator: number;
+        minDropNumerator: number;
+        minDropDenominator: number;
+        coverUptoNumerator: number;
+        coverUptoDenominator: number;
+        validity: number;
+    }>();
+
     useEffect(() => {
         updateUI();
     }, [showModal]);
+
+    const [price, setPrice] = useState(0);
+
 
     const updateUI = async () => {
         const { ethereum }: any = window;
@@ -39,11 +60,13 @@ const Insure = (props: BoxProps) => {
         const signer = provider.getSigner();
 
         const safock = new ethers.Contract(SAFOCK_ADDRESS[CHAIN_ID], safockAbi, signer);
-
+        setPlan(await safock.getPlan(+planNum))
 
         const _price = await safock.price(rToken);
+
+        setPrice(+_price * +amount)
     };
-    
+
     const provideInsurance = async () => {
         try {
             console.log("providing insurance...");
@@ -150,6 +173,36 @@ const Insure = (props: BoxProps) => {
                         }}
                         style={modalStyle}
                     >
+                          Your Plan info:
+
+                        <div></div>
+                        <div></div>
+
+                        {`Token Name: ${rToken?.name}`}
+
+                        <div></div>
+
+                        {`Token Symbol: ${rToken?.symbol}`}
+                        <div></div>
+
+                        {`Insurace Plan type ${rToken?.symbol}: ${(plan?.planType!)}`}                 
+                        <div></div>
+
+                        {`Price should atleast drop: ${plan?.minDropNumerator}`}
+                        <div></div>
+
+                        {`% Price Insurace will be covered: ${(plan?.coverUptoNumerator!)}`}
+
+                        <div></div>
+                        {`Validity: ${(plan?.validity!)/ (3600*24)} Days`}                  
+
+                        <div></div>
+                        {`Price: ${plan?.priceNumerator!}% of Asset Price`}
+
+                        <div></div>
+                        {/* {`Is insurance claimable: ${hasFallen}`} */}
+
+                        <Divider mx={-4} my={4} />
                         {info}
                         <>
                             <Divider mx={-4} my={4} />
