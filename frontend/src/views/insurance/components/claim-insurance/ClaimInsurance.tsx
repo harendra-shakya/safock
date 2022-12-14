@@ -52,6 +52,7 @@ const ClaimInsurace = (props: BoxProps) => {
 
     const [validityLeft, setValidityLeft] = useState(0);
     const [hasFallen, setHasFallen] = useState(false);
+    const [planType, setPlanType] = useState<string>("")
 
 
     const updateUI = async () => {
@@ -66,6 +67,8 @@ const ClaimInsurace = (props: BoxProps) => {
         setValidityLeft(await safock.validityLeft(rToken?.address) )
         const _price = await safock.price(rToken);
         setHasFallen(userPlan?.price! > (20 * _price / 100))
+
+     
     }
 
     const _claimInsurance = async () => {

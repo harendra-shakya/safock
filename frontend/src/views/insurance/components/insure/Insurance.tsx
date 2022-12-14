@@ -41,7 +41,7 @@ const Insure = (props: BoxProps) => {
                 setShowModal(false);
                 return;
             }
-            if (+planNum >= 3) {
+            if (+(planNum) > 3) {
                 alert("Wrong plan!");
                 setShowModal(false);
                 return;
