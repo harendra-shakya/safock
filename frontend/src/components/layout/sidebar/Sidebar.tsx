@@ -84,6 +84,7 @@ const Navigation = ({ currentToken }: { currentToken?: ReserveToken | null }) =>
             { path: ROUTES.OVERVIEW, title: t`Overview`, Icon: OverviewIcon },
             { path: ROUTES.ISSUANCE, title: t`Mint + Redeem`, Icon: IssuanceIcon },
             { path: ROUTES.INSURANCE, title: t`Insurance`, Icon: InsuranceIcon },
+            { path: ROUTES.STAKING, title: t`Staking`, Icon: IssuanceIcon },
         ];
 
         if (isManager) {

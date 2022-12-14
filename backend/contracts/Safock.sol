@@ -173,15 +173,21 @@ contract Safock is Ownable, ReentrancyGuard {
         uint256 initialSupply = 10000000 ether;
 
         STK token = new STK(initialSupply);
-
         Staking staking = new Staking();
+
+        token.approve(address(staking), initialSupply);
         staking.initialize(owner(), address(this), address(token));
         staking.setInitialRatio(initialSupply);
         stkContracts[address(staking)] = true;
+        contracts[rToken] = address(staking);
     }
 
+    mapping(address => address) private contracts;
+
     function stake(address rToken, uint256 amount) external isStkContract(rToken) {
-        IStaking(rToken).createStake(amount);
+        IERC20(rToken).transferFrom(msg.sender, address(this), amount);
+        IERC20(rToken).approve(contracts[rToken], amount);
+        IStaking(rToken).createStake(amount, msg.sender);
     }
 
     function removeStake(address rToken, uint256 amount) external isStkContract(rToken) {

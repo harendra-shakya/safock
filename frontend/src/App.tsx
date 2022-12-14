@@ -8,6 +8,7 @@ import { ROUTES } from "utils/constants";
 import Auctions from "views/auctions";
 import Deploy from "views/deploy";
 import Governance from "views/governance";
+import Staking from "views/staking";
 import GovernanceConfigured from "views/governance/views/GovernanceConfigured";
 import Home from "views/home";
 import Management from "views/management";
@@ -37,6 +38,7 @@ const App = () => (
                             <Route path={ROUTES.HOME} element={<Home />} />
                             <Route path={ROUTES.OVERVIEW} element={<Overview />} />
                             <Route path={ROUTES.ISSUANCE} element={<Issuance />} />
+                            <Route path={ROUTES.STAKING} element={<Staking />} />
                             <Route path={ROUTES.INSURANCE} element={<Insurance />} />
                             <Route path={ROUTES.DEPLOY} element={<Deploy />} />
                             <Route path={ROUTES.MANAGEMENT} element={<Management />} />

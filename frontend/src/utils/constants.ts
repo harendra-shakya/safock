@@ -35,6 +35,7 @@ export const ROUTES = Object.freeze({
     OVERVIEW: "/overview",
     INSURANCE: "/insurance",
     ISSUANCE: "/issuance",
+    STAKING: "/staking",
     STAKING_CALCULATOR: "/staking-calculator",
     AUCTIONS: "/auctions",
     DEPLOY: "/deploy",

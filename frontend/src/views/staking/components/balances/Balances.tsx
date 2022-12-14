@@ -21,7 +21,7 @@ import { smallButton } from "theme";
 import { Box, BoxProps, Divider, Grid, Text } from "theme-ui";
 import { TRANSACTION_STATUS } from "utils/constants";
 import { v4 as uuid } from "uuid";
-
+import { Link } from "theme-ui";
 const pendingRSRBalanceAtom = atom((get) => get(pendingRSRSummaryAtom).pendingAmount);
 
 const PendingBalance = () => {
@@ -102,26 +102,9 @@ const StakeBalance = () => {
     return (
         <Box p={4}>
             <Text variant="subtitle" mb={3}>
-                <Trans>Your staked RSR</Trans>
+                <Trans>Note: This functinality is not ready yet. But you can look at our <Link href="https://safock.gitbook.io/docs/products/how-it-woks">docs</Link> to understand how dynamic staking work.</Trans>
             </Text>
-            <TokenBalance
-                symbol={rToken?.stToken?.symbol ?? ""}
-                logoSrc="/svgs/strsr.svg"
-                balance={balance}
-            />
-            <TokenBalance
-                mt={2}
-                symbol="RSR Value"
-                logoSrc="/svgs/equals.svg"
-                balance={balance * rate}
-            />
-            <TokenBalance
-                symbol="USD"
-                logoSrc="/svgs/equals.svg"
-                usd
-                balance={balance * rate * rsrPrice}
-                mt={2}
-            />
+           
         </Box>
     );
 };
@@ -132,7 +115,7 @@ const RSRBalance = () => {
 
     return (
         <Box p={4}>
-            <Text variant="subtitle" mb={3}>
+            {/* <Text variant="subtitle" mb={3}>
                 <Trans>In Wallet</Trans>
             </Text>
             <TokenBalance symbol="RSR" balance={balance} />
@@ -142,7 +125,7 @@ const RSRBalance = () => {
                 usd
                 balance={balance * rsrPrice}
                 mt={2}
-            />
+            /> */}
         </Box>
     );
 };
@@ -152,7 +135,6 @@ const RSRBalance = () => {
  */
 const Balances = (props: BoxProps) => (
     <Card p={0} {...props}>
-        <Grid columns={[1, 2]} gap={0}>
             <StakeBalance />
             <Box
                 sx={(theme: any) => ({
@@ -161,12 +143,9 @@ const Balances = (props: BoxProps) => (
                 })}
             >
                 <RSRBalance />
-                <Divider m={0} />
-                <AvailableBalance />
-                <Divider m={0} />
-                <PendingBalance />
+                {/* <Divider m={0} /> */}
+               
             </Box>
-        </Grid>
     </Card>
 );
 

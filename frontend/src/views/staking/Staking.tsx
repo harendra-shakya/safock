@@ -9,7 +9,7 @@ import Unstake from "./components/unstake";
 const Staking = () => (
     <Container pb={4}>
         <Text ml={5} mb={4} variant="strong" sx={{ display: "block" }}>
-            <Trans>Get Insurance + Claim Insurance</Trans>
+            <Trans>Stake + Unstake</Trans>
         </Text>
         <Box>
             <Grid columns={[1, 2]} gap={4} mb={4}>

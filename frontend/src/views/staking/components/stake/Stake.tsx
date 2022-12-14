@@ -1,5 +1,6 @@
 import { Trans } from "@lingui/macro";
 import { Button } from "components";
+import useRToken from "hooks/useRToken";
 import { useAtomValue } from "jotai/utils";
 import { useState } from "react";
 import { BoxProps, Card } from "theme-ui";
@@ -10,6 +11,7 @@ import StakeInput from "./StakeInput";
 const Stake = (props: BoxProps) => {
     const [confirming, setConfirming] = useState(false);
     const isValid = useAtomValue(isValidStakeAmountAtom);
+    const rToken = useRToken();
 
     return (
         <>
@@ -17,12 +19,12 @@ const Stake = (props: BoxProps) => {
             <Card p={4} {...props}>
                 <StakeInput />
                 <Button
-                    disabled={!isValid}
+                    disabled={true}
                     sx={{ width: "100%" }}
                     mt={3}
                     onClick={() => setConfirming(true)}
                 >
-                    + <Trans>Stake RSR</Trans>
+                    + <Trans>Stake {rToken?.symbol}</Trans>
                 </Button>
             </Card>
         </>
