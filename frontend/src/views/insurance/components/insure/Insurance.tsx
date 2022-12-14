@@ -15,6 +15,7 @@ import { LoadingButton } from "components/button";
 import Modal from "components/modal";
 import { Divider, Flex, Text, Link, Box, Spinner } from "theme-ui";
 import { CHAIN_ID } from "utils/chains";
+import { Select } from "theme-ui";
 
 const Insure = (props: BoxProps) => {
     const rToken = useRToken();
@@ -53,18 +54,17 @@ const Insure = (props: BoxProps) => {
 
     const [price, setPrice] = useState(0);
 
-
     const updateUI = async () => {
         const { ethereum }: any = window;
         const provider = new ethers.providers.Web3Provider(ethereum);
         const signer = provider.getSigner();
 
         const safock = new ethers.Contract(SAFOCK_ADDRESS[CHAIN_ID], safockAbi, signer);
-        setPlan(await safock.getPlan(+planNum))
+        setPlan(await safock.getPlan(+planNum));
 
         const _price = await safock.price(rToken);
 
-        setPrice(+_price * +amount)
+        setPrice(+_price * +amount);
     };
 
     const provideInsurance = async () => {
@@ -173,41 +173,29 @@ const Insure = (props: BoxProps) => {
                         }}
                         style={modalStyle}
                     >
-                          Your Plan info:
-
+                        Your Plan info:
                         <div></div>
                         <div></div>
-
                         {`Token Name: ${rToken?.name}`}
-
                         <div></div>
-
                         {`Token Symbol: ${rToken?.symbol}`}
                         <div></div>
-
-                        {`Insurace Plan type ${rToken?.symbol}: ${(plan?.planType!)}`}                 
+                        {`Insurace Plan type ${rToken?.symbol}: ${plan?.planType!}`}
                         <div></div>
-
                         {`Price should atleast drop: ${plan?.minDropNumerator}`}
                         <div></div>
-
-                        {`% Price Insurace will be covered: ${(plan?.coverUptoNumerator!)}`}
-
+                        {`% Price Insurace will be covered: ${plan?.coverUptoNumerator!}`}
                         <div></div>
-                        {`Validity: ${(plan?.validity!)/ (3600*24)} Days`}                  
-
+                        {`Validity: ${plan?.validity! / (3600 * 24)} Days`}
                         <div></div>
                         {`Price: ${plan?.priceNumerator!}% of Asset Price`}
-
                         <div></div>
                         {/* {`Is insurance claimable: ${hasFallen}`} */}
-
                         <Divider mx={-4} my={4} />
                         {info}
                         <>
                             <Divider mx={-4} my={4} />
                         </>
-
                         <Divider mx={-4} mt={4} />
                         <LoadingButton
                             loading={!!signing}

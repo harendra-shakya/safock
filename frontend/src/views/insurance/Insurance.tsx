@@ -16,7 +16,7 @@ const Staking = () => (
                 <Insure />
                 <ClaimInsurance />
             </Grid>
-            {/* <Balances /> */}
+            <Balances />
         </Box>
     </Container>
 );

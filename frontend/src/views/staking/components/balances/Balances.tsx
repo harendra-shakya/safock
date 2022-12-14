@@ -102,9 +102,12 @@ const StakeBalance = () => {
     return (
         <Box p={4}>
             <Text variant="subtitle" mb={3}>
-                <Trans>Note: This functinality is not ready yet. But you can look at our <Link href="https://safock.gitbook.io/docs/products/how-it-woks">docs</Link> to understand how dynamic staking work.</Trans>
+                <Trans>
+                    Note: This functinality is not ready yet. But you can look at our{" "}
+                    <Link href="https://safock.gitbook.io/docs/products/how-it-woks">docs</Link> to
+                    understand how dynamic staking work.
+                </Trans>
             </Text>
-           
         </Box>
     );
 };
@@ -135,17 +138,16 @@ const RSRBalance = () => {
  */
 const Balances = (props: BoxProps) => (
     <Card p={0} {...props}>
-            <StakeBalance />
-            <Box
-                sx={(theme: any) => ({
-                    borderLeft: ["none", `1px solid ${theme.colors.border}`],
-                    borderTop: [`1px solid ${theme.colors.border}`, "none"],
-                })}
-            >
-                <RSRBalance />
-                {/* <Divider m={0} /> */}
-               
-            </Box>
+        <StakeBalance />
+        <Box
+            sx={(theme: any) => ({
+                borderLeft: ["none", `1px solid ${theme.colors.border}`],
+                borderTop: [`1px solid ${theme.colors.border}`, "none"],
+            })}
+        >
+            <RSRBalance />
+            {/* <Divider m={0} /> */}
+        </Box>
     </Card>
 );
 

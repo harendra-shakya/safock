@@ -1,1 +1,1 @@
-export { default } from "./Balances";
+export { default } from "./PlansInfo";

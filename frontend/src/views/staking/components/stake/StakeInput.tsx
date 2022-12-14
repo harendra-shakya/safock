@@ -6,7 +6,7 @@ import { stakeAmountAtom } from "views/insurance/atoms";
 
 const StakeInput = (props: Partial<TransactionInputProps>) => {
     const max = useAtomValue(rsrBalanceAtom);
-    const rToken = useRToken()
+    const rToken = useRToken();
 
     return (
         <TransactionInput

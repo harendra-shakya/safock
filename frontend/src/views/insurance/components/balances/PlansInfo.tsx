@@ -93,7 +93,7 @@ const AvailableBalance = () => {
     );
 };
 
-const StakeBalance = () => {
+const Plans = () => {
     const rToken = useAtomValue(rTokenAtom);
     const balance = useAtomValue(stRsrBalanceAtom);
     const rate = useAtomValue(rsrExchangeRateAtom);
@@ -102,47 +102,57 @@ const StakeBalance = () => {
     return (
         <Box p={4}>
             <Text variant="subtitle" mb={3}>
-                <Trans>Your staked RSR</Trans>
+                <Trans>There are currently 4 insurance plans that we provide: </Trans>
             </Text>
-            <TokenBalance
-                symbol={rToken?.stToken?.symbol ?? ""}
-                logoSrc="/svgs/strsr.svg"
-                balance={balance}
-            />
-            <TokenBalance
-                mt={2}
-                symbol="RSR Value"
-                logoSrc="/svgs/equals.svg"
-                balance={balance * rate}
-            />
-            <TokenBalance
-                symbol="USD"
-                logoSrc="/svgs/equals.svg"
-                usd
-                balance={balance * rate * rsrPrice}
-                mt={2}
-            />
+            <Text variant="subtitle" mb={3}>
+                <Trans>0. BASIC - cost = 1% of price, lose cover upto 30%.</Trans>
+            </Text>
+            <Text variant="subtitle" mb={3}>
+                <Trans>1. PRO - cost = 3% of price, lose cover upto 50%.</Trans>
+            </Text>
+            <Text variant="subtitle" mb={3}>
+                <Trans>2. PRO_PLUS - cost = 5% of price, lose cover upto 70%.</Trans>
+            </Text>
+            <Text variant="subtitle" mb={3}>
+                <Trans>3. PRO_MAX - cost = 7% of price, lose cover upto 100%.</Trans>
+            </Text>
         </Box>
     );
 };
 
-const RSRBalance = () => {
+const Conditions = () => {
     const balance = useAtomValue(rsrBalanceAtom);
     const rsrPrice = useAtomValue(rsrPriceAtom);
 
     return (
         <Box p={4}>
             <Text variant="subtitle" mb={3}>
-                <Trans>In Wallet</Trans>
+                <Trans>The insurance can be claimed if it meets the conditions: </Trans>
             </Text>
-            <TokenBalance symbol="RSR" balance={balance} />
-            <TokenBalance
-                logoSrc="/svgs/equals.svg"
-                symbol="USD"
-                usd
-                balance={balance * rsrPrice}
-                mt={2}
-            />
+            <Text variant="subtitle" mb={3}>
+                <Trans>
+                    0. BASIC - Conditions: If the price drops atleast 20% then the purchased price.
+                    Validity 3 month.
+                </Trans>
+            </Text>
+            <Text variant="subtitle" mb={3}>
+                <Trans>
+                    1. PRO - Conditions: If the price drops atleast 20% then the purchased price.
+                    Validity 3 month.
+                </Trans>
+            </Text>
+            <Text variant="subtitle" mb={3}>
+                <Trans>
+                    2. PRO_PLUS - Conditions: If the price drops atleast 20% then the purchased
+                    price. Validity 3 month.
+                </Trans>
+            </Text>
+            <Text variant="subtitle" mb={3}>
+                <Trans>
+                    3. PRO_MAX - Conditions: If the price drops atleast 20% then the purchased
+                    price. Validity 3 month.
+                </Trans>
+            </Text>
         </Box>
     );
 };
@@ -150,24 +160,20 @@ const RSRBalance = () => {
 /**
  * Display collateral tokens balances
  */
-const Balances = (props: BoxProps) => (
+const PlansInfo = (props: BoxProps) => (
     <Card p={0} {...props}>
         <Grid columns={[1, 2]} gap={0}>
-            <StakeBalance />
+            <Plans />
             <Box
                 sx={(theme: any) => ({
                     borderLeft: ["none", `1px solid ${theme.colors.border}`],
                     borderTop: [`1px solid ${theme.colors.border}`, "none"],
                 })}
             >
-                <RSRBalance />
-                <Divider m={0} />
-                <AvailableBalance />
-                <Divider m={0} />
-                <PendingBalance />
+                <Conditions />
             </Box>
         </Grid>
     </Card>
 );
 
-export default Balances;
+export default PlansInfo;
