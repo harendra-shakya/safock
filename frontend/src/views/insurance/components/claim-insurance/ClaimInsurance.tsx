@@ -27,7 +27,7 @@ const ClaimInsurace = (props: BoxProps) => {
 
     const [tokenName, setTokenName] = useState("USDT");
     const [isOkDisabled, setIsOkDisabled] = useState(false);
-    const [info, setInfo] = useState(`Claim insurance`);
+    const [info, setInfo] = useState(`Claim insurance?`);
 
     enum InsurancePlan {
         BASIC,
@@ -50,7 +50,7 @@ const ClaimInsurace = (props: BoxProps) => {
         updateUI();
     }, [account, showModal])
 
-    const [numRTokens, setNumRTokens] = useState(0);
+    const [validityLeft, setValidityLeft] = useState(0);
     const [owner, setOwner] = useState(0);
     const [isClaimed, setisClaimed] = useState(0);
     const [price, setprice] = useState(0);
@@ -66,12 +66,16 @@ const ClaimInsurace = (props: BoxProps) => {
         const safock = new ethers.Contract(SAFOCK_ADDRESS[CHAIN_ID], safockAbi, signer);
         
         setUserPlan(await safock.getUserPlan(account, rToken?.address));
-        console.log("working")
-        setNumRTokens(userPlan?.numRTokens!)
+
+        setValidityLeft(await safock.validityLeft(rToken?.address) )
     }
 
     const _claimInsurance = async () => {
         try {
+            if(userPlan?.owner !== account) {
+                alert("You don't have any plan");
+                return;
+            }
             setIsOkDisabled(true);
             const { ethereum }: any = window;
             const provider = new ethers.providers.Web3Provider(ethereum);
@@ -147,6 +151,7 @@ const ClaimInsurace = (props: BoxProps) => {
                     </Trans>
                 </Button>
                 {showModal && (
+
                     <Modal
                         title="Claim Insurance"
                         onClose={() => {
@@ -154,9 +159,26 @@ const ClaimInsurace = (props: BoxProps) => {
                         }}
                         style={modalStyle}
                     >
-                        Plan info:
-                      {/* {parseInt(numRTokens.toString())} */}
+                        Your Plan info:
 
+                        <div></div>
+                        <div></div>
+
+                        {`Token Symbol: ${rToken?.symbol}`}
+                        <div></div>
+
+                      {`Number of ${rToken?.symbol}: ${parseInt((userPlan?.numRTokens!).toString())}`}{"\n"}                    
+                      <div></div>
+
+                      {`Insurance Plan Type: ${userPlan?.planType}`}
+                      <div></div>
+
+                      {`Amount assured In USD: ${ethers.utils.formatEther((userPlan?.amountInsuredInUSD!))}`}
+
+                      <div></div>
+                      {`Validity: ${rToken?.symbol}: ${(userPlan?.validity! - validityLeft)/ (3600*24)} Days`}{"\n"}                    
+
+                  
                         <Divider mx={-4} my={4} />
 
                         {info}
