@@ -16,7 +16,7 @@ Safock is a DeFi platform that focuses on crypto (ETFs) trading in a decentraliz
 
 ## Overview
 
-Safock is a Crypto ETF platform that opens doors to purchase Defi crypto ETFs. Safock makes it easy to bundle together various yield-generating collateral assets to create a customized financial product while utilizing an insurance backstop and fully on-chain transparency to protect users. This functionality is perffor ect for creating crypto ETF, as the deployer can choose their custom basket of underlying assets, and even use yield-generating assets to generate revenue. And users can stake their ETF too with our platform for even higher yields.
+Safock is a Crypto ETF platform that opens doors to purchase Defi crypto ETFs. Safock makes it easy to bundle together various yield-generating collateral assets to create a customized financial product while utilizing an insurance backstop and fully on-chain transparency to protect users. This functionality is perfect for creating crypto ETF, as the deployer can choose their custom basket of underlying assets, and even use yield-generating assets to generate revenue. And users can stake their ETF too with our platform for even higher yields.
 
 ETFs are investment vehicles that track the performance of a particular asset or basket of assets, and they are traded on exchanges like stocks but as they're backed by centralized commodities the barrier of entry is too high that's why we build Decentralized Finance ETFs, also known as "DeFi ETFs" are ETFs(exchange-traded funds) that are built on blockchain technology and backed by Rtokens. This allows for a more transparent and secure way to invest in a diversified portfolio of crypto assets.
 
@@ -54,9 +54,10 @@ For creating and minting ETFs, Safock uses Reserve Protocol as the Reserve Proto
 
 All the logic minting and redeeming of ETFs is handled by Reserve Protocol. But we add an extra layer in frontend to make it easy to mint RTokens and simplifies the overall process for users.
 
+### Insurance:<br>
+
 To save our users from losses, we also provide insurance to our customers.
 
-Insurance:<br>
 There are currently 4 insurance plans that we provide. The insurance can be claimed if it meets the conditions.
 
 1. BASIC -> cost = 1% of price, lose cover upto 30%. **Conditions:** If the price drops atleast 20% then the purchased price. Validity 3 month.
@@ -67,6 +68,8 @@ There are currently 4 insurance plans that we provide. The insurance can be clai
 (Although we can change them after looking at stats and data when we deploy that on mainnet.)
 
 <img src="backend/docs/safock-userflow.png" alt="safock-userflow" border="0" /><br>
+
+### Dynamic staking:<br>
 
 As a core feature of our product we also provide ETF (RToken) staking. We're implementing dynamic staking here. For most common staking applications, the admin has to provide the estimated APY for the program for a certain period of time beforehand. With the dynamic staking approach, it calculates the APY dynamically for a particular stakeholder based on the number of stakeholders, their staked amount, and the rewards which were added to the Staking contract address till that point in time. There is no lock-in time for the stakeholder's stake in this approach. Stakeholders can remove their stake at any point in time and can claim the rewards. Here the staking program is done for a dummy StakeToken(STK) which is an ERC20 token deployed on the Goerli network.<br>
 
