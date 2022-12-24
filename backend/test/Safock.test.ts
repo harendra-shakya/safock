@@ -14,7 +14,8 @@ import {
   TestIStRSR,
   TestIRToken,
   USDCMock,
-  Safock
+  Safock,
+  StakingToken,
 } from '../typechain'
 import { Collateral, Implementation, IMPLEMENTATION, defaultFixture } from './fixtures'
 
@@ -26,7 +27,7 @@ describe('Safock contract', () => {
   let addr2: SignerWithAddress
   let other: SignerWithAddress
 
-  let safock: Safock;
+  let safock: Safock
   // Tokens
   let initialBal: BigNumber
   let token: ERC20Mock
@@ -54,11 +55,9 @@ describe('Safock contract', () => {
   let loadFixture: ReturnType<typeof createFixtureLoader>
   let wallet: Wallet
 
-
   let USDC = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
   let USDT = '0xdAC17F958D2ee523a2206206994597C13D831ec7'
   let BUSD = '0x4Fabb145d64652a948d72533023f6E7A623C7C53'
-
 
   before('create fixture loader', async () => {
     ;[wallet] = (await ethers.getSigners()) as unknown as Wallet[]
@@ -81,11 +80,11 @@ describe('Safock contract', () => {
     )
     cToken = <CTokenMock>await ethers.getContractAt('CTokenMock', await cTokenAsset.erc20())
 
-     // Deploy Safock
-  const SafockFactory = await ethers.getContractFactory('Safock')
+    // Deploy Safock
+    const SafockFactory = await ethers.getContractFactory('Safock')
 
-  safock = <Safock>await SafockFactory.connect(owner).deploy(facade.address, USDC, USDT, BUSD) // 
-  await safock.deployed()
+    safock = <Safock>await SafockFactory.connect(owner).deploy(facade.address, USDC, USDT, BUSD) //
+    await safock.deployed()
   })
 
   describe('Views', () => {
@@ -120,9 +119,46 @@ describe('Safock contract', () => {
     })
 
     it('Safock: Should return RToken price correctly', async () => {
-        console.log("Here is the price: ", ethers.utils.formatEther(await facade.price(rToken.address)))
+      console.log(
+        'Here is the price: ',
+        ethers.utils.formatEther(await facade.price(rToken.address))
+      )
       expect(await safock.getPrice(rToken.address)).to.equal(fp('1'))
     })
+    it('stake correctly', async () => {
+      const amount = ethers.utils.parseEther('10')
+      await rToken.connect(addr1).approve(safock.address, amount)
+      await safock.connect(addr1).stake(rToken.address, amount)
 
+      const stk = await safock.getStakingContract(rToken.address)
+      const stkToken = await ethers.getContractAt('StakingToken', stk)
+      console.log('stkaddress', stk)
+      const bal = await stkToken.connect(addr1).balanceOf(addr1.address)
+      console.log('Here is the balance', ethers.utils.formatEther(bal))
+      expect(bal).to.equal(amount)
+    })
+
+    it('unstake correctly', async () => {
+      const amount = ethers.utils.parseEther('10')
+
+      await rToken.connect(addr1).approve(safock.address, amount)
+      await safock.connect(addr1).stake(rToken.address, amount)
+      let stk = await safock.getStakingContract(rToken.address)
+      let stkToken = await ethers.getContractAt('StakingToken', stk)
+      console.log('stkaddress', stk)
+      let bal = await stkToken.connect(addr1).balanceOf(addr1.address)
+      console.log('Here is the balance', ethers.utils.formatEther(bal))
+
+      await stkToken.connect(addr1).approve(safock.address, amount)
+
+      await safock.connect(addr1).removeStake(rToken.address, amount)
+
+      stk = await safock.getStakingContract(rToken.address)
+      stkToken = await ethers.getContractAt('StakingToken', stk)
+      console.log('stkaddress', stk)
+      bal = await stkToken.connect(addr1).balanceOf(addr1.address)
+      console.log('Here is the balance', ethers.utils.formatEther(bal))
+      expect(bal).to.equal(0)
+    })
   })
 })

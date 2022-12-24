@@ -77,7 +77,7 @@ contract Staking is Initializable, AccessControlUpgradeable, PausableUpgradeable
         uint256 _totalShares = totalSupply;
         uint256 shares;
 
-        if(_totalShares == 0 && rToken.balanceOf(address(this)) == 0) {
+        if(_totalShares == 0) {
             shares = stakeAmount;
         } else {
             shares = (stakeAmount * _totalShares) / rToken.balanceOf(address(this));
@@ -93,7 +93,7 @@ contract Staking is Initializable, AccessControlUpgradeable, PausableUpgradeable
     }
 
     function removeStake(address to) public whenNotPaused {
-        uint256 stakeAmount = rToken.balanceOf(address(this)) - totalStakes;
+        uint256 stakeAmount = balanceOf[address(this)];
         uint256 stakeholderStake = stakeholderToStake[to].stakedRToken;
         uint256 stakeholderShares = stakeholderToStake[to].shares;
 

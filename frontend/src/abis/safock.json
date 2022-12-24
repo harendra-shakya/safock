@@ -195,19 +195,6 @@
                 "type": "address"
             }
         ],
-        "name": "createStakingContract",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "rToken",
-                "type": "address"
-            }
-        ],
         "name": "getCurrentRewards",
         "outputs": [
             {
@@ -307,12 +294,31 @@
                 "type": "address"
             }
         ],
-        "name": "getStkPerShare",
+        "name": "getRTokenPerShare",
         "outputs": [
             {
                 "internalType": "uint256",
                 "name": "",
                 "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "rToken",
+                "type": "address"
+            }
+        ],
+        "name": "getStakingContract",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "_stakingContract",
+                "type": "address"
             }
         ],
         "stateMutability": "view",
@@ -519,7 +525,7 @@
                 "type": "address"
             }
         ],
-        "name": "refundLockedSTK",
+        "name": "refundLockedRToken",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -580,7 +586,7 @@
                 "type": "address"
             }
         ],
-        "name": "rewardForSTK",
+        "name": "rewardForRToken",
         "outputs": [
             {
                 "internalType": "uint256",

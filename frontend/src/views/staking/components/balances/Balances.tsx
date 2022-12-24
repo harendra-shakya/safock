@@ -22,6 +22,10 @@ import { Box, BoxProps, Divider, Grid, Text } from "theme-ui";
 import { TRANSACTION_STATUS } from "utils/constants";
 import { v4 as uuid } from "uuid";
 import { Link } from "theme-ui";
+import { ethers } from "ethers";
+import { SAFOCK_ADDRESS } from "utils/addresses";
+import { CHAIN_ID } from "utils/chains";
+import safockAbi from "abis/safock.json";
 const pendingRSRBalanceAtom = atom((get) => get(pendingRSRSummaryAtom).pendingAmount);
 
 const PendingBalance = () => {
@@ -94,20 +98,85 @@ const AvailableBalance = () => {
 };
 
 const StakeBalance = () => {
-    const rToken = useAtomValue(rTokenAtom);
-    const balance = useAtomValue(stRsrBalanceAtom);
-    const rate = useAtomValue(rsrExchangeRateAtom);
-    const rsrPrice = useAtomValue(rsrPriceAtom);
+    const rToken = useRToken();
+    const [stakedAmount, setStakedAmount] = useState("0");
+    const [rTokenPerShare, setRTokenPerShare] = useState("0");
+    const [shares, setShares] = useState("0");
+    const [reward, setReward] = useState("0");
+    const [totalStake, setTotalStake] = useState("0");
+    const [totalShare, setTotalShare] = useState("0");
+
+    const { account } = useWeb3React();
+
+    useEffect(() => {
+        updateUI();
+    }, [account]);
+
+    const updateUI = async () => {
+        const { ethereum }: any = window;
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+
+        const safock = new ethers.Contract(SAFOCK_ADDRESS[CHAIN_ID], safockAbi, signer);
+
+        if (!(await safock.isStakingContractExists(rToken?.address))) return;
+
+        setStakedAmount(ethers.utils.formatEther(await safock.stakeOf(account, rToken?.address)));
+        setRTokenPerShare(
+            ethers.utils.formatEther(await safock.getRTokenPerShare(rToken?.address))
+        );
+        setShares(ethers.utils.formatEther(await safock.sharesOf(account, rToken?.address)));
+        setReward(ethers.utils.formatEther(await safock.rewardOf(account, rToken?.address)));
+        setTotalStake(ethers.utils.formatEther(await safock.getTotalStakes(rToken?.address)));
+        setTotalShare(ethers.utils.formatEther(await safock.getTotalShares(rToken?.address)));
+    };
 
     return (
         <Box p={4}>
+            <Text variant="title" mb={3}>
+                <Trans>Staked Amount</Trans>
+            </Text>
             <Text variant="subtitle" mb={3}>
                 <Trans>
-                    Note: This functinality is not ready yet. But you can look at our{" "}
-                    <Link href="https://safock.gitbook.io/docs/products/how-it-woks">docs</Link> to
-                    understand how dynamic staking work.
+                    {stakedAmount} {rToken?.symbol} ETF
                 </Trans>
             </Text>
+            <Text variant="title" mb={3}>
+                <Trans>ETFs Per STK Token</Trans>
+            </Text>
+            <Text variant="subtitle" mb={3}>
+                <Trans>
+                    {rTokenPerShare} {rToken?.symbol} ETF
+                </Trans>
+            </Text>{" "}
+            <Text variant="title" mb={3}>
+                <Trans>Your STK</Trans>
+            </Text>
+            <Text variant="subtitle" mb={3}>
+                <Trans>{shares} STK</Trans>
+            </Text>{" "}
+            <Text variant="title" mb={3}>
+                <Trans>Your Reward</Trans>
+            </Text>
+            <Text variant="subtitle" mb={3}>
+                <Trans>
+                    {reward} {rToken?.symbol} ETF
+                </Trans>
+            </Text>{" "}
+            <Text variant="title" mb={3}>
+                <Trans>Total Stake</Trans>
+            </Text>
+            <Text variant="subtitle" mb={3}>
+                <Trans>
+                    {totalStake} {rToken?.symbol} ETF
+                </Trans>
+            </Text>{" "}
+            <Text variant="title" mb={3}>
+                <Trans>Total STK</Trans>
+            </Text>
+            <Text variant="subtitle" mb={3}>
+                <Trans>{totalShare} STK</Trans>
+            </Text>{" "}
         </Box>
     );
 };

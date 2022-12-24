@@ -197,6 +197,10 @@ contract Safock is Ownable, ReentrancyGuard {
         return IStaking(stakingContracts[rToken]).getRTokenPerShare();
     }
 
+    function getStakingContract(address rToken) external view returns (address _stakingContract) {
+        _stakingContract = stakingContracts[rToken];
+    }
+
     function stakeOf(address stakeholder, address rToken)
         external
         view

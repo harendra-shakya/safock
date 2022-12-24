@@ -71,18 +71,18 @@ There are currently 4 insurance plans that we provide. The insurance can be clai
 
 ### Dynamic staking:<br>
 
-As a core feature of our product we also provide ETF (RToken) staking. We're implementing dynamic staking here. For most common staking applications, the admin has to provide the estimated APY for the program for a certain period of time beforehand. With the dynamic staking approach, it calculates the APY dynamically for a particular stakeholder based on the number of stakeholders, their staked amount, and the rewards which were added to the Staking contract address till that point in time. There is no lock-in time for the stakeholder's stake in this approach. Stakeholders can remove their stake at any point in time and can claim the rewards. We are also providing STK Token in exchange of their RTokens.<br>
+As a core feature of our product we also provide ETF (RToken) staking. We're implementing dynamic staking here. For most common staking applications, the admin has to provide the estimated APY for the program for a certain period of time beforehand. With the dynamic staking approach, it calculates the APY dynamically for a particular stakeholder based on the number of stakeholders, their staked amount, and the rewards which were added to the Staking contract address till that point in time. There is no lock-in time for the stakeholder's stake in this approach. Stakeholders can remove their stake at any point in time and can claim the rewards. We are providing STK Token in exchange of their RTokens.<br>
 
-The financial logic of the staking smart contract is to mint STK Token to each stakeholder and rewards are in proportion to the STK Token. Just like Mutual Funds derive the NAV(Net Asset Value) and it increases or decreases based on the STK Token and their asset value inside of it, the similar way the NAV, in this case, will be RToken per share price which will increase as and when rewards are added to the staking program.<br>
+The financial logic of the staking smart contract is to mint STK Token to each stakeholder and rewards are in proportion to the STK Token. Just like Mutual Funds derive the NAV(Net Asset Value) and it increases or decreases based on the STK Token and their asset value inside of it, the similar way the NAV, in this case, will be RToken per STK Token price which will increase as and when rewards are added to the staking program.<br>
 
-By default the initial ratio will be set at 1:1, so 1 RToken is equal to 1 share. Each user who stakes at this ratio will receive an equal amount of STK Token for the number of RToken she/he staked. During the month a reward will be sent to the Staking smart contract, which will alter the number of RToken on the contract and by default alter the RToken per share ratio.<br>
+By default the initial ratio will be set at 1:1, so 1 RToken is equal to 1 STK Token. Each user who stakes at this ratio will receive an equal amount of STK Token for the number of RToken she/he staked. During the month a reward will be sent to the Staking smart contract, which will alter the number of RToken on the contract and by default alter the RToken per STK Token ratio.<br>
 
 #### Example flow -
 
-1. Initially the RToken/share ratio will be 1.
+1. Initially the RToken/STK Token ratio will be 1.
 2. `StakeholderA` stakes 1000 RToken token at this point, so `StakeholderA` will receive 1000 STK Token.
 3. Reward of 100 RToken is deposited on the Staking contract address.
-4. Now, the RToken/share ratio gets increase to 1.1 (total RToken / number of STK Token = 1100/1000)
+4. Now, the RToken/STK Token ratio gets increase to 1.1 (total RToken / number of STK Token = 1100/1000)
 5. `StakeholderB` stakes 1000 RToken token at this point, so `StakeholderB` will receive 1000/1.1 ~ 909 STK Token
 6. `StakeholderA` remove stake of 1000 RToken at this point, so `StakeholderA` will receive 1000\*1.1 = 1100 RToken. So, reward of `StakeholderA` is 1100-1000 = 100 RToken
 
