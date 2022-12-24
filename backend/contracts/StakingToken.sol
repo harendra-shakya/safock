@@ -9,7 +9,7 @@ contract StakingToken {
     using SafeMath for uint256;
 
     string public constant name = "StakingToken";
-    string public constant symbol = "ST";
+    string public constant symbol = "STK";
     uint8 public constant decimals = 18;
     uint256 public totalSupply;
     mapping(address => uint256) public balanceOf;
