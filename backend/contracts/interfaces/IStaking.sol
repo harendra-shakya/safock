@@ -14,11 +14,11 @@ interface IStaking {
 
     function setInitialRatio(uint256 stakeAmount) external;
 
-    function createStake(uint256 stakeAmount) external;
+    function createStake(address to) external;
 
-    function removeStake(uint256 stakeAmount) external;
+    function removeStake(address to) external;
 
-    function getStkPerShare() external view returns (uint256);
+    function getRTokenPerShare() external view returns (uint256);
 
     function stakeOf(address stakeholder) external view returns (uint256);
 
@@ -26,7 +26,7 @@ interface IStaking {
 
     function rewardOf(address stakeholder) external view returns (uint256);
 
-    function rewardForSTK(address stakeholder, uint256 stkAmount) external view returns (uint256);
+    function rewardForRToken(address stakeholder, uint256 stkAmount) external view returns (uint256);
 
     function getTotalStakes() external view returns (uint256);
 
@@ -36,7 +36,7 @@ interface IStaking {
 
     function getTotalStakeholders() external view returns (uint256);
 
-    function refundLockedSTK(uint256 from, uint256 to) external;
+    function refundLockedRToken(uint256 from, uint256 to) external;
 
     function removeLockedRewards() external;
 }

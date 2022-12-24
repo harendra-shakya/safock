@@ -7,23 +7,23 @@ import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol"
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "./StakingToken.sol";
 
 // @dev it's a dynamic staking contract
-contract Staking is Initializable, AccessControlUpgradeable, PausableUpgradeable {
+contract Staking is Initializable, AccessControlUpgradeable, PausableUpgradeable, StakingToken {
     using EnumerableSet for EnumerableSet.AddressSet;
 
-    IERC20 private stkToken;
+    IERC20 private rToken;
     EnumerableSet.AddressSet private stakeholders;
 
     struct Stake {
-        uint256 stakedSTK;
+        uint256 stakedRToken;
         uint256 shares;
     }
 
     bytes32 private ADMIN_ROLE;
-    uint256 private base;
+    uint256 private constant BASE = 10**18;
     uint256 private totalStakes;
-    uint256 private totalShares;
     bool private initialRatioFlag;
 
     mapping(address => Stake) private stakeholderToStake;
@@ -46,20 +46,11 @@ contract Staking is Initializable, AccessControlUpgradeable, PausableUpgradeable
         require(hasRole(ADMIN_ROLE, msg.sender), "Caller is not an admin");
         _;
     }
-    modifier isInitialRatioNotSet() {
-        require(!initialRatioFlag, "Initial Ratio has already been set");
-        _;
-    }
-
-    modifier isInitialRatioSet() {
-        require(initialRatioFlag, "Initial Ratio has not yet been set");
-        _;
-    }
 
     function initialize(
         address admin1,
         address admin2,
-        address _stkToken
+        address _rToken
     ) public initializer {
         AccessControlUpgradeable.__AccessControl_init();
         PausableUpgradeable.__Pausable_init();
@@ -70,8 +61,7 @@ contract Staking is Initializable, AccessControlUpgradeable, PausableUpgradeable
         _setupRole(ADMIN_ROLE, admin1);
         _setupRole(ADMIN_ROLE, admin2);
 
-        stkToken = IERC20(_stkToken);
-        base = 10**18;
+        rToken = IERC20(_rToken);
     }
 
     function pauseContract() public hasAdminRole {
@@ -82,79 +72,63 @@ contract Staking is Initializable, AccessControlUpgradeable, PausableUpgradeable
         _unpause();
     }
 
-    function setInitialRatio(uint256 stakeAmount) public isInitialRatioNotSet hasAdminRole {
-        require(
-            totalShares == 0 && stkToken.balanceOf(address(this)) == 0,
-            "Stakes and shares are non-zero"
-        );
+    function createStake(address to) public whenNotPaused {
+        uint256 stakeAmount = rToken.balanceOf(address(this)) - totalStakes;
+        uint256 _totalShares = totalSupply;
+        uint256 shares;
 
-        stakeholders.add(msg.sender);
-        stakeholderToStake[msg.sender] = Stake({ stakedSTK: stakeAmount, shares: stakeAmount });
-        totalStakes = stakeAmount;
-        totalShares = stakeAmount;
-        initialRatioFlag = true;
+        if(_totalShares == 0 && rToken.balanceOf(address(this)) == 0) {
+            shares = stakeAmount;
+        } else {
+            shares = (stakeAmount * _totalShares) / rToken.balanceOf(address(this));
+        }
 
-        require(
-            stkToken.transferFrom(msg.sender, address(this), stakeAmount),
-            "STK transfer failed"
-        );
-
-        emit StakeAdded(msg.sender, stakeAmount, stakeAmount, block.timestamp);
-    }
-
-    function createStake(uint256 stakeAmount) public whenNotPaused isInitialRatioSet {
-        uint256 shares = (stakeAmount * totalShares) / stkToken.balanceOf(address(this));
-
-        require(
-            stkToken.transferFrom(msg.sender, address(this), stakeAmount),
-            "STK transfer failed"
-        );
-
-        stakeholders.add(msg.sender);
-        stakeholderToStake[msg.sender].stakedSTK += stakeAmount;
-        stakeholderToStake[msg.sender].shares += shares;
+        stakeholders.add(to);
+        stakeholderToStake[to].stakedRToken += stakeAmount;
+        stakeholderToStake[to].shares += shares;
         totalStakes += stakeAmount;
-        totalShares += shares;
+        _mint(to, shares);
 
-        emit StakeAdded(msg.sender, stakeAmount, shares, block.timestamp);
+        emit StakeAdded(to, stakeAmount, shares, block.timestamp);
     }
 
-    function removeStake(uint256 stakeAmount) public whenNotPaused {
-        uint256 stakeholderStake = stakeholderToStake[msg.sender].stakedSTK;
-        uint256 stakeholderShares = stakeholderToStake[msg.sender].shares;
+    function removeStake(address to) public whenNotPaused {
+        uint256 stakeAmount = rToken.balanceOf(address(this)) - totalStakes;
+        uint256 stakeholderStake = stakeholderToStake[to].stakedRToken;
+        uint256 stakeholderShares = stakeholderToStake[to].shares;
 
         require(stakeholderStake >= stakeAmount, "Not enough staked!");
 
-        uint256 stakedRatio = (stakeholderStake * base) / stakeholderShares;
-        uint256 currentRatio = (stkToken.balanceOf(address(this)) * base) / totalShares;
+        uint256 stakedRatio = (stakeholderStake * BASE) / stakeholderShares;
+        uint256 currentRatio = (rToken.balanceOf(address(this)) * BASE) / totalSupply;
         uint256 sharesToWithdraw = (stakeAmount * stakeholderShares) / stakeholderStake;
 
         uint256 rewards = 0;
 
         if (currentRatio > stakedRatio) {
-            rewards = (sharesToWithdraw * (currentRatio - stakedRatio)) / base;
+            rewards = (sharesToWithdraw * (currentRatio - stakedRatio)) / BASE;
         }
 
-        stakeholderToStake[msg.sender].shares -= sharesToWithdraw;
-        stakeholderToStake[msg.sender].stakedSTK -= stakeAmount;
+        stakeholderToStake[to].shares -= sharesToWithdraw;
+        stakeholderToStake[to].stakedRToken -= stakeAmount;
         totalStakes -= stakeAmount;
-        totalShares -= sharesToWithdraw;
+        _burn(address(this), sharesToWithdraw);
 
-        require(stkToken.transfer(msg.sender, stakeAmount + rewards), "STK transfer failed");
+        require(rToken.transfer(to, stakeAmount + rewards), "RToken transfer failed");
 
-        if (stakeholderToStake[msg.sender].stakedSTK == 0) {
-            stakeholders.remove(msg.sender);
+        if (stakeholderToStake[to].stakedRToken == 0) {
+            stakeholders.remove(to);
         }
 
-        emit StakeRemoved(msg.sender, stakeAmount, sharesToWithdraw, rewards, block.timestamp);
+        emit StakeRemoved(to, stakeAmount, sharesToWithdraw, rewards, block.timestamp);
     }
 
-    function getStkPerShare() public view returns (uint256) {
-        return (stkToken.balanceOf(address(this)) * base) / totalShares;
+    function getRTokenPerShare() public view returns (uint256) {
+        return (rToken.balanceOf(address(this)) * BASE) / totalSupply;
     }
 
     function stakeOf(address stakeholder) public view returns (uint256) {
-        return stakeholderToStake[stakeholder].stakedSTK;
+        return stakeholderToStake[stakeholder].stakedRToken;
     }
 
     function sharesOf(address stakeholder) public view returns (uint256) {
@@ -162,40 +136,40 @@ contract Staking is Initializable, AccessControlUpgradeable, PausableUpgradeable
     }
 
     function rewardOf(address stakeholder) public view returns (uint256) {
-        uint256 stakeholderStake = stakeholderToStake[stakeholder].stakedSTK;
+        uint256 stakeholderStake = stakeholderToStake[stakeholder].stakedRToken;
         uint256 stakeholderShares = stakeholderToStake[stakeholder].shares;
 
         if (stakeholderShares == 0) {
             return 0;
         }
 
-        uint256 stakedRatio = (stakeholderStake * base) / stakeholderShares;
-        uint256 currentRatio = (stkToken.balanceOf(address(this)) * base) / totalShares;
+        uint256 stakedRatio = (stakeholderStake * BASE) / stakeholderShares;
+        uint256 currentRatio = (rToken.balanceOf(address(this)) * BASE) / totalSupply;
 
         if (currentRatio <= stakedRatio) {
             return 0;
         }
 
-        uint256 rewards = (stakeholderShares * (currentRatio - stakedRatio)) / base;
+        uint256 rewards = (stakeholderShares * (currentRatio - stakedRatio)) / BASE;
 
         return rewards;
     }
 
-    function rewardForSTK(address stakeholder, uint256 stkAmount) public view returns (uint256) {
-        uint256 stakeholderStake = stakeholderToStake[stakeholder].stakedSTK;
+    function rewardForRToken(address stakeholder, uint256 rTokenAmount) public view returns (uint256) {
+        uint256 stakeholderStake = stakeholderToStake[stakeholder].stakedRToken;
         uint256 stakeholderShares = stakeholderToStake[stakeholder].shares;
 
-        require(stakeholderStake >= stkAmount, "Not enough staked!");
+        require(stakeholderStake >= rTokenAmount, "Not enough staked!");
 
-        uint256 stakedRatio = (stakeholderStake * base) / stakeholderShares;
-        uint256 currentRatio = (stkToken.balanceOf(address(this)) * base) / totalShares;
-        uint256 sharesToWithdraw = (stkAmount * stakeholderShares) / stakeholderStake;
+        uint256 stakedRatio = (stakeholderStake * BASE) / stakeholderShares;
+        uint256 currentRatio = (rToken.balanceOf(address(this)) * BASE) / totalSupply;
+        uint256 sharesToWithdraw = (rTokenAmount * stakeholderShares) / stakeholderStake;
 
         if (currentRatio <= stakedRatio) {
             return 0;
         }
 
-        uint256 rewards = (sharesToWithdraw * (currentRatio - stakedRatio)) / base;
+        uint256 rewards = (sharesToWithdraw * (currentRatio - stakedRatio)) / BASE;
 
         return rewards;
     }
@@ -204,42 +178,38 @@ contract Staking is Initializable, AccessControlUpgradeable, PausableUpgradeable
         return totalStakes;
     }
 
-    function getTotalShares() public view returns (uint256) {
-        return totalShares;
-    }
-
     function getCurrentRewards() public view returns (uint256) {
-        return stkToken.balanceOf(address(this)) - totalStakes;
+        return rToken.balanceOf(address(this)) - totalStakes;
     }
 
     function getTotalStakeholders() public view returns (uint256) {
         return stakeholders.length();
     }
 
-    function refundLockedSTK(uint256 from, uint256 to) public hasAdminRole {
+    function refundLockedRToken(uint256 from, uint256 to) public hasAdminRole {
         require(to <= stakeholders.length(), "Invalid `to` param");
         uint256 s;
 
         for (s = from; s < to; s += 1) {
-            totalStakes -= stakeholderToStake[stakeholders.at(s)].stakedSTK;
+            totalStakes -= stakeholderToStake[stakeholders.at(s)].stakedRToken;
 
             require(
-                stkToken.transfer(
+                rToken.transfer(
                     stakeholders.at(s),
-                    stakeholderToStake[stakeholders.at(s)].stakedSTK
+                    stakeholderToStake[stakeholders.at(s)].stakedRToken
                 ),
-                "STK transfer failed"
+                "RToken transfer failed"
             );
 
-            stakeholderToStake[stakeholders.at(s)].stakedSTK = 0;
+            stakeholderToStake[stakeholders.at(s)].stakedRToken = 0;
         }
     }
 
     function removeLockedRewards() public hasAdminRole {
         require(totalStakes == 0, "Stakeholders still have stakes");
 
-        uint256 balance = stkToken.balanceOf(address(this));
+        uint256 balance = rToken.balanceOf(address(this));
 
-        require(stkToken.transfer(msg.sender, balance), "STK transfer failed");
+        require(rToken.transfer(msg.sender, balance), "RToken transfer failed");
     }
 }

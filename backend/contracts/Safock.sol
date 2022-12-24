@@ -6,7 +6,6 @@ import "./interfaces/IRToken.sol";
 import "./libraries/TransferHelpers.sol";
 import "./interfaces/IStaking.sol";
 import "./Staking.sol";
-import "./STK.sol";
 
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -70,10 +69,11 @@ contract Safock is Ownable, ReentrancyGuard {
     mapping(address => mapping(address => UserPlan)) private userPlans; // user -> tToken -> UserPlan
     mapping(InsurancePlan => InsuranceAttributes) private plans; // InsurancePlan -> InsuranceAttributes
 
-    mapping(address => bool) private stkContracts;
+    mapping(address => bool) private isStkContractsExists; // rToken -> bool
+    mapping(address => address) private stakingContracts; // rToken -> staking contract
 
-    modifier isStkContract(address rToken) {
-        require(!isStakingContractExists(rToken), "Staking contract exists");
+    modifier stkContractExists(address rToken) {
+        require(isStakingContractExists(rToken), "Staking contract NOT exists");
         _;
     }
 
@@ -166,109 +166,108 @@ contract Safock is Ownable, ReentrancyGuard {
     // ========================== Staking ==================================== //
 
     function isStakingContractExists(address rToken) public view returns (bool isExists) {
-        isExists = stkContracts[rToken];
+        isExists = isStkContractsExists[rToken];
     }
 
-    function createStakingContract(address rToken) external isStkContract(rToken) {
-        uint256 initialSupply = 10000000 ether;
+    function createStakingContract(address rToken) private {
+        require(!isStakingContractExists(rToken), "Staking contract NOT exists");
 
-        STK token = new STK(initialSupply);
         Staking staking = new Staking();
 
-        token.approve(address(staking), initialSupply);
-        staking.initialize(owner(), address(this), address(token));
-        staking.setInitialRatio(initialSupply);
-        stkContracts[address(staking)] = true;
-        contracts[rToken] = address(staking);
+        staking.initialize(owner(), address(this), rToken);
+        isStkContractsExists[rToken] = true;
+        stakingContracts[rToken] = address(staking);
     }
 
-    mapping(address => address) private contracts;
 
-    function stake(address rToken, uint256 amount) external isStkContract(rToken) {
-        IERC20(rToken).transferFrom(msg.sender, address(this), amount);
-        IERC20(rToken).approve(contracts[rToken], amount);
-        IStaking(rToken).createStake(amount, msg.sender);
+    function stake(address rToken, uint256 amount) external {
+        if(!isStakingContractExists(rToken)) createStakingContract(rToken);
+        address _stakingContract = stakingContracts[rToken];
+        require(IERC20(rToken).transferFrom(msg.sender, _stakingContract, amount), "RToken transfer failed");
+        IStaking(_stakingContract).createStake(msg.sender);
     }
 
-    function removeStake(address rToken, uint256 amount) external isStkContract(rToken) {
-        IStaking(rToken).removeStake(amount);
+    function removeStake(address rToken, uint256 amount) external stkContractExists(rToken) {
+        address _stakingContract = stakingContracts[rToken];
+        require(IERC20(_stakingContract).transferFrom(msg.sender, _stakingContract, amount), "Staking Token transfer failed");
+        IStaking(_stakingContract).removeStake(msg.sender);
     }
 
-    function getStkPerShare(address rToken) external view isStkContract(rToken) returns (uint256) {
-        return IStaking(rToken).getStkPerShare();
+    function getRTokenPerShare(address rToken) external view stkContractExists(rToken) returns (uint256) {
+        return IStaking(stakingContracts[rToken]).getRTokenPerShare();
     }
 
     function stakeOf(address stakeholder, address rToken)
         external
         view
-        isStkContract(rToken)
+        stkContractExists(rToken)
         returns (uint256)
     {
-        return IStaking(rToken).stakeOf(stakeholder);
+        return IStaking(stakingContracts[rToken]).stakeOf(stakeholder);
     }
 
     function sharesOf(address stakeholder, address rToken)
         external
         view
-        isStkContract(rToken)
+        stkContractExists(rToken)
         returns (uint256)
     {
-        return IStaking(rToken).sharesOf(stakeholder);
+        return IStaking(stakingContracts[rToken]).sharesOf(stakeholder);
     }
 
     function rewardOf(address stakeholder, address rToken)
         external
         view
-        isStkContract(rToken)
+        stkContractExists(rToken)
         returns (uint256)
     {
-        return IStaking(rToken).rewardOf(stakeholder);
+        return IStaking(stakingContracts[rToken]).rewardOf(stakeholder);
     }
 
-    function rewardForSTK(
+    function rewardForRToken(
         address stakeholder,
         uint256 stkAmount,
         address rToken
-    ) external view isStkContract(rToken) returns (uint256) {
-        return IStaking(rToken).rewardForSTK(stakeholder, stkAmount);
+    ) external view stkContractExists(rToken) returns (uint256) {
+        return IStaking(stakingContracts[rToken]).rewardForRToken(stakeholder, stkAmount);
     }
 
-    function getTotalStakes(address rToken) external view isStkContract(rToken) returns (uint256) {
-        return IStaking(rToken).getTotalStakes();
+    function getTotalStakes(address rToken) external view stkContractExists(rToken) returns (uint256) {
+        return IStaking(stakingContracts[rToken]).getTotalStakes();
     }
 
-    function getTotalShares(address rToken) external view isStkContract(rToken) returns (uint256) {
-        return IStaking(rToken).getTotalShares();
+    function getTotalShares(address rToken) external view stkContractExists(rToken) returns (uint256) {
+        return IStaking(stakingContracts[rToken]).getTotalShares();
     }
 
     function getCurrentRewards(address rToken)
         external
         view
-        isStkContract(rToken)
+        stkContractExists(rToken)
         returns (uint256)
     {
-        return IStaking(rToken).getCurrentRewards();
+        return IStaking(stakingContracts[rToken]).getCurrentRewards();
     }
 
     function getTotalStakeholders(address rToken)
         external
         view
-        isStkContract(rToken)
+        stkContractExists(rToken)
         returns (uint256)
     {
-        return IStaking(rToken).getCurrentRewards();
+        return IStaking(stakingContracts[rToken]).getCurrentRewards();
     }
 
-    function refundLockedSTK(
+    function refundLockedRToken(
         uint256 from,
         uint256 to,
         address rToken
-    ) external isStkContract(rToken) {
-        IStaking(rToken).refundLockedSTK(from, to);
+    ) external stkContractExists(rToken) {
+        IStaking(stakingContracts[rToken]).refundLockedRToken(from, to);
     }
 
-    function removeLockedRewards(address rToken) external isStkContract(rToken) {
-        IStaking(rToken).removeLockedRewards();
+    function removeLockedRewards(address rToken) external stkContractExists(rToken) {
+        IStaking(stakingContracts[rToken]).removeLockedRewards();
     }
 
     // ========================== Insurance ==================================== //
@@ -305,9 +304,8 @@ contract Safock is Ownable, ReentrancyGuard {
 
         InsuranceAttributes memory plan = plans[planType];
         uint256 amount = (plan.priceNumerator * totalAmount) / plan.priceDenominator;
-        IERC20(paymentCurrency).transferFrom(msg.sender, address(this), amount);
-        // TransferHelpers.safeTranferFrom(paymentCurrency, msg.sender, address(this), amount);
-
+        require(IERC20(paymentCurrency).transferFrom(msg.sender, address(this), amount), "Payment Currency transfer failed!");
+        
         userPlans[msg.sender][rToken] = UserPlan(
             msg.sender, //owner
             false, // isClaimed
@@ -354,8 +352,8 @@ contract Safock is Ownable, ReentrancyGuard {
             "Price dropped out of coverage"
         );
 
-        IERC20(rToken).transferFrom(msg.sender, address(this), plan.numRTokens);
-        IERC20(USDT).transfer(msg.sender, plan.amountInsuredInUSD);
+        require(IERC20(rToken).transferFrom(msg.sender, address(this), plan.numRTokens), "RToken Transafer failed!");
+        require(IERC20(USDT).transfer(msg.sender, plan.amountInsuredInUSD), "USDT Transfer failed");
 
         plan.isClaimed = true;
 
