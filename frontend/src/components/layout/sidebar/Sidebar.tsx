@@ -171,7 +171,18 @@ const Navigation = ({ currentToken }: { currentToken?: ReserveToken | null }) =>
 // Sidebar footer
 const Footer = () => (
     <Box m={4} sx={{ display: ["none", "none", "block"] }}>
-        <Box sx={{ fontSize: 1 }} mb={3}></Box>
+        <Box sx={{ fontSize: 1 }} mb={3}>
+            <a href="https://discord.gg/KkckfSdA8R/">Discord</a>
+        </Box>{" "}
+        <Box sx={{ fontSize: 1 }} mb={3}>
+            <a href="https://twitter.com/SafockOfficial">Twitter</a>
+        </Box>
+        <Box sx={{ fontSize: 1 }} mb={3}>
+            <a href="https://safock.gitbook.io/docs/">Docs</a>
+        </Box>
+        <Box sx={{ fontSize: 1 }} mb={3}>
+            <a href="https://safock.gitbook.io/docs/important/privacy-policy/">Privacy Policy</a>
+        </Box>
         <Flex sx={{ alignItems: "center" }}>
             <Box mx="auto" />
             <SyncedBlock />

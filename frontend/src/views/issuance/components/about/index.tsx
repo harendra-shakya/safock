@@ -13,7 +13,7 @@ const About = () => (
             </Trans>
         </Text>
         <Text variant="strong" mb={2} mt={4}>
-            <Trans>When wisll I get my RTokens?</Trans>
+            <Trans>When will I get my RTokens?</Trans>
         </Text>
         <Text as="p" variant="legend">
             <Trans>
