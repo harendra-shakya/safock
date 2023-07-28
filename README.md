@@ -3,16 +3,6 @@
 Safock is a DeFi platform that focuses on crypto (ETFs) trading in a decentralized way, Backed by RTokens.<br>
 (This project is a submission to the Reserve Protocol Hackathon💎)
 
-<br>
-<p style="text-align: center" align="center">
-<a href="https://ibb.co/DVKcwfD"><img src="https://i.ibb.co/h78Q2FR/Green-Black-White-Circuit-Board-Social-Feed-Static-Ad.png" alt="Safock | Reserve Protocol Hackathon Submission" border="0" /></a>
-<div align="center"></p>
-<div align="center">
-  <a href="https://safock.com">Safock.com</a>
-  <h6>Backed by RTokens</h6>
-</div>
-</div> 
-<br>
 
 ## Overview
 
@@ -87,17 +77,6 @@ By default the initial ratio will be set at 1:1, so 1 RToken is equal to 1 STK T
 6. `StakeholderA` remove stake of 1000 RToken at this point, so `StakeholderA` will receive 1000\*1.1 = 1100 RToken. So, reward of `StakeholderA` is 1100-1000 = 100 RToken
 
 <img src="backend/docs/safock-staking.png" alt="safock-staking" border="0" /><br>
-
-## Official Links
-
-Official Website: https://safock.com<br>
-Documentation: https://safock.gitbook.io/docs<br>
-Launch Dapp: https://app.safock.com<br>
-Twitter: https://twitter.com/SafockOfficial<br>
-Discord: https://discord.gg/KkckfSdA8R<br>
-Medium: https://medium.com/@Safock<br>
-Youtube: https://www.youtube.com/@Safock<br>
-Mail: hi@safock.com <br>
 
 ## Mission
 
