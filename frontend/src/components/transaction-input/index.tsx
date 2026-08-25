@@ -58,6 +58,7 @@ export interface InsureTransactionInputProps extends BoxProps {
     placeholder?: string;
     compact?: boolean;
     disabled?: boolean;
+    onChange?: (value: string) => void;
 }
 
 export const InsureTransactionInput = ({
@@ -65,6 +66,7 @@ export const InsureTransactionInput = ({
     placeholder = "",
     disabled = false,
     compact = false,
+    onChange,
     ...props
 }: InsureTransactionInputProps) => {
     const maxLabel = (
@@ -83,7 +85,11 @@ export const InsureTransactionInput = ({
                 </Text>
                 {compact && maxLabel}
             </Flex>
-            <NumericalInput disabled={disabled} placeholder={placeholder} onChange={() => {}} />
+            <NumericalInput
+                disabled={disabled}
+                placeholder={placeholder}
+                onChange={onChange || (() => undefined)}
+            />
             {!compact && <Flex mt={2}>{maxLabel}</Flex>}
         </Box>
     );

@@ -72,16 +72,27 @@ contract Staking is Initializable, AccessControlUpgradeable, PausableUpgradeable
         _unpause();
     }
 
-    function createStake(address to) public whenNotPaused {
-        uint256 stakeAmount = rToken.balanceOf(address(this)) - totalStakes;
+    function createStake(address to) public hasAdminRole whenNotPaused {
+        uint256 available = rToken.balanceOf(address(this)) - totalStakes;
+        _createStake(to, available);
+    }
+
+    function createStake(address to, uint256 stakeAmount) public hasAdminRole whenNotPaused {
+        uint256 available = rToken.balanceOf(address(this)) - totalStakes;
+        require(stakeAmount > 0 && stakeAmount <= available, "Invalid stake amount");
+        _createStake(to, stakeAmount);
+    }
+
+    function _createStake(address to, uint256 stakeAmount) private {
         uint256 _totalShares = totalSupply;
         uint256 shares;
 
-        if(_totalShares == 0) {
+        if (_totalShares == 0) {
             shares = stakeAmount;
         } else {
             shares = (stakeAmount * _totalShares) / rToken.balanceOf(address(this));
         }
+        require(shares > 0, "Stake amount too small");
 
         stakeholders.add(to);
         stakeholderToStake[to].stakedRToken += stakeAmount;
@@ -92,7 +103,7 @@ contract Staking is Initializable, AccessControlUpgradeable, PausableUpgradeable
         emit StakeAdded(to, stakeAmount, shares, block.timestamp);
     }
 
-    function removeStake(address to) public whenNotPaused {
+    function removeStake(address to) public hasAdminRole whenNotPaused {
         uint256 stakeAmount = balanceOf[address(this)];
         uint256 stakeholderStake = stakeholderToStake[to].stakedRToken;
         uint256 stakeholderShares = stakeholderToStake[to].shares;
@@ -124,6 +135,7 @@ contract Staking is Initializable, AccessControlUpgradeable, PausableUpgradeable
     }
 
     function getRTokenPerShare() public view returns (uint256) {
+        if (totalSupply == 0) return 0;
         return (rToken.balanceOf(address(this)) * BASE) / totalSupply;
     }
 
@@ -176,6 +188,10 @@ contract Staking is Initializable, AccessControlUpgradeable, PausableUpgradeable
 
     function getTotalStakes() public view returns (uint256) {
         return totalStakes;
+    }
+
+    function getTotalShares() public view returns (uint256) {
+        return totalSupply;
     }
 
     function getCurrentRewards() public view returns (uint256) {

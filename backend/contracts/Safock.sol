@@ -56,6 +56,7 @@ contract Safock is Ownable, ReentrancyGuard {
         bool isClaimed;
         InsurancePlan planType;
         address rToken;
+        address paymentCurrency;
         uint256 numRTokens;
         uint256 price;
         uint256 amountInsuredInUSD;
@@ -112,6 +113,7 @@ contract Safock is Ownable, ReentrancyGuard {
         USDC = usdc;
         USDT = usdt;
         BUSD = busd;
+        TREASURY_ADDRESS = msg.sender;
 
         // 0. BASIC     ->   cost = 1% of price, if drops atleast 20%, lose cover upto 30%, validity 3 month (validity is low coz of market fluctuation)
         // 1. PRO       ->   cost = 3% of price, if drops atleast 20%, lose cover upto 50%, validity 3 month
@@ -184,7 +186,7 @@ contract Safock is Ownable, ReentrancyGuard {
         if(!isStakingContractExists(rToken)) createStakingContract(rToken);
         address _stakingContract = stakingContracts[rToken];
         require(IERC20(rToken).transferFrom(msg.sender, _stakingContract, amount), "RToken transfer failed");
-        IStaking(_stakingContract).createStake(msg.sender);
+        IStaking(_stakingContract).createStake(msg.sender, amount);
     }
 
     function removeStake(address rToken, uint256 amount) external stkContractExists(rToken) {
@@ -259,7 +261,7 @@ contract Safock is Ownable, ReentrancyGuard {
         stkContractExists(rToken)
         returns (uint256)
     {
-        return IStaking(stakingContracts[rToken]).getCurrentRewards();
+        return IStaking(stakingContracts[rToken]).getTotalStakeholders();
     }
 
     function refundLockedRToken(
@@ -315,10 +317,11 @@ contract Safock is Ownable, ReentrancyGuard {
             false, // isClaimed
             planType, // planType
             rToken, // rToken
+            paymentCurrency, // payment currency
             numRTokens, // number of RTokens
             price, // current price of the RToken
             totalAmount, // amountInsuredInUSD
-            plan.validity // validity
+            block.timestamp + plan.validity // expiry timestamp
         );
 
         emit Insured(msg.sender, planType, rToken, numRTokens, price, totalAmount, plan.validity);
@@ -328,9 +331,8 @@ contract Safock is Ownable, ReentrancyGuard {
      * @dev main function resposible for claiming the insurance
      */
     function claimInsurance(address rToken) external nonReentrant {
-        UserPlan memory plan = userPlans[msg.sender][rToken];
-        InsurancePlan planType = plan.planType;
-        InsuranceAttributes memory planAttributes = plans[planType];
+        UserPlan storage plan = userPlans[msg.sender][rToken];
+        InsuranceAttributes memory planAttributes = plans[plan.planType];
 
         require(plan.owner != address(0), "Plan not exists");
         require(!plan.isClaimed, "Already Claimed");
@@ -338,7 +340,6 @@ contract Safock is Ownable, ReentrancyGuard {
 
         uint256 currentPrice = getPrice(rToken);
 
-        // * Currect price should be less than minimum drop
         require(
             currentPrice <=
                 ((planAttributes.minDropDenominator - planAttributes.minDropNumerator) *
@@ -346,8 +347,6 @@ contract Safock is Ownable, ReentrancyGuard {
                     planAttributes.minDropDenominator,
             "Price not dropped below minimum theshold"
         );
-
-        // * Currect price should be more than cove upto
         require(
             currentPrice >=
                 ((planAttributes.coverUptoDenominator - planAttributes.coverUptoNumerator) *
@@ -356,10 +355,16 @@ contract Safock is Ownable, ReentrancyGuard {
             "Price dropped out of coverage"
         );
 
-        require(IERC20(rToken).transferFrom(msg.sender, address(this), plan.numRTokens), "RToken Transafer failed!");
-        require(IERC20(USDT).transfer(msg.sender, plan.amountInsuredInUSD), "USDT Transfer failed");
-
+        // Mark claimed before external token calls to make replay impossible.
         plan.isClaimed = true;
+        require(
+            IERC20(rToken).transferFrom(msg.sender, address(this), plan.numRTokens),
+            "RToken Transafer failed!"
+        );
+        require(
+            IERC20(plan.paymentCurrency).transfer(msg.sender, plan.amountInsuredInUSD),
+            "Payment Currency transfer failed"
+        );
 
         emit InsuranceClaimed(
             msg.sender,
@@ -371,12 +376,14 @@ contract Safock is Ownable, ReentrancyGuard {
         );
     }
 
-    function withdraw(address token, uint256 amount) external {
+    function withdraw(address token, uint256 amount) external onlyOwner {
+        require(TREASURY_ADDRESS != address(0), "Treasury not configured");
         TransferHelpers.safeTranfer(token, TREASURY_ADDRESS, amount);
         emit Withdraw(msg.sender, token, amount);
     }
 
     function changeTreaduryAddress(address newAddress) external onlyOwner {
+        require(newAddress != address(0), "Invalid treasury address");
         TREASURY_ADDRESS = newAddress;
     }
 
@@ -413,6 +420,7 @@ contract Safock is Ownable, ReentrancyGuard {
 
     function validityLeft(address rToken) external view returns (uint256 leftValidity) {
         UserPlan memory plan = userPlans[msg.sender][rToken];
+        if (plan.validity <= block.timestamp) return 0;
         leftValidity = plan.validity - block.timestamp;
     }
 }

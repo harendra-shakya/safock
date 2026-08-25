@@ -56,6 +56,7 @@ const Insure = (props: BoxProps) => {
 
     const updateUI = async () => {
         const { ethereum }: any = window;
+        if (!ethereum || !rToken?.address) return;
         const provider = new ethers.providers.Web3Provider(ethereum);
         const signer = provider.getSigner();
 
