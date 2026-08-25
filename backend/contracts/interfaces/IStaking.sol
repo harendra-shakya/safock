@@ -58,6 +58,8 @@ interface IStaking {
 
     function createStake(address to) external;
 
+    function createStake(address to, uint256 amount) external;
+
     function removeStake(address to) external;
 
     function getRTokenPerShare() external view returns (uint256);

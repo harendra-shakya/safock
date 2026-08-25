@@ -7,86 +7,75 @@ import '@typechain/hardhat'
 import 'hardhat-contract-sizer'
 import 'hardhat-gas-reporter'
 import 'solidity-coverage'
-import '@withtally/tally-publish-dao'
 
 import { useEnv } from '#/utils/env'
 import { HardhatUserConfig } from 'hardhat/types'
 import forkBlockNumber from '#/test/integration/fork-block-numbers'
 
-// eslint-disable-next-line node/no-missing-require
 require('#/tasks')
 
 const MAINNET_RPC_URL = useEnv(['MAINNET_RPC_URL', 'ALCHEMY_MAINNET_RPC_URL'])
-const GOERLI_RPC_URL = useEnv('GOERLI_RPC_URL')
+const SEPOLIA_RPC_URL = useEnv('SEPOLIA_RPC_URL')
 const MNEMONIC = useEnv('MNEMONIC') ?? 'test test test test test test test test test test test junk'
 const TIMEOUT = useEnv('SLOW') ? 3_000_000 : 300_000
-
 const src_dir = `./contracts/${useEnv('PROTO')}`
 const settings = useEnv('NO_OPT') ? {} : { optimizer: { enabled: true, runs: 200 } }
+
+const optionalNetworks = {
+  ...(SEPOLIA_RPC_URL
+    ? {
+        sepolia: {
+          chainId: 11155111,
+          url: SEPOLIA_RPC_URL,
+          accounts: { mnemonic: MNEMONIC },
+        },
+      }
+    : {}),
+  ...(MAINNET_RPC_URL
+    ? {
+        mainnet: {
+          chainId: 1,
+          url: MAINNET_RPC_URL,
+          accounts: { mnemonic: MNEMONIC },
+        },
+      }
+    : {}),
+}
 
 const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
   networks: {
     hardhat: {
-      // network for tests/in-process stuff
-      forking: true
+      ...(MAINNET_RPC_URL
         ? {
-            url: MAINNET_RPC_URL,
-            blockNumber: Number(useEnv('MAINNET_BLOCK', forkBlockNumber['default'].toString())),
+            forking: {
+              url: MAINNET_RPC_URL,
+              blockNumber: Number(useEnv('MAINNET_BLOCK', forkBlockNumber['default'].toString())),
+            },
           }
-        : undefined,
+        : {}),
       gas: 0x1ffffffff,
       blockGasLimit: 0x1fffffffffffff,
       allowUnlimitedContractSize: true,
     },
     localhost: {
-      // network for long-lived mainnet forks
       chainId: 31337,
       url: 'http://localhost:8545',
       gas: 0x1ffffffff,
       blockGasLimit: 0x1fffffffffffff,
       allowUnlimitedContractSize: true,
     },
-    // anvil: {
-    //   url: 'http://127.0.0.1:8545/',
-    // },
-    goerli: {
-      chainId: 5,
-      url: GOERLI_RPC_URL,
-      accounts: {
-        mnemonic: MNEMONIC,
-      },
-    },
-    mainnet: {
-      chainId: 1,
-      url: MAINNET_RPC_URL,
-      accounts: {
-        mnemonic: MNEMONIC,
-      },
-      // gasPrice: 10_000_000_000,
-    },
+    ...optionalNetworks,
   },
   solidity: {
     compilers: [
-      {
-        version: '0.8.9',
-        settings,
-      },
-      {
-        version: '0.6.12',
-      },
-      {
-        version: '0.4.24',
-      },
+      { version: '0.8.9', settings },
+      { version: '0.6.12' },
+      { version: '0.4.24' },
     ],
   },
-  paths: {
-    sources: src_dir,
-  },
-  mocha: {
-    timeout: TIMEOUT,
-    slow: 1000,
-  },
+  paths: { sources: src_dir },
+  mocha: { timeout: TIMEOUT, slow: 1000 },
   contractSizer: {
     alphaSort: false,
     disambiguatePaths: false,
@@ -95,12 +84,8 @@ const config: HardhatUserConfig = {
     only: [],
     except: ['Extension'],
   },
-  gasReporter: {
-    enabled: !!useEnv('REPORT_GAS'),
-  },
-  etherscan: {
-    apiKey: useEnv('ETHERSCAN_API_KEY'),
-  },
+  gasReporter: { enabled: !!useEnv('REPORT_GAS') },
+  etherscan: { apiKey: useEnv('ETHERSCAN_API_KEY') || '' },
 }
 
 if (useEnv('ONLY_FAST')) {
